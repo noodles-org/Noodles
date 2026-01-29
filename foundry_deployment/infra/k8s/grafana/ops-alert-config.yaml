@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-ops-alert-config
+  namespace: grafana
+  labels:
+    grafana_alert: "1"
+data:
+  fetch-ip.json: |-
+    {
+      "apiVersion": 1,
+      "groups": [
+        {
+          "orgId": 1,
+          "name": "Metrics Ops",
+          "folder": "Metrics",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "eew0mdtgm6whsc",
+              "title": "Fetch IP Failed",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": {
+                    "from": 600,
+                    "to": 0
+                  },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "disableTextWrap": false,
+                    "editorMode": "builder",
+                    "expr": "fetch_ip_ops_failed_total",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "legendFormat": "__auto",
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A",
+                    "useBackend": false
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": {
+                    "from": 0,
+                    "to": 0
+                  },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": {
+                          "params": [
+                            0
+                          ],
+                          "type": "gt"
+                        },
+                        "operator": {
+                          "type": "and"
+                        },
+                        "query": {
+                          "params": [
+                            "C"
+                          ]
+                        },
+                        "reducer": {
+                          "params": [],
+                          "type": "last"
+                        },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": {
+                      "type": "__expr__",
+                      "uid": "__expr__"
+                    },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "c59aad20-016f-4c6b-a407-6a15957a632e",
+              "panelId": 1,
+              "noDataState": "NoData",
+              "execErrState": "Error",
+              "for": "1m",
+              "annotations": {
+                "__dashboardUid__": "c59aad20-016f-4c6b-a407-6a15957a632e",
+                "__panelId__": "1",
+                "summary": "Fetch IP failed operations"
+              },
+              "isPaused": false
+            }
+          ]
+        }
+      ]
+    }

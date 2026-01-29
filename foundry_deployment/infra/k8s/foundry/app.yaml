@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    app: foundry
+  namespace: foundry
+spec:
+  selector:
+    matchLabels:
+      app: foundry
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: foundry
+    spec:
+      containers:
+        - name: foundry
+          image: docker.io/mephalrith/foundry-server:v0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 30000
+          volumeMounts:
+            - mountPath: "/foundrydata"
+              name: foundry-pv-storage
+      volumes:
+        - name: foundry-pv-storage
+          persistentVolumeClaim:
+            claimName: foundry-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+  namespace: foundry
+spec:
+  selector:
+    app: foundry
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 30000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-pvc
+  namespace: foundry
+  annotations:
+    argocd.argoproj.io/sync-options: Delete=false
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 80Gi
+  storageClassName: local-path

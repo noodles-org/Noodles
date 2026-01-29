@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+  namespace: grafana
+spec:
+  selector:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: prometheus-stack
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: traefik-service
+  namespace: grafana
+spec:
+  weighted:
+    services:
+      - name: service
+        namespace: grafana
+        port: 80
+        weight: 1
