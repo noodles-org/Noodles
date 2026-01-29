@@ -1,0 +1,44 @@
+kube-prometheus-stack:
+  prometheus:
+    service:
+      additionalPorts:
+        - name: pushgateway-metrics
+          port: 9091
+          targetPort: 9091
+    prometheusSpec:
+      additionalScrapeConfigs:
+        - job_name: 'pushgateway'
+          static_configs:
+            - targets: ['prometheus-stack-prometheus-pushgateway.grafana.svc.cluster.local:9091']
+
+  grafana:
+    enabled: true
+    adminPassword: prom-operator
+    envFromSecret: github
+    namespaceOverride: "grafana"
+    defaultDashboardsEnabled: true
+
+    grafana.ini:
+      server:
+        domain: noodles.local
+        root_url: http://noodles.local/grafana/
+        serve_from_sub_path: true
+      auth.github:
+        client_id: $__env{GF_AUTH_GITHUB_CLIENT_ID}
+        client_secret: $__env{GF_AUTH_GITHUB_CLIENT_SECRET}
+        enabled: true
+        allow_sign_up: true
+
+    sidecar:
+      dashboards:
+        enabled: true
+        folderAnnotation: "grafana_folder"
+        provider:
+          foldersFromFilesStructure: true
+      alerts:
+        enabled: true
+
+prometheus-pushgateway:
+  serviceMonitor:
+    enabled: true
+    honorLabels: true
