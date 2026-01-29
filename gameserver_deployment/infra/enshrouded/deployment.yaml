@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enshrouded
+  namespace: enshrouded
+  labels:
+    app: enshrouded
+spec:
+  selector:
+    matchLabels:
+      app: enshrouded
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: enshrouded
+    spec:
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+      containers:
+        - name: enshrouded
+          image: sknnr/enshrouded-dedicated-server:latest
+          imagePullPolicy: Always
+          env:
+            - name: SERVER_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: serverName
+                  name: enshrouded-secret
+                  optional: false
+            - name: PORT
+              value: "15637"
+            - name: STEAM_PORT
+              value: "27015"
+            - name: SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: enshrouded-secret
+                  optional: false
+            - name: SERVER_SLOTS
+              value: "10"
+          ports:
+            - containerPort: 15637
+              name: query-port-udp
+              protocol: UDP
+            - containerPort: 27015
+              name: steam-port-udp
+              protocol: UDP
+          volumeMounts:
+            - name: enshrouded-data
+              mountPath: /home/steam/enshrouded/savegame
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+      volumes:
+        - name: enshrouded-data
+          persistentVolumeClaim:
+            claimName: enshrouded-data
