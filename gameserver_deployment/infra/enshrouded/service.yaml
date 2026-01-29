@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: enshrouded
+  namespace: enshrouded
+  labels:
+    app: enshrouded
+spec:
+  type: LoadBalancer
+  allocateLoadBalancerNodePorts: true
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ports:
+    - port: 15637
+      protocol: UDP
+      name: query-port-udp
+      targetPort: 15637
+      nodePort: 32638
+    - port: 27015
+      protocol: UDP
+      name: steam-port-udp
+      targetPort: 27015
+      nodePort: 31201
+  selector:
+    app: enshrouded

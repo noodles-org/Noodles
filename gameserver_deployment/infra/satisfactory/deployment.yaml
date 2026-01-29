@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: satisfactory
+  namespace: satisfactory
+spec:
+  selector:
+    matchLabels:
+      app: satisfactory
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: satisfactory
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: satisfactory
+          image: wolveix/satisfactory-server:latest
+          env:
+            - name: AUTOPAUSE
+              value: "true"
+            - name: AUTOSAVEONDISCONNECT
+              value: "true"
+            - name: DEBUG
+              value: "false"
+            - name: MAXPLAYERS
+              value: "8"
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: SKIPUPDATE
+              value: "false"
+            - name: STEAMBETA
+              value: "false"
+            - name: ROOTLESS
+              value: "true"
+          ports:
+            - name: api
+              containerPort: 7777
+              protocol: TCP
+            - name: game
+              containerPort: 7777
+              protocol: UDP
+            - name: messaging
+              containerPort: 8888
+              protocol: TCP
+          volumeMounts:
+            - name: satisfactory-config
+              mountPath: /config
+          livenessProbe:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - "/home/steam/healthcheck.sh"
+            initialDelaySeconds: 300
+            failureThreshold: 4
+            successThreshold: 1
+            periodSeconds: 30
+      volumes:
+        - name: satisfactory-config
+          persistentVolumeClaim:
+            claimName: satisfactory-config-pvc

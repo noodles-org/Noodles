@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: valheim
+  namespace: valheim
+  labels:
+    app: valheim
+spec:
+  allocateLoadBalancerNodePorts: true
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: gameport-udp
+      nodePort: 30743
+      port: 2456
+      protocol: UDP
+      targetPort: 2456
+    - name: gameport-tcp
+      nodePort: 30743
+      port: 2456
+      protocol: TCP
+      targetPort: 2456
+    - name: queryport-udp
+      nodePort: 31994
+      port: 2457
+      protocol: UDP
+      targetPort: 2457
+    - name: queryport-tcp
+      nodePort: 31994
+      port: 2457
+      protocol: TCP
+      targetPort: 2457
+  selector:
+    app: valheim
+  sessionAffinity: None
+  type: LoadBalancer

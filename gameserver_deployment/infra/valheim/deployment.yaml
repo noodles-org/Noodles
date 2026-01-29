@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valheim
+  namespace: valheim
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: valheim
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: valheim
+    spec:
+      containers:
+      - env:
+        - name: SERVER_NAME
+          value: noodleheim
+        - name: WORLD_NAME
+          value: EggNoodle
+        - name: SERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: valheim-secret
+              optional: false
+        - name: SERVER_PORT
+          value: "2456"
+        image: lloesche/valheim-server:latest
+        imagePullPolicy: Always
+        name: valheim
+        ports:
+        - containerPort: 2456
+          name: gameport-udp
+          protocol: UDP
+        - containerPort: 2456
+          name: gameport-tcp
+          protocol: TCP
+        - containerPort: 2457
+          name: queryport-udp
+          protocol: UDP
+        - containerPort: 2457
+          name: queryport-tcp
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /config
+          name: gamefiles
+        - mountPath: /opt/valheim
+          name: serverfiles
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: gamefiles
+        persistentVolumeClaim:
+          claimName: valheim-world-data
+      - name: serverfiles
+        persistentVolumeClaim:
+          claimName: valheim-server-base-data
