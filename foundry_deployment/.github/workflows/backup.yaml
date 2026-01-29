@@ -1,0 +1,40 @@
+name: Manual Foundry Backup
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    name: Backup Foundry Data Playbook
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 5.78.156.68 >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+      - name: Install Ansible
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Run Backup Playbook
+        run: ansible-playbook -i infra/inventory.ini infra/playbooks/download_archive.yaml --private-key private_key.pem --extra-vars "destination=${GITHUB_WORKSPACE}/backups"
+
+      - name: Commit backup
+        run: |
+          git config --global user.name 'Actions Bot'
+          git config --global user.email 'actions-bot@users.noreply.github.com'
+          
+          current_time=$(date +%s)
+          mv backups/foundrydata_archive.zip backups/foundrydata_archive_$current_time.zip
+          
+          git add backups/foundrydata_archive_$current_time.zip
+          git commit -am "Foundry backup via workflow"
+          git push
