@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soba
+  namespace: soba
+  labels:
+    app: soba
+spec:
+  selector:
+    matchLabels:
+      app: soba
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: soba
+    spec:
+      containers:
+        - name: soba
+          image: mephalrith/soba-discord-bot:v0.1
+          env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: soba-secret
+                  optional: false
+            - name: GUILD_ID
+              valueFrom:
+                secretKeyRef:
+                  key: guildId
+                  name: soba-secret
+                  optional: false
+          imagePullPolicy: Always
