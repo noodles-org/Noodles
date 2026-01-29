@@ -1,0 +1,31 @@
+name: Prune old Foundry backups
+on:
+  workflow_run:
+    workflows:
+      - "Manual Foundry Backup"
+    types:
+      - completed
+    branches:
+      - "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Remove the oldest backup
+        run: FIRST_FILE=$(ls -1 "./backups"| head -n 1) && rm "./backups/$FIRST_FILE"
+
+      - name: Commit prune
+        run: |
+          git config --global user.name 'Actions Bot'
+          git config --global user.email 'actions-bot@users.noreply.github.com'
+
+          git add backups/foundryarchive\*.zip
+          git commit -am "Clean backups via workflow"
+          git push

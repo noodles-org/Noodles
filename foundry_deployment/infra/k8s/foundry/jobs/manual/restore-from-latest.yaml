@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: foundry-restore
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: restic
+          image: docker.io/restic/restic:0.18.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - restic
+            - "-r"
+            - "s3:https://s3.us-west-1.amazonaws.com/noodles-foundry-bucket/restic"
+            - "--verbose=2"
+            - "restore"
+            - "latest"
+            - "--target"
+            - "/"
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: restic
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: restic
+                  key: secret-access-key
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: restic
+                  key: restic-password
+            - name: BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: restic
+                  key: bucket-name
+          volumeMounts:
+            - mountPath: /foundrydata
+              name: foundry-data
+      volumes:
+        - name: foundry-data
+          persistentVolumeClaim:
+            claimName: foundry-pvc
+  backoffLimit: 4

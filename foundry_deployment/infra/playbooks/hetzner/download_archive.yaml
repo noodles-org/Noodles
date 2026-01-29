@@ -1,0 +1,28 @@
+- name: Archive FoundryData and download it
+  hosts: hetzner_hosts
+  gather_facts: false
+
+  vars_prompt:
+    - name: destination
+      prompt: destination/folder/location
+      private: false
+
+  tasks:
+    - name: Verify destination location
+      delegate_to: localhost
+      stat:
+        path: "{{ destination }}"
+      register: dest_path
+      failed_when: dest_path.stat.isdir is undefined or dest_path.stat.isdir == false or dest_path.stat.path == "/"
+
+    - name: Zip FoundryData on server
+      shell: apt-get install -y zip && zip -o -r /foundrydata_archive.zip /foundrydata -x "/foundrydata/Backups/*"
+
+    - name: Download FoundryData zip file
+      fetch:
+        src: "/foundrydata_archive.zip"
+        dest: "{{ dest_path.stat.path }}/"
+        flat: yes
+
+    - name: Clean up archive file
+      shell: rm /foundrydata_archive.zip

@@ -1,0 +1,10 @@
+[Unit]
+Description=Foundry service
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/local/bin/foundry_start.sh
+
+[Install]
+WantedBy=multi-user.target

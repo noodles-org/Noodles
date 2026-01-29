@@ -1,0 +1,43 @@
+- name: Pull FoundryData latest backup from Restic and download the zip
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - .secrets/restic-ansible-vault.yaml
+
+  vars_prompt:
+    - name: destination
+      prompt: destination/folder/location
+      private: false
+
+  tasks:
+    - name: Verify destination location
+      stat:
+        path: "{{ destination }}"
+      register: dest_path
+      failed_when: dest_path.stat.isdir is undefined or dest_path.stat.isdir == false or dest_path.stat.path == "/"
+
+    - name: Mount Restic archive
+      shell: |
+        mkdir -p ~/mnt
+        export RESTIC_PASSWORD={{ restic_password }}
+        export BUCKET_NAME={{ bucket_name }}
+        export AWS_ACCESS_KEY_ID={{ access_key_id }}
+        export AWS_SECRET_ACCESS_KEY={{ secret_access_key }}
+        restic mount ~/mnt -r s3:{{ repository }}
+      async: 86400 # 24 hrs
+      poll: 0
+      register: background_job
+
+    - name: Wait for restic mount
+      pause:
+        seconds: 30
+
+    - name: Zip FoundryData from Restic mount
+      shell: |
+        zip -o -r {{ dest_path.stat.path }}/foundrydata_archive.zip foundrydata -x "foundrydata/Backups/*"
+      args:
+        chdir: "~/mnt/snapshots/latest"
+
+    - name: Clean up mount path
+      shell: umount ~/mnt && rm -r ~/mnt

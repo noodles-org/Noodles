@@ -1,0 +1,34 @@
+- name: Set up K3s cluster
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_prompt:
+    - name: config
+      prompt: kube config file location
+      private: false
+
+  tasks:
+    - name: Verify config file location
+      stat:
+        path: "{{ config }}"
+      register: file_path
+      failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "text/plain"
+
+    - name: Apply CRDs and configuration files
+      shell: |
+        export KUBECONFIG={{ file_path.stat.path }}
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+        kubectl apply -f ../k8s/namespaces.yaml
+        kubectl apply -f ../.secrets/.
+        
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm install prometheus-stack ../helm/prometheus-stack --namespace grafana -f ../helm/prometheus-stack/values.yaml
+        helm repo add argo https://argoproj.github.io/argo-helm
+        helm install argocd ../helm/argocd --namespace argocd -f ../helm/argocd/values.yaml
+        
+        kubectl apply -f ../k8s/foundry/.
+        kubectl apply -f ../k8s/traefik/.
+        kubectl apply -f ../k8s/grafana/.
+        kubectl apply -f ../k8s/argocd/.
+        kubectl apply -f ../k8s/foundry/jobs/.

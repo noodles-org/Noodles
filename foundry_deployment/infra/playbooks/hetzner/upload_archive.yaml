@@ -1,0 +1,36 @@
+- name: Upload archived FoundryData and unzip it
+  hosts: hetzner_hosts
+  gather_facts: false
+
+  vars_prompt:
+    - name: source
+      prompt: source/file/location.zip
+      private: false
+
+  tasks:
+    - name: Verify file location
+      delegate_to: localhost
+      stat:
+        path: "{{ source }}"
+      register: file_path
+      failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "application/zip"
+
+    - name: Upload archive to server
+      copy:
+        src: "{{ file_path.stat.path }}"
+        dest: "/{{ file_path.stat.path | basename }}"
+        mode: u+rwx
+
+    - name: Stop Foundry service
+      shell: systemctl stop foundry.service
+
+    - name: Unzip archive on server
+      shell: "apt-get install -y unzip && unzip -o /{{ file_path.stat.path | basename }}"
+      args:
+        chdir: "/"
+
+    - name: Resume Foundry service
+      shell: systemctl start foundry.service
+
+    - name: Clean up archive file
+      shell: "rm /{{ file_path.stat.path | basename }}"

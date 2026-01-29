@@ -1,0 +1,50 @@
+- name: Set up Node and initial Foundry install
+  hosts: hetzner_hosts
+  gather_facts: false
+
+  vars_prompt:
+    - name: source
+      prompt: source/file/location.zip (Node.js version)
+      private: false
+
+  tasks:
+    - name: Verify file location
+      delegate_to: localhost
+      stat:
+        path: "{{ source }}"
+      register: file_path
+      failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "application/zip"
+
+    - name: Install dependencies and prepare file structure
+      shell: |
+        apt-get update && apt-get install -y zip unzip curl
+        
+        apt-get install -y libssl-dev
+        curl -sL https://deb.nodesource.com/setup_20.x | sudo bash -
+        apt-get install -y nodejs
+        
+        mkdir -p /foundryvtt /foundrydata
+
+    - name: Upload installation files to server
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: u+rwx
+      loop:
+        - src: "{{ file_path.stat.path }}"
+          dest: "/foundryvtt/{{ file_path.stat.path | basename }}"
+        - src: "{{ playbook_dir }}/../scripts/foundry_start.sh"
+          dest: "/usr/local/bin/foundry_start.sh"
+        - src: "{{ playbook_dir }}/../scripts/foundry.service"
+          dest: "/etc/systemd/system/foundry.service"
+
+    - name: Unzip install files
+      shell: "unzip -o {{ file_path.stat.path | basename }}"
+      args:
+        chdir: "/foundryvtt"
+
+    - name: Cleanup installation files from server
+      shell: "rm /foundryvtt/{{ file_path.stat.path | basename }}"
+
+    - name: Start Foundry service
+      shell: systemctl daemon-reload && systemctl start foundry.service
