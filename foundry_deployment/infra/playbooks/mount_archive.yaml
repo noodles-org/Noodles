@@ -1,0 +1,23 @@
+- name: Pull FoundryData latest backup from Restic
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - .secrets/restic-ansible-vault.yaml
+
+  tasks:
+    - name: Mount Restic archive
+      shell: |
+        mkdir -p ~/mnt
+        export RESTIC_PASSWORD={{ restic_password }}
+        export BUCKET_NAME={{ bucket_name }}
+        export AWS_ACCESS_KEY_ID={{ access_key_id }}
+        export AWS_SECRET_ACCESS_KEY={{ secret_access_key }}
+        restic mount ~/mnt -r s3:{{ repository }}
+      async: 86400 # 24 hrs
+      poll: 0
+      register: background_job
+
+    - name: Wait for restic mount
+      pause:
+        seconds: 30
