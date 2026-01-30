@@ -10,3 +10,6 @@ sops-encrypt-all:
 	sops --encrypt enshrouded/.secret.yaml > .secrets/enshrouded.enc.yaml && \
 	sops --encrypt valheim/.secret.yaml > .secrets/valheim.enc.yaml && \
 	sops --encrypt soba/.secret.yaml > .secrets/soba.enc.yaml
+
+switch-context-gameserver:
+	export KUBECONFIG=~/.kube/gameserver_config
