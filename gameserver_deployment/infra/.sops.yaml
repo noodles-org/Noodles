@@ -1,8 +1,6 @@
 define: &age_pub "age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz"
 
 creation_rules:
-  - path_regex: "argocd/.secret.yaml"
-    age: *age_pub
   - path_regex: "enshrouded/.secret.yaml"
     age: *age_pub
   - path_regex: "valheim/.secret.yaml"
