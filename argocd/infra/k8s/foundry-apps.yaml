@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: foundry
+  namespace: argocd
+spec:
+  project: foundry-project
+  sources:
+    - repoURL: https://github.com/noodles-org/Noodles
+      targetRevision: HEAD
+      path: foundry_deployment/infra/k8s/foundry
+    - repoURL: https://github.com/noodles-org/Noodles
+      targetRevision: HEAD
+      path: foundry_deployment/infra/k8s/foundry/jobs
+  destination:
+    name: in-cluster
+    namespace: foundry
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: foundry-project
+  source:
+    repoURL: https://github.com/noodles-org/Noodles
+    targetRevision: HEAD
+    path: foundry_deployment/infra/k8s/traefik
+  destination:
+    name: in-cluster
+    namespace: traefik
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: foundry-project
+  source:
+    repoURL: https://github.com/noodles-org/Noodles
+    targetRevision: HEAD
+    path: foundry_deployment/infra/k8s/grafana
+  destination:
+    name: in-cluster
+    namespace: grafana

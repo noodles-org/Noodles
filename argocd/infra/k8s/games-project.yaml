@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: games-project
+  namespace: argocd
+spec:
+  description: Games Project
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: enshrouded
+      server: games-context
+      name: games-context
+    - namespace: satisfactory
+      server: games-context
+      name: games-context
+    - namespace: soba
+      server: games-context
+      name: games-context
+    - namespace: valheim
+      server: games-context
+      name: games-context
+  # Deny all cluster-scoped resources from being created, except for Namespace
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+    - group: ''
+      kind: ResourceQuota
+    - group: ''
+      kind: LimitRange
+    - group: ''
+      kind: NetworkPolicy
+  roles:
+    - name: read-only
+      description: Read-only privileges to games-project
+      policies:
+        - p, proj:games-project:read-only, applications, get, games-project/*, allow
+#      groups:
+#        - foundry-oidc-group
