@@ -17,9 +17,6 @@ sops-encrypt-all:
 	sops --encrypt .secrets/restic.yaml > .secrets/restic.enc.yaml && \
 	sops --encrypt .secrets/escrow > .secrets/escrow.enc
 
-switch-context-foundry:
-	export KUBECONFIG=~/.kube/foundry_config
-
 setup-cluster:
 	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=~/.kube/foundry_config"
 

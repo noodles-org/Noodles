@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: foundry-project
+  namespace: argocd
+spec:
+  description: Foundry Project
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: foundry
+      server: in-cluster
+      name: in-cluster
+    - namespace: traefik
+      server: in-cluster
+      name: in-cluster
+    - namespace: grafana
+      server: in-cluster
+      name: in-cluster
+  # Deny all cluster-scoped resources from being created, except for Namespace
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+    - group: ''
+      kind: ResourceQuota
+    - group: ''
+      kind: LimitRange
+    - group: ''
+      kind: NetworkPolicy
+  roles:
+    - name: read-only
+      description: Read-only privileges to foundry-project
+      policies:
+        - p, proj:foundry-project:read-only, applications, get, foundry-project/*, allow
+#      groups:
+#        - foundry-oidc-group

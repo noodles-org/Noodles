@@ -4,7 +4,3 @@ sops-encrypt-all:
 
 sops-decrypt-all:
 	sops --decrypt .secrets/argocd.enc.yaml > k8s/.secret.yaml
-
-# Argo lives in the foundry cluster
-switch-context-argocd:
-	export KUBECONFIG=~/.kube/foundry_config
