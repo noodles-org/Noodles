@@ -19,16 +19,15 @@
       shell: |
         export KUBECONFIG={{ file_path.stat.path }}
         kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
-        kubectl apply -f ../k8s/namespaces.yaml
-        kubectl apply -f ../.secrets/.
         
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm install prometheus-stack ../helm/prometheus-stack --namespace grafana -f ../helm/prometheus-stack/values.yaml
         helm repo add argo https://argoproj.github.io/argo-helm
         helm install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml
         
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml
+        
         kubectl apply -f ../k8s/foundry/.
-        kubectl apply -f ../k8s/traefik/.
-        kubectl apply -f ../k8s/grafana/.
-        kubectl apply -f ../../../argocd/infra/k8s/.
         kubectl apply -f ../k8s/foundry/jobs/.
+        kubectl apply -f ../k8s/traefik/.
+        kubectl apply -f ../k8s/monitoring/.
+        kubectl apply -f ../../../argocd/infra/k8s/.
