@@ -1,2 +1,2 @@
 # Ignore secrets
-*/.secret.yaml
+.secret.yaml

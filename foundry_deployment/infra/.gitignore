@@ -38,4 +38,4 @@ override.tf.json
 terraform.rc
 
 # Ignore secrets
-*/.secret.yaml
+.secret.yaml
