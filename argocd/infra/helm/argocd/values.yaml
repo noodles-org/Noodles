@@ -5,6 +5,29 @@ argo-cd:
   configs:
     params:
       server.insecure: true
+    cm:
+      dex.config: |
+       connectors:
+         - type: github
+           id: github
+           name: GitHub
+           config:
+             clientID: $github-auth:auth.clientID
+             clientSecret: $github-auth:auth.clientSecret
+             orgs:
+             - name: noodles-org
+    rbac:
+      policy.csv: |
+        p, role:developer, applications, get, */*, allow
+        p, role:developer, projects, get, *, allow
+        p, role:developer, logs, get, *, allow
+        g, noodles-org:developer, role:developer
+        p, role:admin, applications, *, */*, allow
+        p, role:admin, clusters, get, *, allow
+        p, role:admin, repositories, *, *, allow
+        p, role:admin, logs, get, *, allow
+        p, role:admin, exec, create, */*, allow
+        g, noodles-org:admin, role:admin
   server:
     ingress:
       enabled: false

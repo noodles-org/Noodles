@@ -34,5 +34,5 @@ spec:
       description: Read-only privileges to foundry-project
       policies:
         - p, proj:foundry-project:read-only, applications, get, foundry-project/*, allow
-#      groups:
-#        - foundry-oidc-group
+      groups:
+        - developer

@@ -37,5 +37,5 @@ spec:
       description: Read-only privileges to games-project
       policies:
         - p, proj:games-project:read-only, applications, get, games-project/*, allow
-#      groups:
-#        - foundry-oidc-group
+      groups:
+        - developer

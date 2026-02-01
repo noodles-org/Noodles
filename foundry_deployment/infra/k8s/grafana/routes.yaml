@@ -4,6 +4,8 @@ metadata:
   name: dashboard
   namespace: grafana
 spec:
+  entryPoints:
+    - web
   routes:
     - match: Host(`noodles.local`) && PathPrefix(`/grafana`)
       kind: Rule
@@ -17,8 +19,10 @@ metadata:
   name: prometheus-ingress-route
   namespace: grafana
 spec:
+  entryPoints:
+    - web
   routes:
-    - match: PathPrefix(`/metrics`)
+    - match: Host(`noodles.local`) && PathPrefix(`/metrics`)
       kind: Rule
       services:
         - name: prometheus@internal

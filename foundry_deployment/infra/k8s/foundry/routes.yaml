@@ -31,14 +31,6 @@ spec:
     - web
     - websecure
   routes:
-    - match: Host(`foundry.noodles.local`)
-      kind: Rule
-      services:
-        - name: traefik-service
-          namespace: foundry
-          kind: TraefikService
-      middlewares:
-        - name: secure-redirect
     - match: Host(`foundry.noodles.quest`)
       kind: Rule
       services:
