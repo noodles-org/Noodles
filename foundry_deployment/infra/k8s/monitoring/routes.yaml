@@ -1,23 +1,39 @@
 apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-redirect
+  namespace: monitoring
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: dashboard
-  namespace: grafana
+  namespace: monitoring
 spec:
   entryPoints:
     - web
+    - websecure
   routes:
-    - match: Host(`noodles.local`) && PathPrefix(`/grafana`)
+    - match: Host(`noodles.quest`) && PathPrefix(`/grafana`)
       kind: Rule
       services:
         - name: traefik-service
           kind: TraefikService
+          namespace: monitoring
+      middlewares:
+        - name: secure-redirect
+  tls:
+    secretName: noodles-quest-prod-tls
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: prometheus-ingress-route
-  namespace: grafana
+  namespace: monitoring
 spec:
   entryPoints:
     - web

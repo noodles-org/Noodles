@@ -9,25 +9,26 @@ kube-prometheus-stack:
       additionalScrapeConfigs:
         - job_name: 'pushgateway'
           static_configs:
-            - targets: ['prometheus-stack-prometheus-pushgateway.grafana.svc.cluster.local:9091']
+            - targets: ['prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091']
 
   grafana:
     enabled: true
     adminPassword: prom-operator
     envFromSecret: github
-    namespaceOverride: "grafana"
+    namespaceOverride: "monitoring"
     defaultDashboardsEnabled: true
 
     grafana.ini:
       server:
-        domain: noodles.local
-        root_url: http://noodles.local/grafana/
+        domain: noodles.quest
+        root_url: https://noodles.quest/grafana/
         serve_from_sub_path: true
       auth.github:
         client_id: $__env{GF_AUTH_GITHUB_CLIENT_ID}
         client_secret: $__env{GF_AUTH_GITHUB_CLIENT_SECRET}
         enabled: true
         allow_sign_up: true
+        role_attribute_path: contains(groups[*], '@noodles-org/admin') && 'Admin' || contains(groups[*], '@noodles-org/developer') && 'Editor' || 'None'
 
     sidecar:
       dashboards:

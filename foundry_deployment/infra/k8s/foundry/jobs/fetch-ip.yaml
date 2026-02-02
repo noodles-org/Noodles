@@ -24,4 +24,4 @@ spec:
                       name: cloudflare
                       key: dns-api-key
                 - name: SERVICE_URL
-                  value: "http://prometheus-stack-prometheus-pushgateway.grafana.svc.cluster.local:9091"
+                  value: "http://prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091"

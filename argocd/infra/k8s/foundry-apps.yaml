@@ -34,14 +34,14 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana
+  name: monitoring
   namespace: argocd
 spec:
   project: foundry-project
   source:
     repoURL: https://github.com/noodles-org/Noodles
     targetRevision: HEAD
-    path: foundry_deployment/infra/k8s/grafana
+    path: foundry_deployment/infra/k8s/monitoring
   destination:
     name: in-cluster
-    namespace: grafana
+    namespace: monitoring

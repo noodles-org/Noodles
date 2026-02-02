@@ -5,3 +5,7 @@ creation_rules:
     age: *age_pub
   - path_regex: "playbooks/.secrets/*"
     age: *age_pub
+  - path_regex: "k8s/foundry/.secret.yaml"
+    age: *age_pub
+  - path_regex: "k8s/monitoring/.secret.yaml"
+    age: *age_pub

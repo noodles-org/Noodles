@@ -14,7 +14,7 @@ spec:
     - namespace: traefik
       server: in-cluster
       name: in-cluster
-    - namespace: grafana
+    - namespace: monitoring
       server: in-cluster
       name: in-cluster
   # Deny all cluster-scoped resources from being created, except for Namespace

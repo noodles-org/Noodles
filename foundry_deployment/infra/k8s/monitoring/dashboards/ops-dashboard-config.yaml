@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-ops-dashboard-config
-  namespace: grafana
+  namespace: monitoring
   annotations:
     grafana_folder: "Metrics"
   labels:

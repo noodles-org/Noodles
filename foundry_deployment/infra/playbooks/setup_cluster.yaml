@@ -21,13 +21,14 @@
         kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
         
         helm repo add argo https://argoproj.github.io/argo-helm
-        helm install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml
+        helm install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
         
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml
+        helm install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
         
         kubectl apply -f ../k8s/foundry/.
         kubectl apply -f ../k8s/foundry/jobs/.
         kubectl apply -f ../k8s/traefik/.
         kubectl apply -f ../k8s/monitoring/.
+        kubectl apply -f ../k8s/monitoring/dashboards/.
         kubectl apply -f ../../../argocd/infra/k8s/.
