@@ -16,7 +16,7 @@ spec:
           containers:
             - name: ip-fetcher
               image: docker.io/mephalrith/fetch-foundry-ip:v0.1
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               env:
                 - name: API_KEY
                   valueFrom:
@@ -25,3 +25,13 @@ spec:
                       key: dns-api-key
                 - name: SERVICE_URL
                   value: "http://prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091"
+                - name: ZONE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare
+                      key: dns-zone-id
+                - name: RECORDS
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare
+                      key: dns-record-ids

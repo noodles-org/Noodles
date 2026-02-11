@@ -12,10 +12,10 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
-	zoneID       = "f780c2a14270259a21f3b4e78eccd209"
 	opsProcessed = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "fetch_ip_ops_processed_total",
 		Help: "The total number of processed DNS records",
@@ -48,7 +48,7 @@ func getPublicIP() (string, error) {
 func updateDNSRecords(client *cloudflare.Client, ip string, recordID string) error {
 	_, err := client.DNS.Records.Edit(context.Background(), recordID,
 		dns.RecordEditParams{
-			ZoneID: cloudflare.F(zoneID),
+			ZoneID: cloudflare.F(os.Getenv("ZONE_ID")),
 			Body: dns.ARecordParam{
 				Content: cloudflare.F(ip),
 			},
@@ -67,22 +67,16 @@ func main() {
 		option.WithAPIToken(os.Getenv("API_KEY")),
 	)
 
-	// *.noodles.quest
-	err = updateDNSRecords(client, ip, "4e348b2685650c0a586e43643c969346")
-	if err != nil {
-		opsFailed.Inc()
-		panic(err)
-	} else {
-		opsProcessed.Inc()
-	}
-
-	// noodles.quest
-	err = updateDNSRecords(client, ip, "5a097852198975fa6d556eca8600a0fc")
-	if err != nil {
-		opsFailed.Inc()
-		panic(err)
-	} else {
-		opsProcessed.Inc()
+	records := strings.Split(os.Getenv("RECORDS"), ",")
+	for _, record := range records {
+		recordID := strings.TrimSpace(record)
+		err = updateDNSRecords(client, ip, recordID)
+		if err != nil {
+			opsFailed.Inc()
+			panic(err)
+		} else {
+			opsProcessed.Inc()
+		}
 	}
 
 	err = push.New(os.Getenv("SERVICE_URL"), "fetch-ip").

@@ -31,4 +31,6 @@ spec:
                   key: guildId
                   name: soba-secret
                   optional: false
+            - name: GAMES
+              value: "Enshrouded=15637, Satisfactory=7777, Valheim=2456"
           imagePullPolicy: Always

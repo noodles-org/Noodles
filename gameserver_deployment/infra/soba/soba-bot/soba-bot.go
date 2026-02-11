@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
@@ -17,24 +18,27 @@ var (
 			Name:        "get-server-ip",
 			Description: "Get the IP address and port for Noodles dedicated servers",
 		},
-		{
-			Name:        "get-palworld-ip",
-			Description: "This is deprecated. Use 'get-server-ip' instead.",
-		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"get-server-ip": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			content, err := getOutboundIP()
+			ip, err := getOutboundIP()
 			if err != nil {
 				fmt.Println("error getting ip:", err)
 				return
+			}
+
+			games := parseGamesEnv()
+			content := strings.Builder{}
+			content.WriteString(fmt.Sprintf("### IP address:\n%s\n### Game Ports:\n", ip))
+			for key, value := range games {
+				content.WriteString(fmt.Sprintf("- %s: %s\n", key, value))
 			}
 
 			err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Flags:   discordgo.MessageFlagsEphemeral,
-					Content: content,
+					Content: content.String(),
 				},
 			})
 			if err != nil {
@@ -45,9 +49,6 @@ var (
 				}
 				return
 			}
-		},
-		"get-palworld-ip": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			return
 		},
 	}
 )
@@ -70,6 +71,23 @@ func getOutboundIP() (string, error) {
 	}
 
 	return string(ip), nil
+}
+
+func parseGamesEnv() map[string]string {
+	m := make(map[string]string)
+	entries := strings.Split(os.Getenv("GAMES"), ",")
+
+	for _, entry := range entries {
+		entry = strings.TrimSpace(entry)
+		parts := strings.Split(entry, "=")
+
+		if len(parts) == 2 {
+			key := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			m[key] = value
+		}
+	}
+	return m
 }
 
 func main() {
