@@ -1,6 +1,8 @@
 # Noodles Quest
 The Noodles Foundry server, run on our TrueNAS cluster.
 
+We use the Node.js version of FoundryVTT.
+
 ### Set Up
 1. Set up the TrueNAS VM.
 2. Use the supplied VNC shell to enable SSH.

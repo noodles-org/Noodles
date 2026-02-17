@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: foundry
-          image: docker.io/mephalrith/foundry-server:v0.1
+          image: docker.io/mephalrith/foundry-server:v0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 30000
