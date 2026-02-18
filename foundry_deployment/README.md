@@ -1,7 +1,10 @@
 # Noodles Quest
 The Noodles Foundry server, run on our TrueNAS cluster.
 
-We use the Node.js version of FoundryVTT.
+We use the Node.js version of FoundryVTT. The Foundry version can be updated by building the Dockerfile with the following:
+```shell
+docker buildx build --platform linux/amd64 --build-arg FOUNDRY_URL=<timed_url> -t mephalrith/foundry-server:<version> .
+```
 
 ### Set Up
 1. Set up the TrueNAS VM.

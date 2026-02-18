@@ -13,10 +13,6 @@ spec:
       labels:
         app: satisfactory
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
       containers:
         - name: satisfactory
           image: wolveix/satisfactory-server:latest
@@ -62,6 +58,21 @@ spec:
             failureThreshold: 4
             successThreshold: 1
             periodSeconds: 30
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+        - image: mephalrith/mod-manager:v0.1
+          name: satisfactory-mod-manager
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "ficsit installation add /config/gamefiles && while true; do sleep 30; done;"
+          volumeMounts:
+            - name: satisfactory-config
+              mountPath: /config
+          securityContext:
+            runAsUser: 0
       volumes:
         - name: satisfactory-config
           persistentVolumeClaim:
