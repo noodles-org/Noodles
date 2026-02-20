@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teamspeak
+  namespace: teamspeak
+  labels:
+    app: teamspeak
+spec:
+  selector:
+    matchLabels:
+      app: teamspeak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: teamspeak
+    spec:
+      containers:
+        - name: teamspeak
+          image: teamspeaksystems/teamspeak6-server:latest
+          imagePullPolicy: Always
+          env:
+            - name: TSSERVER_LICENSE_ACCEPTED
+              value: "accept"
+          ports:
+            - containerPort: 9987
+              name: voice-port
+              protocol: UDP
+            - containerPort: 30033
+              name: file-transfer
+              protocol: TCP
+            - containerPort: 10080
+              name: web-query
+              protocol: TCP
+          volumeMounts:
+            - name: teamspeak-data
+              mountPath: /var/tsserver
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+      volumes:
+        - name: teamspeak-data
+          persistentVolumeClaim:
+            claimName: teamspeak-data
