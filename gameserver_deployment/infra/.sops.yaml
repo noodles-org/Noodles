@@ -11,3 +11,5 @@ creation_rules:
     age: *age_pub
   - path_regex: ".secrets/*"
     age: *age_pub
+  - path_regex: "helm/grafana-alloy/values.yaml"
+    age: *age_pub
