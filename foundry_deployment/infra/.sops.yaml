@@ -9,3 +9,7 @@ creation_rules:
     age: *age_pub
   - path_regex: "k8s/monitoring/.secret.yaml"
     age: *age_pub
+  - path_regex: "helm/grafana-loki/values.yaml"
+    age: *age_pub
+  - path_regex: "helm/grafana-alloy/values.yaml"
+    age: *age_pub
