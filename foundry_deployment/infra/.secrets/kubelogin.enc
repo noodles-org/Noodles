@@ -1,18 +1,25 @@
 {
-	"data": "ENC[AES256_GCM,data:Y5bpou8brgdke9ozlgXpcCUwgDBfG9VS8QQsTP4+Eo0=,iv:MowWJXawz+l2vTB/PK+62Ku9Tw6rKiVIz3PcLY8v7+U=,tag:H4lEaiWPXpSDo4JJxp248A==,type:str]",
+	"data": "ENC[AES256_GCM,data:7w7Xe59xPvnF4iS+FpuIKoaZeEdIrxxzOPzRA/XeuzQ=,iv:4UpiBO24S9rHmbXkj4K+s4sg26lbQUxYX2rlO3l3Xd0=,tag:gF2wX3p+f8a8Ss5bBdDheQ==,type:str]",
 	"sops": {
-		"kms": null,
+		"kms": [
+			{
+				"arn": "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f",
+				"created_at": "2026-05-19T03:10:40Z",
+				"enc": "AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgHAkc/Wx0tCd4crsM4uQoABAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMPjF2VZykC6YrLz+cAgEQgDtdrz6Alk4P81VKcMuHJ0oNzI06cUVDJwIjfnpUtt2x0bbFbEWzyrDkOTro1pLFaKftKwh9psEw4Se8jw==",
+				"aws_profile": ""
+			}
+		],
 		"gcp_kms": null,
 		"azure_kv": null,
 		"hc_vault": null,
 		"age": [
 			{
 				"recipient": "age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz",
-				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByYzRaVHIrSnVROXd2czFB\ndGhCR1ZsdWRoL0FLSk85akZjZzhBUXBkTTM4CnNkMDQwaW9EVlNYYzd4OC9xTWd5\nYzNaVndwRFlRUDdkeGN6a0ZXRnp5NzQKLS0tIE1tampmQzZ4cXc4UkxoNTYzakdK\nSUlxTUdJbmhUSzJGQ3h3R3dqUVkwYUkKuDUa5X6QJQ5sW7Qd7tLnBo4WS0gWkuKf\nHI/+dwfmAbSBZaU3xFG8k6FztEyi65O+CyoUtgg6l1R6cdak3neQeA==\n-----END AGE ENCRYPTED FILE-----\n"
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaaEN6OVJGY3VlaUdoYnpl\na3UxbzhNeGNuVVA3Z2xVazBHSGdoanpHYVJVCnpLOVZCWUgvYlNxRG4zdk41bzB6\nOWhra2lUNUdVUjB5YnFBdVNpRjFMbEEKLS0tIHJ3d3lrTkJzUzRsTVRlQnd6cllk\nM2hTSFFuMXBaSDRWb2h3YTBSeXpzajgKgQNhvYjjaJ4FBKL/jRyRIsPP8wHLe7aC\n4QM2u4ODk6G79bAjba7vn95JIBkgh73oqOX7RViQ7OxmwF0wq9vozw==\n-----END AGE ENCRYPTED FILE-----\n"
 			}
 		],
-		"lastmodified": "2026-05-19T01:04:00Z",
-		"mac": "ENC[AES256_GCM,data:Kc6cOi3+STADiHEgGoxbb7IOzg3Q0GeQoVo2hnkCtLTUS1xvL4LK/Uy76C15f6hAsRSochhovKkH6J2/UJvqPcT7r5PXEEOdVoAixg4UT1boFk10rF0KcT0jrgo8/rX7Y1pKxLUK2o1E519d9QJUlU3YB0OdafiaBQ4H9bfoUhE=,iv:0z3WTpjo3uxeyIvgTVx2peT5rPMO/N9u8dBIwMMqOcM=,tag:RxEKoyq6GMUqkeVVbvKvSg==,type:str]",
+		"lastmodified": "2026-05-19T03:10:40Z",
+		"mac": "ENC[AES256_GCM,data:sXhN3t/25tf/9w8pkxgLcnJCaexd8HNfyZX9FnMEMd2A8XZdm4/XP/qm49ti1U3DjKpIZtPnpuM3LBwRIiD31YOHMdrgm+LMw3UAmC1zu3+1e8jCtvseUlMxyM+vAiQtvYiRc3XGJUjb/d5Vyfc4R7NhOQaHwmvhraUg8KAW6Dk=,iv:9PkPm05nvozmS8rf+LBABfA6sfYEWSLwODRLEQ855zE=,tag:VyMr+4VeZc4yvAat2dz72g==,type:str]",
 		"pgp": null,
 		"unencrypted_suffix": "_unencrypted",
 		"version": "3.8.1"
