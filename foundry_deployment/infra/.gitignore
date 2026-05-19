@@ -40,7 +40,6 @@ terraform.rc
 # Ignore secrets
 .secret.yaml
 *.pem
-inventory.ini
 
 # Ignore helm dependency archives
 helm/**/charts/*.tgz
