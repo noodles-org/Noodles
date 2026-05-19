@@ -1,3 +1,46 @@
+- name: Configure K3s node
+  hosts: foundry_vm
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Set inotify max_user_instances
+      ansible.posix.sysctl:
+        name: fs.inotify.max_user_instances
+        value: "1024"
+        state: present
+        sysctl_set: true
+
+    - name: Create K3s auth config directory and copy dex.yaml
+      block:
+        - file:
+            path: /home/noodle/k3s-auth
+            state: directory
+            owner: noodle
+            group: noodle
+            mode: "0755"
+        - copy:
+            src: ../../config/dex.yaml
+            dest: /home/noodle/k3s-auth/dex.yaml
+            owner: noodle
+            group: noodle
+            mode: "0644"
+
+    - name: Configure K3s API server authentication
+      copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |
+          kube-apiserver-arg:
+            - "authentication-config=/home/noodle/k3s-auth/dex.yaml"
+        mode: "0644"
+      register: k3s_config
+
+    - name: Restart K3s
+      systemd:
+        name: k3s
+        state: restarted
+      when: k3s_config.changed
+
 - name: Set up K3s cluster
   hosts: localhost
   connection: local
@@ -35,9 +78,9 @@
 
     - name: Install Helm charts
       shell: |
-        helm install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
-        helm install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
-        helm install dex dex/dex --namespace auth -f ../helm/dex/values.yaml
+        helm upgrade --install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
+        helm upgrade --install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
+        helm upgrade --install dex dex/dex --namespace auth -f ../helm/dex/values.yaml
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 

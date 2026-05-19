@@ -2,9 +2,7 @@
 The Noodles Foundry server, run on our TrueNAS cluster.
 
 We use the Node.js version of FoundryVTT. The Foundry version can be updated by rebuilding the Dockerfile with the following command:
-```shell
-make update-foundry-version URL=<timed_url>
-```
+`make update-foundry-version URL=<timed_url>`
 
 ### Set Up
 1. Set up the TrueNAS VM.
@@ -12,23 +10,9 @@ make update-foundry-version URL=<timed_url>
 3. Install K3s on the VM and grab the config file for your local machine.
    * Swap the IP to match the VM.
 4. Update your host file for the `noodles.local` VM IP.
-5. Add `fs.inotify.max_user_instances = 1024` to the `/etc/sysctl.conf` file on the node.
-6. On the K3s server node, create the auth config directory:
-   ```bash
-   mkdir -p ~/k3s-auth
-   ```
-7. Copy `infra/config/dex.yaml` to the server node:
-   ```bash
-   scp infra/config/dex.yaml noodle@noodles.local:~/k3s-auth/
-   ```
-8. Add this to the K3s config `/etc/rancher/k3s/config.yaml` (create it if it doesn't exist):
-   ```yaml
-   kube-apiserver-arg:
-     - "authentication-config=/home/noodle/k3s-auth/dex.yaml"
-   ```
-9. Restart K3s: `sudo systemctl restart k3s`.
-10. Sops decrypt the secrets via `make sops-decrypt-all`.
-11. Run the ansible setup script via `make setup-cluster`.
+5. Sops decrypt the secrets via `make sops-decrypt-all`.
+6. Run the ansible setup script via `make setup-cluster`
+   * Remember to check the location of the config file.
 
 
 ### Kubelogin
