@@ -1,3 +1,46 @@
+- name: Configure K3s node
+  hosts: foundry_vm
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Set inotify max_user_instances
+      ansible.posix.sysctl:
+        name: fs.inotify.max_user_instances
+        value: "1024"
+        state: present
+        sysctl_set: true
+
+    - name: Create K3s auth config directory and copy dex.yaml
+      block:
+        - file:
+            path: /home/noodle/k3s-auth
+            state: directory
+            owner: noodle
+            group: noodle
+            mode: "0755"
+        - copy:
+            src: ../../config/dex.yaml
+            dest: /home/noodle/k3s-auth/dex.yaml
+            owner: noodle
+            group: noodle
+            mode: "0644"
+
+    - name: Configure K3s API server authentication
+      copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |
+          kube-apiserver-arg:
+            - "authentication-config=/home/noodle/k3s-auth/dex.yaml"
+        mode: "0644"
+      register: k3s_config
+
+    - name: Restart K3s
+      systemd:
+        name: k3s
+        state: restarted
+      when: k3s_config.changed
+
 - name: Set up K3s cluster
   hosts: localhost
   connection: local
@@ -15,21 +58,58 @@
       register: file_path
       failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "text/plain"
 
-    - name: Apply CRDs and configuration files
+    - name: Install cert-manager
+      shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Add Helm repos
       shell: |
-        export KUBECONFIG={{ file_path.stat.path }}
-        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
-        
         helm repo add argo https://argoproj.github.io/argo-helm
-        helm install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
-        
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
-        
+        helm repo add dex https://charts.dexidp.io
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Build Prometheus stack Helm dependencies
+      shell: helm dependency build ../helm/prometheus-stack
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Install Helm charts
+      shell: |
+        helm upgrade --install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
+        helm upgrade --install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
+        helm upgrade --install dex dex/dex --namespace auth -f ../helm/dex/values.yaml
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply auth resources
+      shell: kubectl apply -f ../k8s/auth/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Foundry resources
+      shell: |
         kubectl apply -f ../k8s/foundry/.
         kubectl apply -f ../k8s/foundry/jobs/.
-        kubectl apply -f ../k8s/traefik/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Traefik resources
+      shell: kubectl apply -f ../k8s/traefik/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply monitoring resources
+      shell: |
         kubectl apply -f ../k8s/monitoring/.
         kubectl apply -f ../k8s/monitoring/dashboards/.
         kubectl apply -f ../k8s/monitoring/alerts/.
-        kubectl apply -f ../../../argocd/infra/k8s/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply ArgoCD resources
+      shell: kubectl apply -f ../../../argocd/infra/k8s/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
