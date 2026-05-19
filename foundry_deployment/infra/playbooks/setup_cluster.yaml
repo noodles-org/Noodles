@@ -78,7 +78,7 @@
 
     - name: Install Helm charts
       shell: |
-        helm upgrade --install argocd ../../../argocd/infra/helm/argocd --namespace argocd -f ../../../argocd/infra/helm/argocd/values.yaml --create-namespace
+        helm upgrade --install argocd ../helm/argocd --namespace argocd -f ../helm/argocd/values.yaml --create-namespace
         helm upgrade --install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
         helm upgrade --install dex dex/dex --namespace auth -f ../helm/dex/values.yaml
       environment:
@@ -110,6 +110,6 @@
         KUBECONFIG: "{{ file_path.stat.path }}"
 
     - name: Apply ArgoCD resources
-      shell: kubectl apply -f ../../../argocd/infra/k8s/.
+      shell: kubectl apply -f ../k8s/argocd/.
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
