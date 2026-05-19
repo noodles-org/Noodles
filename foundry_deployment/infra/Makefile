@@ -1,7 +1,6 @@
 # sops key is ~/.config/sops/age/keys.txt by default
 sops-encrypt-all:
 	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml && \
-	sops --encrypt k8s/argocd/.secret.yaml > .secrets/argocd.enc.yaml && \
 	sops --encrypt k8s/auth/.secret.yaml > .secrets/auth.enc.yaml && \
 	sops --encrypt k8s/foundry/.secret.yaml > .secrets/foundry.enc.yaml && \
 	sops --encrypt k8s/monitoring/.secret.yaml > .secrets/monitoring.enc.yaml && \
@@ -12,7 +11,6 @@ sops-encrypt-all:
 
 sops-decrypt-all:
 	sops --decrypt playbooks/.secrets/restic-ansible-vault.enc.yaml > playbooks/.secrets/restic-ansible-vault.yaml && \
-	sops --decrypt .secrets/argocd.enc.yaml > k8s/argocd/.secret.yaml && \
 	sops --decrypt .secrets/auth.enc.yaml > k8s/auth/.secret.yaml && \
 	sops --decrypt .secrets/foundry.enc.yaml > k8s/foundry/.secret.yaml && \
 	sops --decrypt .secrets/monitoring.enc.yaml > k8s/monitoring/.secret.yaml && \
