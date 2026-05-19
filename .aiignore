@@ -10,3 +10,5 @@ foundry_deployment/infra/terraform
 foundry_deployment/infra/terraform/*
 foundry_deployment/infra/playbooks/hetzner
 foundry_deployment/infra/playbooks/hetzner/*
+foundry_deployment/.github
+foundry_deployment/.github/*
