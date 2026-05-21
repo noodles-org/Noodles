@@ -1,3 +1,8 @@
+KUBECONFIG_PATH ?= ~/.kube/foundry_config
+
+setup-dev:
+	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG_PATH)"
+
 # sops key is ~/.config/sops/age/keys.txt by default
 sops-encrypt-all:
 	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml && \
@@ -20,7 +25,7 @@ sops-decrypt-all:
 	sops --decrypt .secrets/grafana-alloy-values.enc.yaml > helm/grafana-alloy/values.yaml
 
 setup-cluster:
-	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=~/.kube/foundry_config"
+	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG_PATH)"
 
 manual-backup:
 	kubectl apply -f k8s/foundry/jobs/manual/manual-backup.yaml
