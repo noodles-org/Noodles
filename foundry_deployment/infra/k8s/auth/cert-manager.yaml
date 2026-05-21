@@ -1,8 +1,7 @@
 apiVersion: cert-manager.io/v1
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
-  namespace: foundry
 spec:
   acme:
     email: brookeporter13@gmail.com
@@ -30,5 +29,5 @@ spec:
     - noodles.quest
   issuerRef:
     name: letsencrypt-prod
-    kind: Issuer
+    kind: ClusterIssuer
   secretName: noodles-quest-prod-tls
