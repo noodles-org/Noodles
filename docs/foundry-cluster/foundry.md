@@ -36,14 +36,6 @@ Foundry is exposed via Traefik IngressRoutes:
 - An `IngressRoute` matches `Host(foundry.noodles.quest)` on both `web` and `websecure` entrypoints.
 - A `secure-redirect` middleware enforces HTTPS.
 
-## TLS Certificates
-
-TLS is managed by cert-manager with Let's Encrypt:
-
-- **Issuer:** `letsencrypt-prod` (ACME with Cloudflare DNS-01 solver)
-- **Certificate:** Wildcard cert for `*.noodles.quest` and `noodles.quest`
-- **Secret:** `noodles-quest-prod-tls` — referenced by all IngressRoutes across the cluster.
-
 ## Backups
 
 Foundry data is backed up using Restic to an S3 bucket:

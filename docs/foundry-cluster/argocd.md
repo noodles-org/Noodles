@@ -12,15 +12,29 @@ ArgoCD provides GitOps-based continuous deployment for the cluster. It watches t
 ArgoCD is configured with two projects:
 
 ### foundry-project
-Manages the core Foundry infrastructure:
-- **foundry** app — Syncs `foundry_deployment/infra/k8s/foundry` and `foundry_deployment/infra/k8s/foundry/jobs`.
-- **traefik** app — Syncs `foundry_deployment/infra/k8s/traefik`.
-- **monitoring** app — Syncs `foundry_deployment/infra/k8s/monitoring`.
+Manages the core Foundry infrastructure. Allowed destination namespaces: `foundry`, `traefik`, `monitoring` (all targeting `in-cluster`).
 
-Allowed destination namespaces: `foundry`, `traefik`, `monitoring`.
+The `foundry-apps` ApplicationSet generates applications from a list of directory paths with recursive sync:
+
+| Application    | Source Path                                    | Namespace    |
+|----------------|------------------------------------------------|--------------|
+| `foundry`      | `foundry_deployment/infra/k8s/foundry`         | `foundry`    |
+| `traefik`      | `foundry_deployment/infra/k8s/traefik`         | `traefik`    |
+| `monitoring`   | `foundry_deployment/infra/k8s/monitoring`       | `monitoring` |
 
 ### games-project
-Manages game server deployments (defined separately in `gameserver_deployment/`).
+Manages game server deployments on a separate cluster context (`games-context`). Allowed destination namespaces: `enshrouded`, `satisfactory`, `soba`, `valheim`.
+
+The `games-apps` ApplicationSet generates applications from a list of directory paths with recursive sync:
+
+| Application    | Source Path                                    | Namespace      |
+|----------------|------------------------------------------------|----------------|
+| `soba`         | `gameserver_deployment/infra/soba`             | `soba`         |
+| `enshrouded`   | `gameserver_deployment/infra/enshrouded`       | `enshrouded`   |
+| `satisfactory` | `gameserver_deployment/infra/satisfactory`     | `satisfactory` |
+| `valheim`      | `gameserver_deployment/infra/valheim`          | `valheim`      |
+
+Both ApplicationSets pull from `https://github.com/noodles-org/Noodles` at `HEAD`.
 
 ## RBAC
 
@@ -31,7 +45,7 @@ ArgoCD roles are mapped to GitHub organization teams:
 | `noodles-org:admin`       | `admin`     | Full access to applications, clusters, repos, logs, exec |
 | `noodles-org:developer`   | `developer` | Read-only access to applications, projects, and logs     |
 
-Project-level RBAC further restricts the `developer` role to read-only on `foundry-project` applications.
+Project-level RBAC further restricts the `developer` role to read-only on each project's applications.
 
 ## Helm Chart
 

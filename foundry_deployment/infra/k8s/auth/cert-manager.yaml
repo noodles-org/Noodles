@@ -21,7 +21,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: prod-cert-noodles-quest
-  namespace: foundry
+  namespace: auth
 spec:
   commonName: noodles.quest
   dnsNames:
