@@ -1,13 +1,13 @@
-FROM debian:bookworm
+FROM node:26-slim
 
 WORKDIR /
 
 ARG FOUNDRY_URL
 
-RUN apt-get update && apt-get install -y zip unzip curl
-RUN apt-get install -y libssl-dev && \
-    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl zip unzip ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -p /foundryvtt /foundrydata
 
 COPY playbooks/scripts/foundry_start.sh /usr/local/bin/

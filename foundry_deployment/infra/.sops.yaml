@@ -3,9 +3,25 @@ define: &age_pub "age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
 creation_rules:
   - path_regex: ".secrets/*"
     age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
   - path_regex: "playbooks/.secrets/*"
     age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
+  - path_regex: "k8s/argocd/.secret.yaml"
+    age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
+  - path_regex: "k8s/auth/.secret.yaml"
+    age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
   - path_regex: "k8s/foundry/.secret.yaml"
     age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
   - path_regex: "k8s/monitoring/.secret.yaml"
     age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
+  - path_regex: "helm/grafana-loki/values.yaml"
+    age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
+  - path_regex: "helm/grafana-alloy/values.yaml"
+    age: *age_pub
+    kms: "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"

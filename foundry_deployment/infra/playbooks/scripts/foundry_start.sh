@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/bin/node /foundryvtt/main.js --dataPath=/foundrydata
+exec node /foundryvtt/main.js --dataPath=/foundrydata

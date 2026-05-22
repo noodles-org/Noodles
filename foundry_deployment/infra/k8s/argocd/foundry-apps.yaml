@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: foundry-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: foundry
+            path: foundry_deployment/infra/k8s/foundry
+          - name: traefik
+            path: foundry_deployment/infra/k8s/traefik
+          - name: monitoring
+            path: foundry_deployment/infra/k8s/monitoring
+  template:
+    metadata:
+      name: "{{name}}"
+    spec:
+      project: foundry-project
+      source:
+        repoURL: https://github.com/noodles-org/Noodles
+        targetRevision: HEAD
+        path: "{{path}}"
+        directory:
+          recurse: true
+      destination:
+        name: in-cluster
+        namespace: "{{name}}"

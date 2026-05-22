@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: games
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: soba
+            path: gameserver_deployment/infra/soba
+          - name: enshrouded
+            path: gameserver_deployment/infra/enshrouded
+          - name: satisfactory
+            path: gameserver_deployment/infra/satisfactory
+          - name: valheim
+            path: gameserver_deployment/infra/valheim
+  template:
+    metadata:
+      name: "{{name}}"
+    spec:
+      project: games-project
+      source:
+        repoURL: https://github.com/noodles-org/Noodles
+        targetRevision: HEAD
+        path: "{{path}}"
+        directory:
+          recurse: true
+      destination:
+        name: games-context
+        namespace: "{{name}}"
