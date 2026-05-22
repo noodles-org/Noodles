@@ -43,5 +43,5 @@ Dex is exposed via a Traefik IngressRoute:
 
 - **External URL:** `https://dex.noodles.quest`
 - An `IngressRoute` matches `Host(dex.noodles.quest)` on the `websecure` entrypoint.
-- Routes to the `dex` Service in the `auth` namespace on port 5554.
+- Routes to the `dex` Service in the `auth` namespace on port 5556.
 - TLS termination uses the `noodles-quest-prod-tls` Secret.

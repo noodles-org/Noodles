@@ -18,10 +18,10 @@ The foundry cluster runs on a K3s single-node cluster hosted on a TrueNAS VM. It
 
 ### Namespaces
 
-- **foundry** — FoundryVTT application, backups, cert-manager resources, and CronJobs.
+- **foundry** — FoundryVTT application, backups, and CronJobs.
 - **argocd** — ArgoCD server and application definitions.
 - **monitoring** — Prometheus stack, Grafana, Loki, Alloy, and Pushgateway.
-- **auth** — Dex OIDC provider and RBAC resources.
+- **auth** — Dex OIDC provider, RBAC resources, and cert-manager TLS certificates.
 - **traefik** — Traefik ingress route overrides.
 
 ### Cluster Setup
