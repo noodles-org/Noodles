@@ -12,6 +12,6 @@ spec:
       services:
         - name: dex
           namespace: auth
-          port: 5554
+          port: 5556
   tls:
     secretName: noodles-quest-prod-tls
