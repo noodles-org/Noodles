@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dex-ingress-route
+  namespace: auth
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dex.noodles.quest`)
+      kind: Rule
+      services:
+        - name: dex
+          namespace: auth
+          port: 5554
+  tls:
+    secretName: noodles-quest-prod-tls
