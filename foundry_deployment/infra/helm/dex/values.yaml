@@ -83,6 +83,12 @@ config:
         - http://localhost:8000
       name: "Kubelogin"
       secretEnv: KUBELOGIN_CLIENT_SECRET
+    - id: jellyfin
+      redirectURIs:
+        - https://jellyfin.noodles.quest/sso/OID/redirect/github
+        - http://jellyfin.noodles.quest/sso/OID/redirect/github
+      name: "Jellyfin"
+      secretEnv: JELLYFIN_CLIENT_SECRET
   oauth2:
     skipApprovalScreen: true
 

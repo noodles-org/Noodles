@@ -1,0 +1,30 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-redirect
+  namespace: jellyfin
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: route
+  namespace: jellyfin
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`jellyfin.noodles.quest`)
+      kind: Rule
+      services:
+        - name: traefik-service
+          namespace: jellyfin
+          kind: TraefikService
+      middlewares:
+        - name: secure-redirect
+  tls:
+    secretName: noodles-quest-prod-tls
