@@ -13,6 +13,8 @@ spec:
             path: foundry_deployment/infra/k8s/traefik
           - name: monitoring
             path: foundry_deployment/infra/k8s/monitoring
+          - name: jellyfin
+            path: foundry_deployment/infra/k8s/jellyfin
   template:
     metadata:
       name: "{{name}}"

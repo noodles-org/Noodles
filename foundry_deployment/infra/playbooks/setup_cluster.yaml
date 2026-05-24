@@ -101,6 +101,11 @@
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
+    - name: Apply Jellyfin resources
+      shell: kubectl apply -f ../k8s/jellyfin/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
     - name: Apply monitoring resources
       shell: |
         kubectl apply -f ../k8s/monitoring/.

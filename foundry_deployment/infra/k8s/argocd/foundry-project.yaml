@@ -17,6 +17,9 @@ spec:
     - namespace: monitoring
       server: in-cluster
       name: in-cluster
+    - namespace: jellyfin
+      server: in-cluster
+      name: in-cluster
   # Deny all cluster-scoped resources from being created, except for Namespace
   clusterResourceWhitelist:
     - group: ''
