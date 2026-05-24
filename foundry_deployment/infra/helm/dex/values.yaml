@@ -74,6 +74,7 @@ config:
         clientID: $GITHUB_CLIENT_ID
         clientSecret: $GITHUB_CLIENT_SECRET
         redirectURI: https://dex.noodles.quest/callback
+        loadAllGroups: true
         orgs:
           - name: noodles-org
   staticClients:
