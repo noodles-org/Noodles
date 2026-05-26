@@ -44,7 +44,7 @@
       pause:
         prompt: >-
           AWS CLI has been installed. Please open a new terminal and run
-          'aws configure' or 'aws sso login' to authenticate, then press
+          'aws configure' or 'aws login' to authenticate, then press
           Enter to continue
 
     - name: Verify AWS authentication

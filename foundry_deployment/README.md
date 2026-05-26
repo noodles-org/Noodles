@@ -11,7 +11,7 @@ We use the Node.js version of FoundryVTT. The Foundry version can be updated by 
    ```
    Or, to specify a custom kubeconfig path (default is `~/.kube/foundry_config`):
    ```sh
-   make setup-dev KUBECONFIG_PATH=~/.kube/my_custom_config
+   make setup-dev KUBECONFIG=~/.kube/my_custom_config
    ```
    This will:
    * Install required tools (AWS CLI, sops, kubectl, kubelogin) via Homebrew
@@ -33,7 +33,7 @@ We use the Node.js version of FoundryVTT. The Foundry version can be updated by 
 5. Sops decrypt the secrets via `make sops-decrypt-all`.
 6. Run the ansible setup script via `make setup-cluster`, or specify a custom kubeconfig path (default is `~/.kube/foundry_config`)
    ```sh
-   make setup-cluster KUBECONFIG_PATH=~/.kube/my_custom_config
+   make setup-cluster KUBECONFIG=~/.kube/my_custom_config
    ```
 
 
