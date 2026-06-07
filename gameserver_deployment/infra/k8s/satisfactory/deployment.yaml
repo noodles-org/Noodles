@@ -62,17 +62,17 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
-        - image: mephalrith/mod-manager:v0.1
-          name: satisfactory-mod-manager
-          command:
-            - "/bin/sh"
-            - "-c"
-            - "ficsit installation add /config/gamefiles && while true; do sleep 30; done;"
-          volumeMounts:
-            - name: satisfactory-config
-              mountPath: /config
-          securityContext:
-            runAsUser: 0
+#        - image: mephalrith/mod-manager:v0.1
+#          name: satisfactory-mod-manager
+#          command:
+#            - "/bin/sh"
+#            - "-c"
+#            - "ficsit installation add /config/gamefiles && while true; do sleep 30; done;"
+#          volumeMounts:
+#            - name: satisfactory-config
+#              mountPath: /config
+#          securityContext:
+#            runAsUser: 0
       volumes:
         - name: satisfactory-config
           persistentVolumeClaim:
