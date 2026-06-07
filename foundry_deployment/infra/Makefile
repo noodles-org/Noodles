@@ -10,6 +10,7 @@ sops-encrypt-all:
 	sops --encrypt k8s/auth/.secret.yaml > .secrets/auth.enc.yaml && \
 	sops --encrypt k8s/foundry/.secret.yaml > .secrets/foundry.enc.yaml && \
 	sops --encrypt k8s/monitoring/.secret.yaml > .secrets/monitoring.enc.yaml && \
+	sops --encrypt k8s/pihole/.secret.yaml > .secrets/pihole.enc.yaml && \
 	sops --encrypt .secrets/escrow > .secrets/escrow.enc && \
 	sops --encrypt helm/grafana-loki/values.yaml > .secrets/grafana-loki-values.enc.yaml && \
 	sops --encrypt helm/grafana-alloy/values.yaml > .secrets/grafana-alloy-values.enc.yaml
@@ -20,6 +21,7 @@ sops-decrypt-all:
 	sops --decrypt .secrets/auth.enc.yaml > k8s/auth/.secret.yaml && \
 	sops --decrypt .secrets/foundry.enc.yaml > k8s/foundry/.secret.yaml && \
 	sops --decrypt .secrets/monitoring.enc.yaml > k8s/monitoring/.secret.yaml && \
+	sops --decrypt .secrets/pihole.enc.yaml > k8s/pihole/.secret.yaml && \
 	sops --decrypt .secrets/escrow.enc > .secrets/escrow && \
 	sops --decrypt .secrets/grafana-loki-values.enc.yaml > helm/grafana-loki/values.yaml && \
 	sops --decrypt .secrets/grafana-alloy-values.enc.yaml > helm/grafana-alloy/values.yaml
