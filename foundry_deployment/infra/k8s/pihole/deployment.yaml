@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    app: pihole
+  namespace: pihole
+spec:
+  selector:
+    matchLabels:
+      app: pihole
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+        - name: pihole
+          image: docker.io/pihole/pihole:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          ports:
+            - containerPort: 80
+              protocol: TCP
+            - containerPort: 53
+              protocol: TCP
+            - containerPort: 53
+              protocol: UDP
+          env:
+            - name: TZ
+              value: "America/Los_Angeles"
+            - name: FTLCONF_webserver_port
+              value: "80o"
+            - name: FTLCONF_webserver_api_password
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-admin
+                  key: ADMIN_PASSWORD
