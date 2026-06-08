@@ -20,6 +20,9 @@ spec:
     - namespace: jellyfin
       server: in-cluster
       name: in-cluster
+    - namespace: pihole
+      server: in-cluster
+      name: in-cluster
   # Deny all cluster-scoped resources from being created, except for Namespace
   clusterResourceWhitelist:
     - group: ''
