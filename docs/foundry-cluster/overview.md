@@ -24,6 +24,7 @@ The foundry cluster runs on a K3s single-node cluster hosted on a TrueNAS VM. It
 - **auth** — Dex OIDC provider, RBAC resources, and cert-manager TLS certificates.
 - **traefik** — Traefik ingress route overrides.
 - **pihole** — Pi-hole DNS sinkhole and ad blocker.
+- **stalwart** — Stalwart self-hosted mail server.
 
 ### Cluster Setup
 
@@ -32,4 +33,4 @@ The cluster is provisioned via Ansible using `make setup-cluster`. The playbook 
 1. Configures K3s API server authentication with Dex.
 2. Installs cert-manager for TLS certificate management.
 3. Adds Helm repos (ArgoCD, Prometheus, Dex) and installs their charts.
-4. Applies Kubernetes manifests for auth, foundry, traefik, jellyfin, monitoring, Pi-hole, and ArgoCD resources.
+4. Applies Kubernetes manifests for auth, foundry, traefik, jellyfin, monitoring, Pi-hole, Stalwart, and ArgoCD resources.
