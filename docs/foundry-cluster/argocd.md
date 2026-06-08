@@ -12,7 +12,7 @@ ArgoCD provides GitOps-based continuous deployment for the cluster. It watches t
 ArgoCD is configured with two projects:
 
 ### foundry-project
-Manages the core Foundry infrastructure. Allowed destination namespaces: `foundry`, `traefik`, `monitoring`, `jellyfin`, `pihole` (all targeting `in-cluster`).
+Manages the core Foundry infrastructure. Allowed destination namespaces: `foundry`, `traefik`, `monitoring`, `jellyfin`, `pihole`, `stalwart` (all targeting `in-cluster`).
 
 The `foundry-apps` ApplicationSet generates applications from a list of directory paths with recursive sync:
 
@@ -23,6 +23,7 @@ The `foundry-apps` ApplicationSet generates applications from a list of director
 | `monitoring`   | `foundry_deployment/infra/k8s/monitoring`       | `monitoring` |
 | `jellyfin`     | `foundry_deployment/infra/k8s/jellyfin`         | `jellyfin`   |
 | `pihole`       | `foundry_deployment/infra/k8s/pihole`           | `pihole`     |
+| `stalwart`     | `foundry_deployment/infra/k8s/stalwart`         | `stalwart`   |
 
 ### games-project
 Manages game server deployments on a separate cluster context (`games-context`). Allowed destination namespaces: `enshrouded`, `satisfactory`, `soba`, `valheim`.
