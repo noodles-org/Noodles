@@ -28,23 +28,31 @@ spec:
             # SMTP
             - containerPort: 25
               protocol: TCP
+              hostPort: 25
             - containerPort: 587
               protocol: TCP
+              hostPort: 587
             - containerPort: 465
               protocol: TCP
+              hostPort: 465
             # IMAP
             - containerPort: 143
               protocol: TCP
+              hostPort: 143
             - containerPort: 993
               protocol: TCP
+              hostPort: 993
             # POP3
             - containerPort: 110
               protocol: TCP
+              hostPort: 110
             - containerPort: 995
               protocol: TCP
+              hostPort: 995
             # ManageSieve
             - containerPort: 4190
               protocol: TCP
+              hostPort: 4190
           volumeMounts:
             - name: stalwart-config
               mountPath: /etc/stalwart
