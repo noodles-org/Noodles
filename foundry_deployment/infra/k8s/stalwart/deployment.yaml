@@ -46,13 +46,14 @@ spec:
             - containerPort: 4190
               protocol: TCP
           volumeMounts:
-            - name: stalwart-data
+            - name: stalwart-config
               mountPath: /etc/stalwart
-              subPath: config
             - name: stalwart-data
               mountPath: /var/lib/stalwart
-              subPath: db
       volumes:
+        - name: stalwart-config
+          persistentVolumeClaim:
+            claimName: stalwart-config-pvc
         - name: stalwart-data
           persistentVolumeClaim:
-            claimName: stalwart-pvc
+            claimName: stalwart-data-pvc
