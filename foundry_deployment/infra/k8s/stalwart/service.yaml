@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+  namespace: stalwart
+spec:
+  selector:
+    app: stalwart
+  ports:
+    # HTTP/HTTPS
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      name: https
+    # SMTP
+    - protocol: TCP
+      port: 25
+      targetPort: 25
+      name: smtp
+    - protocol: TCP
+      port: 587
+      targetPort: 587
+      name: submission
+    - protocol: TCP
+      port: 465
+      targetPort: 465
+      name: submissions
+    # IMAP
+    - protocol: TCP
+      port: 143
+      targetPort: 143
+      name: imap
+    - protocol: TCP
+      port: 993
+      targetPort: 993
+      name: imaps
+    # POP3
+    - protocol: TCP
+      port: 110
+      targetPort: 110
+      name: pop3
+    - protocol: TCP
+      port: 995
+      targetPort: 995
+      name: pop3s
+    # ManageSieve
+    - protocol: TCP
+      port: 4190
+      targetPort: 4190
+      name: managesieve
+  type: ClusterIP
+---
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: traefik-service
+  namespace: stalwart
+spec:
+  weighted:
+    services:
+      - name: service
+        namespace: stalwart
+        port: 80
+        weight: 1
