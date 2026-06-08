@@ -17,6 +17,8 @@ spec:
             path: foundry_deployment/infra/k8s/jellyfin
           - name: pihole
             path: foundry_deployment/infra/k8s/pihole
+          - name: stalwart
+            path: foundry_deployment/infra/k8s/stalwart
   template:
     metadata:
       name: "{{name}}"
