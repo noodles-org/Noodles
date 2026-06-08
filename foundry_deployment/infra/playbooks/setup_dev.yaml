@@ -61,6 +61,8 @@
         - { src: ".secrets/auth.enc.yaml", dest: "k8s/auth/.secret.yaml" }
         - { src: ".secrets/foundry.enc.yaml", dest: "k8s/foundry/.secret.yaml" }
         - { src: ".secrets/monitoring.enc.yaml", dest: "k8s/monitoring/.secret.yaml" }
+        - { src: ".secrets/pihole.enc.yaml", dest: "k8s/pihole/.secret.yaml" }
+        - { src: ".secrets/stalwart.enc.yaml", dest: "k8s/stalwart/.secret.yaml" }
         - { src: ".secrets/escrow.enc", dest: ".secrets/escrow" }
         - { src: ".secrets/grafana-loki-values.enc.yaml", dest: "helm/grafana-loki/values.yaml" }
         - { src: ".secrets/grafana-alloy-values.enc.yaml", dest: "helm/grafana-alloy/values.yaml" }
