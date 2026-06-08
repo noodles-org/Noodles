@@ -148,6 +148,11 @@
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
+    - name: Apply Stalwart resources
+      shell: kubectl apply -f ../k8s/stalwart/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
     - name: Apply ArgoCD resources
       shell: kubectl apply -f ../k8s/argocd/.
       environment:

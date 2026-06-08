@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    app: stalwart
+  namespace: stalwart
+spec:
+  selector:
+    matchLabels:
+      app: stalwart
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: stalwart
+    spec:
+      containers:
+        - name: stalwart
+          image: docker.io/stalwartlabs/stalwart:latest
+          imagePullPolicy: Always
+          ports:
+            # HTTP/HTTPS
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 443
+              protocol: TCP
+            # SMTP
+            - containerPort: 25
+              protocol: TCP
+            - containerPort: 587
+              protocol: TCP
+            - containerPort: 465
+              protocol: TCP
+            # IMAP
+            - containerPort: 143
+              protocol: TCP
+            - containerPort: 993
+              protocol: TCP
+            # POP3
+            - containerPort: 110
+              protocol: TCP
+            - containerPort: 995
+              protocol: TCP
+            # ManageSieve
+            - containerPort: 4190
+              protocol: TCP
+          volumeMounts:
+            - name: stalwart-data
+              mountPath: /etc/stalwart
+              subPath: config
+            - name: stalwart-data
+              mountPath: /var/lib/stalwart
+              subPath: db
+      volumes:
+        - name: stalwart-data
+          persistentVolumeClaim:
+            claimName: stalwart-pvc
