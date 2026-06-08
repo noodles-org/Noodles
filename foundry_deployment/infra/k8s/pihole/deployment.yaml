@@ -28,13 +28,17 @@ spec:
               protocol: TCP
             - containerPort: 53
               protocol: TCP
+              hostPort: 53
             - containerPort: 53
               protocol: UDP
+              hostPort: 53
           env:
             - name: TZ
               value: "America/Los_Angeles"
             - name: FTLCONF_webserver_port
               value: "80o"
+            - name: FTLCONF_dns_listeningMode
+              value: "all"
             - name: FTLCONF_webserver_api_password
               valueFrom:
                 secretKeyRef:
