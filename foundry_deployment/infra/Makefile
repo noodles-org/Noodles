@@ -47,3 +47,6 @@ update-foundry-version:
 	docker buildx build --platform linux/amd64 --build-arg FOUNDRY_URL=$(URL) -t mephalrith/foundry-server .
 	docker push mephalrith/foundry-server:latest
 	kubectl rollout restart -n foundry deployment
+update-stalwart-webhook:
+	docker buildx build --platform linux/amd64 -t mephalrith/stalwart-inbound-webhook k8s/stalwart/inbound-webhook/.
+	docker push mephalrith/stalwart-inbound-webhook:latest
