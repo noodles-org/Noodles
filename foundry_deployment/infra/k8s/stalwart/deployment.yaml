@@ -58,6 +58,34 @@ spec:
               mountPath: /etc/stalwart
             - name: stalwart-data
               mountPath: /var/lib/stalwart
+        - name: inbound-webhook
+          image: docker.io/mephalrith/stalwart-inbound-webhook:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "3000"
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-admin
+                  key: resend-api-key
+            - name: STALWART_SMTP_ADDR
+              value: "localhost:25"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 10
       volumes:
         - name: stalwart-config
           persistentVolumeClaim:

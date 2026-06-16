@@ -52,6 +52,11 @@ spec:
       port: 4190
       targetPort: 4190
       name: managesieve
+    # Inbound webhook
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      name: webhook
   type: ClusterIP
 ---
 apiVersion: traefik.io/v1alpha1
