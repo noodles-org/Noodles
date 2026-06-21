@@ -2,40 +2,96 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/smtp"
 	"os"
+	"strconv"
 	"strings"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-type WebhookPayload struct {
-	Type string      `json:"type"`
-	Data WebhookData `json:"data"`
+const (
+	maxRetries     = 4
+	retryBaseDelay = 500 * time.Millisecond
+	maxTotalWait   = 10 * time.Second
+)
+
+var (
+	emailsReceived = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "webhook_emails_received_total",
+		Help: "Total email.received events received from Resend",
+	})
+	emailsDelivered = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "webhook_emails_delivered_total",
+		Help: "Total emails successfully delivered to Stalwart",
+	})
+	emailsFailed = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "webhook_emails_failed_total",
+		Help: "Total emails that failed to process",
+	}, []string{"stage", "retryable"})
+	retryAttempts = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "webhook_retry_attempts_total",
+		Help: "Total retry attempts made, by operation",
+	}, []string{"operation"})
+	processingDuration = promauto.NewHistogram(prometheus.HistogramOpts{
+		Name:    "webhook_processing_duration_seconds",
+		Help:    "End-to-end time to process an inbound email",
+		Buckets: prometheus.DefBuckets,
+	})
+)
+
+func isRetryable(err error) bool {
+	var ae *apiError
+	if errors.As(err, &ae) {
+		if ae.StatusCode == http.StatusTooManyRequests {
+			return true
+		}
+		if ae.StatusCode >= 400 && ae.StatusCode < 500 {
+			return false
+		}
+		return true
+	}
+	return true
 }
 
-type WebhookData struct {
-	EmailID string   `json:"email_id"`
-	From    string   `json:"from"`
-	To      []string `json:"to"`
-	Subject string   `json:"subject"`
-}
+func withRetries(operation string, fn func() error) error {
+	start := time.Now()
+	var lastErr error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		lastErr = fn()
+		if lastErr == nil {
+			return nil
+		}
 
-type ReceivedEmail struct {
-	From    string            `json:"from"`
-	To      []string          `json:"to"`
-	Subject string            `json:"subject"`
-	HTML    string            `json:"html"`
-	Text    *string           `json:"text"`
-	Headers map[string]string `json:"headers"`
-	Raw     *RawEmail         `json:"raw"`
-}
+		if !isRetryable(lastErr) {
+			log.Printf("%s: non-retryable error, giving up: %v", operation, lastErr)
+			return lastErr
+		}
 
-type RawEmail struct {
-	DownloadURL string `json:"download_url"`
-	ExpiresAt   string `json:"expires_at"`
+		if attempt == maxRetries {
+			break
+		}
+
+		delay := retryBaseDelay * time.Duration(1<<(attempt-1))
+		if time.Since(start)+delay > maxTotalWait {
+			log.Printf("%s: giving up, would exceed max wait budget", operation)
+			break
+		}
+
+		retryAttempts.WithLabelValues(operation).Inc()
+		log.Printf("%s: attempt %d/%d failed: %v (retrying in %s)", operation, attempt, maxRetries, lastErr, delay)
+		time.Sleep(delay)
+	}
+	log.Printf("%s: exhausted retries, giving up: %v", operation, lastErr)
+	return lastErr
 }
 
 func fetchReceivedEmail(emailID string, apiKey string) (*ReceivedEmail, error) {
@@ -58,7 +114,7 @@ func fetchReceivedEmail(emailID string, apiKey string) (*ReceivedEmail, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("resend API returned %d: %s", resp.StatusCode, string(body))
+		return nil, &apiError{StatusCode: resp.StatusCode, Body: string(body)}
 	}
 
 	var email ReceivedEmail
@@ -80,7 +136,8 @@ func downloadRawEmail(url string) ([]byte, error) {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("raw download returned %d", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		return nil, &apiError{StatusCode: resp.StatusCode, Body: string(body)}
 	}
 
 	return io.ReadAll(resp.Body)
@@ -92,7 +149,6 @@ func deliverToStalwart(from string, to []string, rawMessage []byte) error {
 		smtpAddr = "localhost:25"
 	}
 
-	// Extract just the email address from "Name <email>" format
 	sender := extractEmail(from)
 
 	c, err := smtp.Dial(smtpAddr)
@@ -141,6 +197,56 @@ func extractEmail(addr string) string {
 	return strings.TrimSpace(addr)
 }
 
+func processInboundEmail(payload WebhookPayload, apiKey string) error {
+	start := time.Now()
+	defer func() { processingDuration.Observe(time.Since(start).Seconds()) }()
+
+	var email *ReceivedEmail
+	err := withRetries("fetch_received_email", func() error {
+		e, err := fetchReceivedEmail(payload.Data.EmailID, apiKey)
+		if err != nil {
+			return err
+		}
+		email = e
+		return nil
+	})
+	if err != nil {
+		emailsFailed.WithLabelValues("fetch", strconv.FormatBool(isRetryable(err))).Inc()
+		return fmt.Errorf("fetching email %s: %w", payload.Data.EmailID, err)
+	}
+
+	if email.Raw == nil || email.Raw.DownloadURL == "" {
+		log.Printf("no raw email available for %s, skipping", payload.Data.EmailID)
+		return nil
+	}
+
+	var rawMessage []byte
+	err = withRetries("download_raw_email", func() error {
+		b, err := downloadRawEmail(email.Raw.DownloadURL)
+		if err != nil {
+			return err
+		}
+		rawMessage = b
+		return nil
+	})
+	if err != nil {
+		emailsFailed.WithLabelValues("download", strconv.FormatBool(isRetryable(err))).Inc()
+		return fmt.Errorf("downloading raw email %s: %w", payload.Data.EmailID, err)
+	}
+
+	err = withRetries("deliver_to_stalwart", func() error {
+		return deliverToStalwart(email.From, email.To, rawMessage)
+	})
+	if err != nil {
+		emailsFailed.WithLabelValues("deliver", strconv.FormatBool(isRetryable(err))).Inc()
+		return fmt.Errorf("delivering email %s to stalwart: %w", payload.Data.EmailID, err)
+	}
+
+	emailsDelivered.Inc()
+	log.Printf("delivered email %s to stalwart", payload.Data.EmailID)
+	return nil
+}
+
 func webhookHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -171,48 +277,23 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-
+	emailsReceived.Inc()
 	log.Printf("received email %s from %s to %v subject=%q",
 		payload.Data.EmailID, payload.Data.From, payload.Data.To, payload.Data.Subject)
 
 	apiKey := os.Getenv("RESEND_API_KEY")
 	if apiKey == "" {
-		log.Printf("RESEND_API_KEY not set")
-		http.Error(w, "server error", http.StatusInternalServerError)
-		return
-	}
-
-	// Fetch full email content from Resend API
-	email, err := fetchReceivedEmail(payload.Data.EmailID, apiKey)
-	if err != nil {
-		log.Printf("error fetching email %s: %v", payload.Data.EmailID, err)
-		http.Error(w, "failed to fetch email", http.StatusInternalServerError)
-		return
-	}
-
-	// Download raw RFC822 message if available
-	var rawMessage []byte
-	if email.Raw != nil && email.Raw.DownloadURL != "" {
-		rawMessage, err = downloadRawEmail(email.Raw.DownloadURL)
-		if err != nil {
-			log.Printf("error downloading raw email: %v", err)
-			http.Error(w, "failed to download raw email", http.StatusInternalServerError)
-			return
-		}
-	} else {
-		log.Printf("no raw email available for %s, skipping", payload.Data.EmailID)
+		log.Printf("CONFIG ERROR: RESEND_API_KEY not set, cannot process email %s", payload.Data.EmailID)
+		emailsFailed.WithLabelValues("config", "false").Inc()
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	// Deliver to Stalwart via local SMTP
-	if err := deliverToStalwart(email.From, email.To, rawMessage); err != nil {
-		log.Printf("error delivering to stalwart: %v", err)
-		http.Error(w, "delivery failed", http.StatusInternalServerError)
-		return
+	// Always 200 to Resend regardless of outcome. Retries and handling are done in our logic.
+	if err := processInboundEmail(payload, apiKey); err != nil {
+		log.Printf("FAILED to process email %s after retries: %v", payload.Data.EmailID, err)
 	}
 
-	log.Printf("delivered email %s to stalwart", payload.Data.EmailID)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -228,7 +309,7 @@ func main() {
 
 	http.HandleFunc("/webhook/inbound", webhookHandler)
 	http.HandleFunc("/healthz", healthHandler)
-
+	http.Handle("/metrics", promhttp.Handler())
 	log.Printf("inbound webhook handler listening on :%s", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatalf("server error: %v", err)

@@ -1,11 +1,12 @@
-FROM golang:1.24.5-alpine3.22
+FROM golang:1.26.4-alpine3.24
 LABEL authors="blporter"
 
 WORKDIR /usr/src/app
 
 COPY go.mod ./
-RUN go mod download
 COPY webhook.go .
+COPY models.go .
+RUN go get ./...
 RUN go build -v -o /usr/local/bin/app ./...
 
 CMD ["app"]
