@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: webhook-metrics-push
+  namespace: stalwart
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: push-metrics
+              image: curlimages/curl:8.10.1
+              env:
+                - name: METRICS_URL
+                  value: "http://service.stalwart.svc.cluster.local:3000/metrics"
+                - name: PROMETHEUS_URL
+                  value: "http://prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  curl -sf "$METRICS_URL" | curl -sf --data-binary @- "PROMETHEUS_URL"
