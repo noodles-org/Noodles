@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go/v4"
 	"github.com/cloudflare/cloudflare-go/v4/dns"
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/push"
-	"io"
-	"net/http"
-	"os"
-	"strings"
 )
 
 var (
@@ -74,9 +75,8 @@ func main() {
 		if err != nil {
 			opsFailed.Inc()
 			panic(err)
-		} else {
-			opsProcessed.Inc()
 		}
+		opsProcessed.Inc()
 	}
 
 	err = push.New(os.Getenv("SERVICE_URL"), "fetch-ip").
