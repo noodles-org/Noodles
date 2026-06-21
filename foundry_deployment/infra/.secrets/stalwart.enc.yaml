@@ -1,14 +1,14 @@
-apiVersion: ENC[AES256_GCM,data:mrE=,iv:SijOw6zEsyT5rSlONr6QG2dRSrlmESGjuLfcD/PzrXk=,tag:LR0lrVc8LgYDs0HZi02U+Q==,type:str]
-kind: ENC[AES256_GCM,data:j17Dlzlv,iv:PEeiPsDCj///ymbLNj81wvMu7A3dtk/7gs65D8iaBQE=,tag:VpXChLDqAQWPv/bbZf5J0w==,type:str]
+apiVersion: v1
+kind: Secret
 metadata:
-    name: ENC[AES256_GCM,data:2bQYnTqALeFFmV3rbLM=,iv:Yh8WmHhP2Jxvfz3Kaend2JkFZgdYqCV4HsZoTIfnB3k=,tag:vQUmpK7/ELfs+rh6ZhjDMA==,type:str]
-    namespace: ENC[AES256_GCM,data:Qjp2Im7w3BQ=,iv:NI/+R6vyjWU2NfV8jKN6YlJtdqT/W+/GVRbbs0Ke8EQ=,tag:y3JGZ7XkHY2+odP8cOe7NQ==,type:str]
+    name: stalwart-admin
+    namespace: stalwart
 stringData:
-    username: ENC[AES256_GCM,data:yWdmDgBMpCBcoZ9uNUmYurAVHA==,iv:51/sLj93HKjyPQOij3/oe+124+V/c+ONNlxUPhvUuWQ=,tag:tRUXKG8doQqA9UQJ36rmWg==,type:str]
-    password: ENC[AES256_GCM,data:VW/e3iLrMGb5dD+zEgEjTg==,iv:7jv8PUqM28tVb+kkIMITS8pzGLaSEJL/oure+juSrjQ=,tag:LxJCe8lDgmLbs6fc2trE7w==,type:str]
-    #ENC[AES256_GCM,data:qwjAAd+YI948JrpXrm83Axp+jcTfCBv/uzcq/WpsiKDw7Xw/E9Duaz3IyNZBunRUiaNKg4vgl81XTqYYhEMXgdXCmqwf,iv:IcaN9K9jlpDMN2VHi2Me56J1+6owPuWz8MmNds3TufU=,tag:ui3dx3GfT8f13vg+GHjR0w==,type:comment]
-    dns-api-key: ENC[AES256_GCM,data:4EJNZk3SBrz7wEzPqzH04Cq0y7dC9ldOr7ERYPRzuxx8I2U4wiHzcQ==,iv:MB1g1jUuuAFMgzaAOm44NptGVKqz82SO5zUPuPmO99g=,tag:BVhoJtTE9yG45HteOw3Y1g==,type:str]
-    resend-api-key: ENC[AES256_GCM,data:FPYIQfFfGFRIrkxVWyUQztQewKmr+u3dAzg8fWFa23fZx2/W,iv:aocy1+R/qL5Tgm+ne782Pqd/mR6Xqor7QeUFL9Mg+UY=,tag:X8r4M5UjHz857kixz18MoQ==,type:str]
+    username: ENC[AES256_GCM,data:/HBmdfYUQOLDRLDeVw5smHhgBQ==,iv:qoBgRvar4UUxoojAnnWfpmLNJKl9wjgX4L7+llKsUo0=,tag:vL4VsocWi36QBrq/Fze2ow==,type:str]
+    password: ENC[AES256_GCM,data:u6bL+eS8ZLaLDHozbkSQxQ==,iv:4ZTAvWMJpFl3wyEKirUU5+sxWtrIHA5pXtHdaVGtsV0=,tag:CX+ETkbMU9/Y7/mZMMNEsQ==,type:str]
+    #ENC[AES256_GCM,data:Ln3wyMlAiPnY5j+6XJXu/sRlI3/2t5pkXGzxcAE4LjTcS5Cvt6SSaHuXsQaimx+HlYiLkn+a1UNdzI5xzQPzuMkLol8G,iv:RacI6roL3/BrNThvxh+85aWaigbVxLCDhPPMN/D6WO8=,tag:IWT44LbpH2YHrc2qcRnnYA==,type:comment]
+    dns-api-key: ENC[AES256_GCM,data:Y0hw3kQUa2ou+kmKkk6rmyd0vEZIPBWW8lYzl/M49fLfL0ROomI2Tg==,iv:gXqg4XiBwtl5mzEdpiqwQ0AlAkPUF02JC9v/kXSRtEg=,tag:Skv3JG3BGNebS/05USCshQ==,type:str]
+    resend-api-key: ENC[AES256_GCM,data:cqmreVOVILBobDZhr153mgN7my6twOAIlHcnlWFLStXM7dcR,iv:srTmrZKWz1GPY3gg60xa3sWB01+QK2EuRoEgAZdwmEA=,tag:mjf5Cz1IY924WJ/VcKbmOw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -18,14 +18,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBRQ3VWbklPMXJnbXRLU1lx
-            NG1aeEpVSXhwM2I0ZTJRaUpwQlJxSkdRVEU4Cnh1L3Rsa3pPaTdBYWQ1byt2djlk
-            M2hXR01qUnFqYnVscGdOYUN0dDFWa3cKLS0tIHdTdXJZR01TQmpDemh2bVJhWmdY
-            QThXcUlXUWxuY05RdWNhL2o3Undyd2sK/SWdYc8mmHSC9yfxdUuZc5uv1JJ33asq
-            lk0dbSfkDJ+0UDR960SctdA724VJ1XbWQG43T6K7L83jCdnSDU8fyA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBiN2dsWDBrb1dDYmZmM1Vj
+            QkZMWExCMEpHZDFWdlJZTjBZY1M3emVmQ1JVCjhNQ2J2b3M3MlVNNEp3SklvSjZO
+            a3pvdmlKenRna3EwQnFyU0lMU0dKZncKLS0tIEhTVHlSNDQwOHZ2UVdDTlVSOUc3
+            WWtlTzNZaStOMW1mSE13cDNLNmdkU3MK1I6aY8e1lKL+Qy4hiwFtqUYf6RU8Mdd1
+            HcACTaxZQ+PfOvJYSxE9jB2HD4JXsvDDyfZCXBgVernsCwYLVdnw0Q==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-06-09T00:41:22Z"
-    mac: ENC[AES256_GCM,data:oTbWu0fMPmOTpSaG1r4rYs+KhrgrtgxVAu4oiwAQqme4HU7H8lAFOG2NhRgpyq/jF9tNenUVz3ASwbmZYxFOS9A+1DEzAQifCrcxQeX9G4AHxVrpqmtRo+NKUJisrNxYcHUllj1eys1mRrC3S4hNkExTezimK5nOGuCJLienuC4=,iv:YQCOhV27wBdlm/jzTmT4xoCKCbTutzpYoYMghKTUixc=,tag:xc4u3oUUwi/WZCh0OahcCg==,type:str]
+    lastmodified: "2026-06-18T22:53:16Z"
+    mac: ENC[AES256_GCM,data:ZfCvzlFsdYJEaCCKoav73W6iz7TmAfH2exYw6VPtikTdk8UREGr62lgAZo1kYQdImUF71yVlt93fOU7irHwpfa+ZQJ36I65T81XWDlJ7kIAdBq5bkcZgPD3+RC07SL8RZFk4p8Z/slYh9dmhBWDxKKZA/488WJ9i0IFnTwJkPMU=,iv:QE6gRgaGPsJnAZvnZ182iN07zM68bt9HdDWzWLPbdPY=,tag:HDQCJvoaDBpoMIjqmaq62w==,type:str]
     pgp: []
-    unencrypted_suffix: _unencrypted
+    encrypted_regex: ^(data|stringData)$
     version: 3.8.1
