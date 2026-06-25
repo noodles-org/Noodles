@@ -53,6 +53,12 @@ spec:
             - containerPort: 4190
               protocol: TCP
               hostPort: 4190
+          env:
+            - name: DNS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-admin
+                  key: dns-api-key
           volumeMounts:
             - name: stalwart-config
               mountPath: /etc/stalwart
@@ -74,6 +80,8 @@ spec:
                   key: resend-api-key
             - name: STALWART_SMTP_ADDR
               value: "localhost:25"
+            - name: SMTP_EHLO_HOST
+              value: "mail.noodles.quest"
           livenessProbe:
             httpGet:
               path: /healthz

@@ -39,7 +39,7 @@ Both PVCs have the `argocd.argoproj.io/sync-options: Delete=false` annotation to
 ### Web Admin
 
 - Routed via Traefik `IngressRoute` on the `web` and `websecure` entrypoints.
-- **Admin URL:** `https://mail.noodles.quest`
+- **Admin URL:** `https://mail.noodles.quest/admin`
 - HTTPS redirect middleware is applied.
 - TLS uses the shared `noodles-quest-prod-tls` wildcard certificate.
 

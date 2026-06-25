@@ -27,4 +27,4 @@ spec:
                 - -c
                 - |
                   set -e
-                  curl -sf "$METRICS_URL" | curl -sf --data-binary @- "PROMETHEUS_URL"
+                  curl -sf "$METRICS_URL" | curl -sf --data-binary @- "$PROMETHEUS_URL"

@@ -161,6 +161,14 @@ func deliverToStalwart(from string, to []string, rawMessage []byte) error {
 		}
 	}()
 
+	ehloHost := os.Getenv("SMTP_EHLO_HOST")
+	if ehloHost == "" {
+		ehloHost = "mail.noodles.quest"
+	}
+	if err := c.Hello(ehloHost); err != nil {
+		return fmt.Errorf("EHLO %s: %w", ehloHost, err)
+	}
+
 	if err := c.Mail(sender); err != nil {
 		return fmt.Errorf("MAIL FROM: %w", err)
 	}
