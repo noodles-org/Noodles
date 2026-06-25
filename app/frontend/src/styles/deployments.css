@@ -1,0 +1,79 @@
+.dep-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.dep-header .page-title {
+    margin-bottom: 0;
+}
+
+.dep-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.deployment-card {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dep-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.dot-healthy    { background: var(--c-success); }
+.dot-progressing { background: var(--c-warning); }
+.dot-degraded   { background: var(--c-danger); }
+.dot-suspended  { background: var(--c-muted); }
+.dot-unknown    { background: var(--c-border); }
+
+.dep-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dep-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.dep-meta {
+    font-size: 13px;
+    color: var(--c-muted);
+    display: flex;
+    gap: 16px;
+    margin-top: 2px;
+}
+
+.dep-badges {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+.badge-healthy     { background: #ecfdf5; color: var(--c-success); }
+.badge-progressing { background: #fffbeb; color: var(--c-warning); }
+.badge-degraded    { background: #fef2f2; color: var(--c-danger); }
+.badge-suspended   { background: #f3f4f6; color: var(--c-muted); }
+.badge-synced      { background: #ecfdf5; color: var(--c-success); }
+.badge-outofsync   { background: #fffbeb; color: var(--c-warning); }
+
+.dep-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}

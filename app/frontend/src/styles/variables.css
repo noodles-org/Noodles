@@ -1,0 +1,22 @@
+:root {
+    --c-bg: #f5f6f8;
+    --c-surface: #ffffff;
+    --c-border: #e2e5e9;
+    --c-text: #1a1d21;
+    --c-muted: #616771;
+    --c-primary: #2563eb;
+    --c-primary-h: #1d4ed8;
+    --c-success: #059669;
+    --c-warning: #d97706;
+    --c-danger: #dc2626;
+
+    --radius: 6px;
+    --radius-lg: 10px;
+    --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-l: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, Consolas, monospace;
+    --nav-h: 56px;
+}
