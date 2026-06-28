@@ -4,6 +4,7 @@ setup-dev:
 	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG)"
 
 # sops key is ~/.config/sops/age/keys.txt by default
+# export AWS_PROFILE for KMS encryption/decryption.
 sops-encrypt-all:
 	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml && \
 	sops --encrypt k8s/argocd/.secret.yaml > .secrets/argocd.enc.yaml && \
@@ -47,3 +48,6 @@ update-foundry-version:
 	docker buildx build --platform linux/amd64 --build-arg FOUNDRY_URL=$(URL) -t mephalrith/foundry-server .
 	docker push mephalrith/foundry-server:latest
 	kubectl rollout restart -n foundry deployment
+update-stalwart-webhook:
+	docker buildx build --platform linux/amd64 -t mephalrith/stalwart-inbound-webhook k8s/stalwart/inbound-webhook/.
+	docker push mephalrith/stalwart-inbound-webhook:latest

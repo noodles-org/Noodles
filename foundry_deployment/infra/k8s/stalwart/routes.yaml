@@ -18,6 +18,12 @@ spec:
     - web
     - websecure
   routes:
+    - match: Host(`mail.noodles.quest`) && PathPrefix(`/webhook/inbound`)
+      kind: Rule
+      services:
+        - name: service
+          namespace: stalwart
+          port: 3000
     - match: Host(`mail.noodles.quest`)
       kind: Rule
       services:
