@@ -1,6 +1,7 @@
 import * as k8s from '@kubernetes/client-node';
-import { DeploymentInfo } from '../types';
-import { logger } from './logger';
+import {DeploymentInfo} from '../types';
+import {config} from '../config';
+import {logger} from './logger';
 
 const kc = new k8s.KubeConfig();
 try {
@@ -11,11 +12,49 @@ try {
 }
 
 const appsApi = kc.makeApiClient(k8s.AppsV1Api);
+const coreApi = kc.makeApiClient(k8s.CoreV1Api);
 
 const PAUSE_ANNOTATION = 'dashboard.cluster/original-replicas';
 const RESTART_ANNOTATION = 'kubectl.kubernetes.io/restartedAt';
 const ARGO_LABEL = 'argocd.argoproj.io/instance';
-const PATCH_HEADERS = { headers: { 'Content-Type': 'application/strategic-merge-patch+json' } };
+const PATCH_HEADERS = {headers: {'Content-Type': 'application/strategic-merge-patch+json'}};
+
+// ── Namespace discovery with short cache ──────────────────────────
+let nsCache: string[] | null = null;
+let nsCacheTime = 0;
+const NS_CACHE_TTL = 60_000;
+
+export async function discoverNamespaces(): Promise<string[]> {
+    if (nsCache && Date.now() - nsCacheTime < NS_CACHE_TTL) return nsCache;
+
+    try {
+        const {body} = await coreApi.listNamespace(
+            undefined, undefined, undefined, undefined,
+            `${config.namespaceLabel}=true`,
+        );
+        nsCache = body.items
+            .map((ns) => ns.metadata?.name)
+            .filter(Boolean) as string[];
+        nsCacheTime = Date.now();
+
+        if (!nsCache.length) {
+            logger.warn(`No namespaces found with label ${config.namespaceLabel}=true`);
+        }
+    } catch (err) {
+        logger.error('Failed to discover namespaces', {error: err});
+        nsCache = nsCache ?? [];
+    }
+
+    return nsCache;
+}
+
+/** Verify namespace is managed before allowing writes */
+export async function isManagedNamespace(namespace: string): Promise<boolean> {
+    const managed = await discoverNamespaces();
+    return managed.includes(namespace);
+}
+
+// ── Deployment helpers ────────────────────────────────────────────
 
 function deriveHealth(dep: k8s.V1Deployment): string {
     const desired = dep.spec?.replicas ?? 0;
@@ -27,15 +66,18 @@ function deriveHealth(dep: k8s.V1Deployment): string {
     return 'Degraded';
 }
 
-export async function listDeployments(namespaces: string[]): Promise<DeploymentInfo[]> {
+export async function listDeployments(): Promise<DeploymentInfo[]> {
+    const namespaces = await discoverNamespaces();
     const all: DeploymentInfo[] = [];
 
     for (const ns of namespaces) {
         try {
-            const { body } = await appsApi.listNamespacedDeployment(ns);
+            const {body} = await appsApi.listNamespacedDeployment(ns);
             for (const dep of body.items) {
                 const ann = dep.metadata?.annotations ?? {};
-                const savedReplicas = ann[PAUSE_ANNOTATION] ? parseInt(ann[PAUSE_ANNOTATION]) : undefined;
+                const savedReplicas = ann[PAUSE_ANNOTATION]
+                    ? parseInt(ann[PAUSE_ANNOTATION])
+                    : undefined;
 
                 all.push({
                     name: dep.metadata?.name ?? '',
@@ -49,12 +91,13 @@ export async function listDeployments(namespaces: string[]): Promise<DeploymentI
                     argoApp: dep.metadata?.labels?.[ARGO_LABEL],
                     healthStatus: deriveHealth(dep),
                     syncStatus: 'Unknown',
-                    lastRestartedAt: dep.spec?.template?.metadata?.annotations?.[RESTART_ANNOTATION],
+                    lastRestartedAt:
+                        dep.spec?.template?.metadata?.annotations?.[RESTART_ANNOTATION],
                     createdAt: dep.metadata?.creationTimestamp?.toISOString(),
                 });
             }
         } catch (err) {
-            logger.error(`Failed listing deployments in ${ns}`, { error: err });
+            logger.error(`Failed listing deployments in ${ns}`, {error: err});
         }
     }
 
@@ -64,40 +107,50 @@ export async function listDeployments(namespaces: string[]): Promise<DeploymentI
 export async function restartDeployment(namespace: string, name: string): Promise<void> {
     await appsApi.patchNamespacedDeployment(
         name, namespace,
-        { spec: { template: { metadata: { annotations: { [RESTART_ANNOTATION]: new Date().toISOString() } } } } },
+        {
+            spec: {
+                template: {
+                    metadata: {
+                        annotations: {
+                            [RESTART_ANNOTATION]: new Date().toISOString(),
+                        }
+                    }
+                }
+            }
+        },
         undefined, undefined, undefined, undefined, undefined,
         PATCH_HEADERS,
     );
-    logger.info('Deployment restarted', { namespace, name });
+    logger.info('Deployment restarted', {namespace, name});
 }
 
 export async function pauseDeployment(namespace: string, name: string): Promise<void> {
-    const { body: dep } = await appsApi.readNamespacedDeployment(name, namespace);
+    const {body: dep} = await appsApi.readNamespacedDeployment(name, namespace);
     const current = dep.spec?.replicas ?? 1;
     if (current === 0) throw new Error('Already paused');
 
     await appsApi.patchNamespacedDeployment(
         name, namespace,
         {
-            metadata: { annotations: { [PAUSE_ANNOTATION]: String(current) } },
-            spec: { replicas: 0 },
+            metadata: {annotations: {[PAUSE_ANNOTATION]: String(current)}},
+            spec: {replicas: 0},
         },
         undefined, undefined, undefined, undefined, undefined,
         PATCH_HEADERS,
     );
-    logger.info('Deployment paused', { namespace, name, previousReplicas: current });
+    logger.info('Deployment paused', {namespace, name, previousReplicas: current});
 }
 
 export async function resumeDeployment(namespace: string, name: string): Promise<void> {
-    const { body: dep } = await appsApi.readNamespacedDeployment(name, namespace);
+    const {body: dep} = await appsApi.readNamespacedDeployment(name, namespace);
     const target = parseInt(dep.metadata?.annotations?.[PAUSE_ANNOTATION] ?? '1');
     if ((dep.spec?.replicas ?? 0) > 0) throw new Error('Not currently paused');
 
     await appsApi.patchNamespacedDeployment(
         name, namespace,
-        { spec: { replicas: target } },
+        {spec: {replicas: target}},
         undefined, undefined, undefined, undefined, undefined,
         PATCH_HEADERS,
     );
-    logger.info('Deployment resumed', { namespace, name, replicas: target });
+    logger.info('Deployment resumed', {namespace, name, replicas: target});
 }

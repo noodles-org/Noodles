@@ -29,11 +29,13 @@
     color: var(--c-muted);
     transition: all 0.15s;
 }
+
 .nav-link:hover {
     color: var(--c-text);
     background: var(--c-bg);
     text-decoration: none;
 }
+
 .nav-link.active {
     color: var(--c-primary);
     background: #eff6ff;
@@ -51,6 +53,16 @@
     color: var(--c-muted);
 }
 
+.nav-role {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: var(--c-bg);
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+}
+
 .nav-logout {
     font-size: 13px;
     color: var(--c-muted);
@@ -60,6 +72,7 @@
     padding: 4px 8px;
     border-radius: var(--radius);
 }
+
 .nav-logout:hover {
     color: var(--c-danger);
     background: #fef2f2;

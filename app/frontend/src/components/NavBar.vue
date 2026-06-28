@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { useAuthStore } from '../stores/auth';
-import { useRoute } from 'vue-router';
+import {useAuthStore} from '../stores/auth';
+import {useRoute} from 'vue-router';
 import '../styles/nav.css';
 
 const auth = useAuthStore();
 const route = useRoute();
 
-// Extend this array to add new pages to the nav
 const navItems = [
-  { path: '/services', label: 'Services' },
-  { path: '/deployments', label: 'Deployments' },
-  { path: '/docs', label: 'Docs' },
+  {path: '/services', label: 'Services'},
+  {path: '/deployments', label: 'Deployments'},
+  {path: '/docs', label: 'Docs'},
 ];
 </script>
 
@@ -23,12 +22,14 @@ const navItems = [
             :to="item.path"
             class="nav-link"
             :class="{ active: route.path.startsWith(item.path) }"
-        >{{ item.label }}</router-link>
+        >{{ item.label }}
+        </router-link>
       </li>
     </ul>
-    <div class="nav-spacer" />
+    <div class="nav-spacer"/>
     <div class="nav-user" v-if="auth.user">
       <span>{{ auth.user.email }}</span>
+      <span class="nav-role">{{ auth.user.role }}</span>
       <button class="nav-logout" @click="auth.logout()">Sign out</button>
     </div>
   </nav>

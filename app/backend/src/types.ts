@@ -1,10 +1,13 @@
-import { Request } from 'express';
+import {Request} from 'express';
+
+export type Role = 'admin' | 'viewer';
 
 export interface User {
     sub: string;
     email: string;
     name: string;
-    groups?: string[];
+    role: Role;
+    groups: string[];
 }
 
 export interface AuthenticatedRequest extends Request {
