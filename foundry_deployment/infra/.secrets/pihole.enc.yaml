@@ -5,9 +5,13 @@ metadata:
     namespace: pihole
 type: Opaque
 stringData:
-    ADMIN_PASSWORD: ENC[AES256_GCM,data:FhPc/Yjtzp18Eg==,iv:6nXbmmOWjRXcndtek9YWt78NnKjOFnTcFpckrTYuops=,tag:wiSabqQL21+yiJinIEXVlw==,type:str]
+    ADMIN_PASSWORD: ENC[AES256_GCM,data:elaA9PZBw8CArA==,iv:zI06ryAoC5+1uD8r24JVqal+ze9sz1wIt0VQw7xt/NE=,tag:Jb57fhyrFzgJDPWIyXn48g==,type:str]
 sops:
-    kms: []
+    kms:
+        - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
+          created_at: "2026-06-28T03:55:07Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgE1VzA+t3MiJnrL3yDyndK8AAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMcTsqIeikdAYT9PwOAgEQgDvLuaPocZHAdKhyBiucSIxrEBCgrkWpVKDyRm9vQIAZQ22GvnArKdATti/b8KwaVxaZsHIGpGfKICYA+Q==
+          aws_profile: ""
     gcp_kms: []
     azure_kv: []
     hc_vault: []
@@ -15,14 +19,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArOVlkUWRkZkZFWUlxNlRt
-            RXRwOGx1amwzM3Qzbjg1blBnQzRQK1p6ZVZ3CmtZZjlzMytlQ05HU3ZKdE1VUkRL
-            elBibFRjemwzdmp5Sm4zdEhmZzQzWXMKLS0tIFdNYXYxWGtacldmZi92QjhxeEFu
-            czhEdXNBZDQrZFNsRkJhZGVrMkVkaWsKt/DxlLrSVixftS8RUe1wLHYTxP/yJ01v
-            WWsNVRNnDvFlEU211sjJxKPV0UbziVX3MHSthwnvRm1dvzc8hgJ4vA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlalB0TklkdVV4Z2FsVis0
+            WHpaRWhDcW1EWUFYWVpndkMvQVlJd00wczIwClY0bnlJSzJZbmVNOGRzMnE1VGds
+            L3gwNmZZeDk3SGkwQWw1cVRPNGlrUGcKLS0tIDVxY3ZmNGdBRHF1Q0g0M1hvTFA5
+            WVlnUUkxSmV0YWNQd3pYS3hJZFlFM1UKAkKxWC42vXfNG78owKEkrbbux1Hcd9kk
+            5i9KwHO8e4ohUYvsYdFsn4hpyQhr54VHmAuzxyHwhsF0xU20+nlHpQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-06-18T22:53:16Z"
-    mac: ENC[AES256_GCM,data:lGRr+R2MmjnHCsaQxFOGmERVdCfNR71hUQ8XV07n5Qe91OAyWZsC+mbgc8J/imnY+3zq8ujEn9OmxmeMVl65Tg2FDg5b5BIzKqGajhkmPzMEtUrvKLE78zwYFGVRx1fvxfrfTm09t8NRsFPeDUJin8VR9WKc9eKQFT7rFV/QPac=,iv:HCzbrDEScPUPbc3j20Owd5hcAIuZAlu8TcQN7f69bRE=,tag:govnlHVtCCsJsqJ8gzCHPw==,type:str]
+    lastmodified: "2026-06-28T03:55:07Z"
+    mac: ENC[AES256_GCM,data:syg+uWJGCLNZhDO1NlQsSnbRg39LpuRccmgmAaPAFjOWqkLeg7U3UVbwwgJ8YiE/j9OQq8FpzDs8bGwXTbnXOSSemyi/3Bo1PUY2HgXH9KC/Hv4wPp+pvzBnpe2D8o/XYb8LZkvq0/gWVGgr/uLPLf8DJ56rDhGRW1TG43x9gWE=,iv:MiA1vZyKVGrDG8ZadLEjy+cRLa/0p2r2PxuX8Wws5Vs=,tag:y+z5bC13CSkY02G75x46ag==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1

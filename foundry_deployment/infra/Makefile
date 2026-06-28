@@ -4,6 +4,7 @@ setup-dev:
 	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG)"
 
 # sops key is ~/.config/sops/age/keys.txt by default
+# export AWS_PROFILE for KMS encryption/decryption.
 sops-encrypt-all:
 	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml && \
 	sops --encrypt k8s/argocd/.secret.yaml > .secrets/argocd.enc.yaml && \
