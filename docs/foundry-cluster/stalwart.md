@@ -57,9 +57,34 @@ Stalwart is configured to manage DNS records automatically via the Cloudflare AP
 
 An explicit A record for `mail.noodles.quest` is required in Cloudflare (the wildcard `*.noodles.quest` record is insufficient due to CNAME interactions). The `mail.noodles.quest` DNS record ID is included in the Foundry fetch-ip CronJob for automatic IP updates.
 
+## Secrets
+
+The `stalwart-admin` Kubernetes Secret in the `stalwart` namespace holds:
+
+| Key              | Purpose                                              |
+|------------------|------------------------------------------------------|
+| `password`       | Stalwart admin account password                      |
+| `dns-api-key`    | Cloudflare API token for DNS management              |
+| `resend-api-key` | Resend API key for outbound SMTP auth                |
+
+The secret is mounted into the stalwart container at `/run/secrets/stalwart-admin` (read-only) so the postStart hook can read credentials at runtime.
+
+## Outbound Route Config (postStart Hook)
+
+Stalwart's admin UI has a bug where saving the `resend` MTA route always persists port `587` regardless of what is entered, causing outbound delivery to fail with an implicit TLS error. To work around this, a `postStart` lifecycle hook on the stalwart container automatically seeds the correct route config via the settings API on every pod start:
+
+- **Host:** `smtp.resend.com`
+- **Port:** `465`
+- **TLS:** `implicit`
+- **Auth username:** `resend`
+- **Auth secret:** read from `/run/secrets/stalwart-admin/resend-api-key`
+
+The hook sleeps 10 seconds after container start to allow Stalwart to initialize before POSTing to `http://localhost:8080/api/settings`. If the pod is restarted and outbound mail stops working, check that the hook ran successfully (it runs silently; check logs or re-send a test email after ~15s).
+
+
 ## Email Routing
 
-Due to Comcast blocking port 25 in both directions for residential connections:
+Due to ISP blocking port 25 in both directions for residential connections:
 
 | Direction    | Method                                                              |
 |--------------|---------------------------------------------------------------------|

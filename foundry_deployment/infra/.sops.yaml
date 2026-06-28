@@ -1,6 +1,6 @@
 age_pub: &age_pub "age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz"
 aws_kms: &aws_kms "arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f"
-encrypted_regex: &encrypted_regex '^(data|stringData)$'
+kubernetes_secrets_regex: &kubernetes_secrets_regex '^(data|stringData)$'
 
 creation_rules:
   - path_regex: ".secrets/*"
@@ -10,7 +10,7 @@ creation_rules:
     age: *age_pub
     kms: *aws_kms
   - path_regex: 'k8s\/.+\/\.secret\.yaml'
-    encrypted_regex: *encrypted_regex
+    encrypted_regex: *kubernetes_secrets_regex
     age: *age_pub
     kms: *aws_kms
   - path_regex: 'helm\/grafana-.+\/values.yaml'
