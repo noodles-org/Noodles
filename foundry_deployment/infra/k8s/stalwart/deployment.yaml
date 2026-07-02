@@ -53,11 +53,69 @@ spec:
             - containerPort: 4190
               protocol: TCP
               hostPort: 4190
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    sleep 10
+                    curl -s -X POST http://localhost:8080/api/settings \
+                      -H "Content-Type: application/json" \
+                      -u "admin:$(cat /run/secrets/stalwart-admin/password)" \
+                      -d "{
+                        \"queue.outbound.route.resend.host\": \"smtp.resend.com\",
+                        \"queue.outbound.route.resend.port\": 465,
+                        \"queue.outbound.route.resend.tls\": \"implicit\",
+                        \"queue.outbound.route.resend.auth.username\": \"resend\",
+                        \"queue.outbound.route.resend.auth.secret\": \"$(cat /run/secrets/stalwart-admin/resend-api-key)\",
+                        \"queue.outbound.route.resend.allow-invalid-certs\": false
+                      }"
+          env:
+            - name: DNS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-admin
+                  key: dns-api-key
           volumeMounts:
             - name: stalwart-config
               mountPath: /etc/stalwart
             - name: stalwart-data
               mountPath: /var/lib/stalwart
+            - name: stalwart-admin-secret
+              mountPath: /run/secrets/stalwart-admin
+              readOnly: true
+        - name: inbound-webhook
+          image: docker.io/mephalrith/stalwart-inbound-webhook:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "3000"
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-admin
+                  key: resend-api-key
+            - name: STALWART_SMTP_ADDR
+              value: "localhost:25"
+            - name: SMTP_EHLO_HOST
+              value: "mail.noodles.quest"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 10
       volumes:
         - name: stalwart-config
           persistentVolumeClaim:
@@ -65,3 +123,6 @@ spec:
         - name: stalwart-data
           persistentVolumeClaim:
             claimName: stalwart-data-pvc
+        - name: stalwart-admin-secret
+          secret:
+            secretName: stalwart-admin
