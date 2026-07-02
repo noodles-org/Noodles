@@ -6,16 +6,20 @@ argo-cd:
     params:
       server.insecure: true
     cm:
-      dex.config: |
-       connectors:
-         - type: github
-           id: github
-           name: GitHub
-           config:
-             clientID: $github-auth:auth.clientID
-             clientSecret: $github-auth:auth.clientSecret
-             orgs:
-             - name: noodles-org
+      url: https://argocd.noodles.quest
+      oidc.config: |
+        name: Dex
+        issuer: https://dex.noodles.quest
+        clientID: argocd
+        clientSecret: $dex-auth:ARGOCD_CLIENT_SECRET
+        requestedScopes:
+          - openid
+          - profile
+          - email
+          - groups
+        requestedIDTokenClaims:
+          groups:
+            essential: true
     rbac:
       policy.csv: |
         p, role:developer, applications, get, */*, allow
