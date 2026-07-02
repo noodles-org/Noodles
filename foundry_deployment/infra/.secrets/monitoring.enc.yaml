@@ -1,18 +1,17 @@
 apiVersion: v1
 kind: Secret
 metadata:
-    name: github
+    name: dex-auth
     namespace: monitoring
 type: Opaque
 stringData:
-    #ENC[AES256_GCM,data:M76lMwV5Q7emjr1dTgvynMBr0kRI141uxOZJdOze8EiTsyD9PYxvHDneL1pB+3YtdF1yVa5NSIIZxdskzq0mW6u19DrihEHSwF8fxVMBX6CxCODYZonsWg5ktHquFtT6ZU/ZboqZWnYfzqGIZh82cWs=,iv:aOyYSPfTJd1FFlyBh4/Cqq90y78vRBvIHzpaRUbmovg=,tag:1E/h8crGBx4rmM82p2VKwg==,type:comment]
-    GF_AUTH_GITHUB_CLIENT_ID: ENC[AES256_GCM,data:JSCl/vogNh8AVRPR+vf1Nzyn+Q4=,iv:zZcgkLwLfv38LtKeOZVkXBq/vziznmv5np4nObLq/EU=,tag:3HYZ4ziEqrtbB9/QcE5NEw==,type:str]
-    GF_AUTH_GITHUB_CLIENT_SECRET: ENC[AES256_GCM,data:1YXM/zM1TMdPDFB2b2+t5qN9GXMcclrQYRyS35FJ9LJryEDJx8XCIA==,iv:mgVP0eKxc28drZZajgVc+cUlI1XBm8PRp1xoWY3dH1c=,tag:RaLmdeBNIcWIkq7c/LWyNw==,type:str]
+    #ENC[AES256_GCM,data:cqSZfY85xr217JWbX1hOM6Ov1bzX88yH1Idmm7Zq77E6/jPpZsqj+2BnCxh+0/c=,iv:yH3Ncsti0g92E1it3l+pXyu/j5g+7FAAOQhEppvfULs=,tag:c4JdsvEsTG4rcQzyfe7OUQ==,type:comment]
+    GRAFANA_CLIENT_SECRET: ENC[AES256_GCM,data:++F8wFKQq30EqXhQyT9N8xSPwmJ5kjmdv0wLiYlQCeo=,iv:vsGg3Vb4s4Ib5/+hF+WXy9ybsNHi22eOg5gWA/RhWoY=,tag:V40dqExHonJZdYBiV6uvwA==,type:str]
 sops:
     kms:
         - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
-          created_at: "2026-06-28T03:55:07Z"
-          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgH8UE3XtveHRvxZrv+LXyBTAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMzhQc4DXBn954JehcAgEQgDv0jKaffQ24sy7duddqAgcSkh12BmvGi8Hv/rwob5JbS5jDQ0XiQ49GmaFsQ8yt1HZ8KP33ZmAjCK86aQ==
+          created_at: "2026-07-02T05:30:24Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgGCViduy+bOwQ8QTuvuNbIpAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMs7aYMC+GV+sOEIIqAgEQgDu1/+Qh3qRqH6YrRWnzysbyG0jDripcaUJ+7tdD2ikDZZkufDjK5OrtcwYOOBBdzR2pUUTAd+X3JSFAJw==
           aws_profile: ""
     gcp_kms: []
     azure_kv: []
@@ -21,14 +20,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArOGJyT1N4Ujg4M0dqY2cx
-            aGUzN05LZHVqNWJ1dERpc1VlYUZReVExOWswCmVGNnlUU1VCK3RDVzBia1hYQXpG
-            QnZOdFRrbjZRZjd1a1RwdkcrL3FVQ1UKLS0tIDh1Z1pDOGs1akZYdE1uSGdkZDgy
-            dVNCRkJGcTZyWEdoQ05IRlFsUWZ0bDQKgj125zc4P06boeUi7H4emINqdaxPF4VL
-            Nafptti7AK993L3yoKOxjfC0/LOz6N2P4q+QZYvtax2iXAfLrHGyuw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPZTlXeGF4NEZSM1lyNCtV
+            dk45NG80ZlNnYnhqZ2phYUg1ei9YdHIrY1g4CmdCYU1Wb3k3R3JnTytPbVpWNGk2
+            dFBRL1NUNUtORkVqUUdMeUk0aUhtY2cKLS0tIEZQNUkzcUIwWUo1MUdHZHFRSVlx
+            ZnpCOGkzcHNKalJPOWhsMU9xRXo1NXMKc5FxR5wDAOtlG+1/tcDzk7QnbtPqf8n6
+            oFtZw0p32MVmcKJPA5EQskRIIEZHG1q7tquRZ3KIufSu+ePzUxHNmg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-06-28T03:55:07Z"
-    mac: ENC[AES256_GCM,data:SiAzopeYFZZyisKgF44io5KBVMeFB2+TCSl4YYF6Vn44qj+y/KbANGGdZ7EjYf3yw76x17VaZgrolK5I3FoSl3FECVD3YgMaBL3YwBuAk4GtqGMtHr9o4HezEh7MeXOKZ3aCGpyt6+W9YGoPZoX+YZ4J8H2VpigUgSt2nMlVwao=,iv:tPM5y/sQ6oNKDB6lYhHeZSpfX1HcYI3rBCOdVNv9X1s=,tag:4uFIGYMS9CSQcjEd3qKk+A==,type:str]
+    lastmodified: "2026-07-02T05:30:25Z"
+    mac: ENC[AES256_GCM,data:qKnCvoJEbb+hZisYn5v55m9Jdm2s6zp55zS/O5qvis9rucQX+pLzp6L4a0u37HV1pQnpIVzOdx1WgeR7XyOYyvjsmYl/8kA3PkuXHA/AXSg5C0edcmxF2Q6PYFCSUE7IYBa3vw1ZlvR1iAoPWMdL4fToSEoknZ9qZbVfp/gLnng=,iv:S9cbHmYgjvj1vj31YMb6R1dl7BsVsVhHRkgFcU51g58=,tag:N0hXb6/VmC6oim8ea5M5YQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1
