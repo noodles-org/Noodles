@@ -85,10 +85,27 @@ config:
       secretEnv: KUBELOGIN_CLIENT_SECRET
     - id: jellyfin
       redirectURIs:
-        - https://jellyfin.noodles.quest/sso/OID/redirect/github
-        - http://jellyfin.noodles.quest/sso/OID/redirect/github
+        - https://jellyfin.noodles.quest/sso/OID/redirect/dex
+        - http://jellyfin.noodles.quest/sso/OID/redirect/dex
       name: "Jellyfin"
       secretEnv: JELLYFIN_CLIENT_SECRET
+    - id: grafana
+      redirectURIs:
+        - https://noodles.quest/grafana/login/generic_oauth
+      name: "Grafana"
+      secretEnv: GRAFANA_CLIENT_SECRET
+    - id: argocd
+      redirectURIs:
+        - https://argocd.noodles.quest/auth/callback
+        - http://argocd.noodles.quest/auth/callback
+      name: "ArgoCD"
+      secretEnv: ARGOCD_CLIENT_SECRET
+    - id: noodles-dashboard
+      redirectURIs:
+        - https://noodles.quest/api/auth/callback
+        - http://noodles.quest/api/auth/callback
+      name: "Noodles Dashboard"
+      secretEnv: DASHBOARD_CLIENT_SECRET
   oauth2:
     skipApprovalScreen: true
 

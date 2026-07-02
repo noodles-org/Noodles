@@ -9,12 +9,12 @@ kube-prometheus-stack:
       additionalScrapeConfigs:
         - job_name: 'pushgateway'
           static_configs:
-            - targets: ['prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091']
+            - targets: [ 'prometheus-stack-prometheus-pushgateway.monitoring.svc.cluster.local:9091' ]
 
   grafana:
     enabled: true
     adminPassword: prom-operator
-    envFromSecret: github
+    envFromSecret: dex-auth
     namespaceOverride: "monitoring"
     defaultDashboardsEnabled: true
 
@@ -23,12 +23,17 @@ kube-prometheus-stack:
         domain: noodles.quest
         root_url: https://noodles.quest/grafana/
         serve_from_sub_path: true
-      auth.github:
-        client_id: $__env{GF_AUTH_GITHUB_CLIENT_ID}
-        client_secret: $__env{GF_AUTH_GITHUB_CLIENT_SECRET}
+      auth.generic_oauth:
         enabled: true
+        name: Dex
         allow_sign_up: true
-        role_attribute_path: contains(groups[*], '@noodles-org/admin') && 'Admin' || contains(groups[*], '@noodles-org/developer') && 'Editor' || 'None'
+        client_id: grafana
+        client_secret: $__env{GRAFANA_CLIENT_SECRET}
+        scopes: openid profile email groups
+        auth_url: https://dex.noodles.quest/auth
+        token_url: https://dex.noodles.quest/token
+        api_url: https://dex.noodles.quest/userinfo
+        role_attribute_path: contains(groups[*], 'noodles-org:admin') && 'Admin' || contains(groups[*], 'noodles-org:developer') && 'Editor' || 'None'
 
     sidecar:
       dashboards:
