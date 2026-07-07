@@ -5,16 +5,16 @@ metadata:
     namespace: foundry
 type: Opaque
 stringData:
-    dns-api-key: ENC[AES256_GCM,data:tZTSfTCG8x2/PHkDuCx4+Sdkm2jeGf6MKr911Wtx75lhfZmOo/3gJw==,iv:ZVhc0XuQXQ++eNffsm/tQOb3pHwHLY4AhJVmyWkYmEE=,tag:nZkomA+Xd7Q7rReZ3aPTjQ==,type:str]
-    global-api-key: ENC[AES256_GCM,data:wZ2oV9UjGtlBbQ61QGL4ufKBV8jCxeqbWuiP1iDmpULornE3Pw==,iv:+aj/ZobWZ5PhczZEzkUj7x/H1nOVF409h/jBtHVY3yM=,tag:b8QpXl/6/pJbSIYHPMS7aA==,type:str]
-    dns-zone-id: ENC[AES256_GCM,data:QLW+kPnZR+BBv58chQiIcyIND1rKkP6mggzJHP1tqNA=,iv:JlgdiQD0jh08Ka0BvKyNQUlU/liLkVvsRYSiI/LcnTc=,tag:wz0I+PMTbg3HIJer7dlHbQ==,type:str]
-    #ENC[AES256_GCM,data:IbJ0Y00t7tBjKolaUQ3wR+RRIZ+cCUWu8Zh4XCS9TFVXu7bhcADT+ZAPc9ZK0X0JWxca,iv:b0yK1TLmHyc34vYo3bKT2BTtWpLb/kRwC+l65CYHJpA=,tag:kSWoJyGFIEEGC3cfFjXWuQ==,type:comment]
-    dns-record-ids: ENC[AES256_GCM,data:UskZZ0R0LEmylF5D4BpfQk9y8+x2gid+H59J3fJmNIlKh+TdapAAFnLZAYeQ5e2E+bSA+69l+puFaXIWoGzHHzvKv10hlrhJrmSTGlOQppjxwTmyPp5DUK5KuKsrZOcnflMYNA==,iv:H89HlURVLzJ3Xlbe3sT1TSIKDaZenZ2uGd5q2jJOfUI=,tag:Wc+UhltWREMEH8Uvpb5P6Q==,type:str]
+    dns-api-key: ENC[AES256_GCM,data:/bhOMCaOc72nPlROSqp0ldlkCiJFHt9vAHMmgiu6FS2EcUi+xx9TsQ==,iv:2vDjSt9uUuJsvvFp3feh1tElqOwgQ6YynSWWFdBBhZY=,tag:B4Axv6RwgrSAeTkSAaX/7Q==,type:str]
+    global-api-key: ENC[AES256_GCM,data:2p/WzLz0vBX1qxTPamg1N1VWx7wl1mKYRMr7/pF8/HBRxz8coQ==,iv:J0RVnbV1dwY5WSvaOqai8P2VRMujxV4Xm3EexaKLtwk=,tag:kw4yRjE+lhWTVekEoFpo2w==,type:str]
+    dns-zone-id: ENC[AES256_GCM,data:GNkn0jR8kYzaGU2eKOyy+QofHDdIpXiK9yr53UprqPs=,iv:88v3fedOcaJ+Ib6qoNy2rZDIVF8l2UZvbtfqpVuNdug=,tag:WmnWnZSj6fGB2sRGvR84sQ==,type:str]
+    #ENC[AES256_GCM,data:ie94lA5ezGEsis/TL7lEEvwWXD9HRMX1CIOWRjPdv6KUWK8/bJivKaDA21OGyQJ+3go7,iv:xJMDCl5EvTgbVGWuHT4d3KZcCOqZEr06BXp6t5a9yLk=,tag:fiOTtS3htHuQNVgxSMVjew==,type:comment]
+    dns-record-ids: ENC[AES256_GCM,data:LSu+jwMRe4uI9E+YFi/vCwAtzuycD4riTocOrNrAwTy0cmZZpIeA0v8UN2Sr9nvWJXCvMFZR3H2WCfV4ORrQAwvRPmOjYCEcYqGJ+ULTi0/l0Lc3/ORhAZoKSBLX54HA4MiYWA==,iv:7NIUYFRBQR+/xntNQmFJ7SjeRK7mhaRqPKhYPCUiYUc=,tag:w+GQNSs2DNnQumyTSJehoQ==,type:str]
 sops:
     kms:
         - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
-          created_at: "2026-07-02T05:30:24Z"
-          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgGL/rfpx3ve3kNHOdf3f2uCAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMIjV1i3L+ffZCxaheAgEQgDtgp3/Hh5DsXN5mcJiimLeF6Bk3/OkQduiw4Q4cu2xTMn4qU5XXKt687fENR4DF7if0Ihw9RfwMgaDUcg==
+          created_at: "2026-07-07T00:07:34Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgHG4FM1tZ+x9+6zQiGfOcEQAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+tYNLX+m9fyQ6hvQAgEQgDuDD79Aaiui57VeeB5t4wEUU/ycM4wZ6S3P0FrQfaWlHm9NCE2qVb0w/RYFxx8Hag0YWt2tmY6OT3wBDg==
           aws_profile: ""
     gcp_kms: []
     azure_kv: []
@@ -23,14 +23,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwNGpWbHBQTlRQVjR5eEtj
-            K3kzRTdGWGFocGpkWUIzZXFhc0hrT2JKaW1FClE3eUovN3lIUUZQSEF4M1hCTUxQ
-            UE1Ra0h0M25XdEZYaDdXUStPQ0k4aW8KLS0tIFUxM3B5YlB6QzZCRnpGMjhDWUc2
-            RU5hbVY4aWFxTVdXRnNkbzF3aVlmd2MKxQe7WNFICQxo0q3B36Mfo5G5ReQ/z/sm
-            iukA7QZbXQjyni65KXqZmrKGRJwwfqb+f4A1MENrRxqpeLNzVprfXQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0ZElDbE1XQ21SVXJPL0JH
+            SmRsM0pNYmU0YjgvK1NwdDBFcjl2SXBFMGhVCldjNHd4RG1CNGg5b1JJVzdTQjFC
+            NzlpZmFFTWVvZlk5NkFjczhCMFJyM0EKLS0tIDhOMXU3NVVwRXR0bWNDVXZuWVV3
+            ZjFSZFNxZ3RQeVU1NmN2WFI2T04yQVEK1AOTx6GZYf8rurJibsRFysBpAXrzkM+k
+            wr2bDs8kzffM9SAXltZpjx6dFsrPLODhvEbQBAaEgp5/N4bNDpXAXQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-07-02T05:30:24Z"
-    mac: ENC[AES256_GCM,data:YJ/Fpe9X1gx9ctvgvg33RqmtKSWuCdkdeiCIHxRBlKQN0WW0ieVc4RgcdWZ8Vkk32foIZ6FVCOFQHTZnFlthEMWbE0RxIFc9MbEe1SaBYBVJukZVodxEJgnV5OR5loAkDHLR52SzI3vLzqqHRNh7uIWddZodsk6QNA26stiame8=,iv:DibyYPUoQrA/El4FRkej49PBQWGieOJPQZerI+2FmpA=,tag:QuW9JV+WGlpJDojDEmupwA==,type:str]
+    lastmodified: "2026-07-07T00:07:34Z"
+    mac: ENC[AES256_GCM,data:EAjnyG6Cg3xlb0c0i9s/kmNcimzelMqYNOmtAwawTbbVqf3AGlfh+1DYOb1eeXKI2mqv2JgE3UHvk4TjfJ4C8w2lkkVtPgMEHxqse/wTTChRogkHjngzMOF3hSTE4vBMMdU+a+NxBFXXUUmnma229m5i2Vw5U6r6jCDEfevMZdg=,iv:xivJHDvBMW6+9OOr14R3GsgTdnFA4iFk3sU9Z/O7KyQ=,tag:Tg43cBFQDjimCYIHwJiVOQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1
@@ -42,16 +42,16 @@ metadata:
     namespace: foundry
 type: Opaque
 stringData:
-    repository: ENC[AES256_GCM,data:jfpxeU/iT//3RcRyj/92zM/2VIeEf6/jY6JlyyyInleleSJnkamqMuUG9bkwsduBuNgQezbYgvJd48VlZjTPvw==,iv:o532q5UM4m3BSe7KP4n2WTQA0SKixOAZDtm0ErbBV0o=,tag:YbBFWfen1eNNQfgSImnkYA==,type:str]
-    bucket-name: ENC[AES256_GCM,data:e627lBiZFtoWJD5TOb8Vu/1RJ6HfZTulwoexiYU=,iv:UN4N6dUEPNJGeV+2a58TYDErdJKze6SW2JhDrY6LOQ0=,tag:h9mZoQ9FfoZ0g/hcRt9O1Q==,type:str]
-    restic-password: ENC[AES256_GCM,data:oU3JBu+sRTxso46ON1wr9f0=,iv:Vw6n/stO7rSbSQdfYMM9KMa8v9iPLeFLMNgDdB9zI/0=,tag:1TPId/EGytU3i9K5zZPerA==,type:str]
-    access-key-id: ENC[AES256_GCM,data:+S19deEIi4fJks1VKw39KA9SXfw=,iv:rMDOB0qYa24wcngqfWizrMHnrSJpC6kc96ekKtK7Lfk=,tag:sAHf3wBZlQDpW5oLxUtdkg==,type:str]
-    secret-access-key: ENC[AES256_GCM,data:ahHQYJPSGfZ+nz7lVs7tchUnMyRQ5UkFNHU16JPmM7cBY/+dPGF91g==,iv:hDLXfUEAFv/yEQknzfUhVVB6SxnZl3nQIBlkQ+ZqW5I=,tag:Q749Ed+vdx2lbvcQtPAkqw==,type:str]
+    repository: ENC[AES256_GCM,data:iS2Do/5P0gdGQeJktKmEijJtgXmSkdS+8u8quW17lZu/hmZnbQ+MhGkeieIqIipQbh3Ww8W95qI+a0DsXptXPA==,iv:34eL7d1kH/jY6knfrPd9SMSurAphvvdNgxFb1p11WT4=,tag:jh9KKikdzcvZgAoUm0MZeg==,type:str]
+    bucket-name: ENC[AES256_GCM,data:ET++GTjy30u4O9JIoJuY4IIEk+ZdLYOP85Ur4/0=,iv:v0k2B6Rg/B5gsyRzCUoSmxm/kkS1vLZoHbf849YQefk=,tag:izun+43MMM9NrNDaIhkKGg==,type:str]
+    restic-password: ENC[AES256_GCM,data:W72KjbZNvEg/QimQRmR/43A=,iv:et1K+lNhB51NeltLCoOvXrQKUI7YG1s1hjJdSlv4upI=,tag:Xk6oiam9jZtGrnmvkhmlkA==,type:str]
+    access-key-id: ENC[AES256_GCM,data:I0NodqrZKbDnCLYQjJuM6e4WVHc=,iv:FX/PgnYnxNaY11eHJYUgTTfBRX//wQGFmi423rC5pPw=,tag:z2wcHqGSlksV/wShuE8wGg==,type:str]
+    secret-access-key: ENC[AES256_GCM,data:j3OUY9KKSgji3wMVeJzXFgmTQOcDZQuC10xBJDWMewPZcdm/I1Ye7w==,iv:Mu1NMlXqBKWjzmPwYbZBhFYTElkFp/CGFLEpavQyhyM=,tag:Ykz762PunRk+SjIarZb83g==,type:str]
 sops:
     kms:
         - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
-          created_at: "2026-07-02T05:30:24Z"
-          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgGL/rfpx3ve3kNHOdf3f2uCAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMIjV1i3L+ffZCxaheAgEQgDtgp3/Hh5DsXN5mcJiimLeF6Bk3/OkQduiw4Q4cu2xTMn4qU5XXKt687fENR4DF7if0Ihw9RfwMgaDUcg==
+          created_at: "2026-07-07T00:07:34Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgHG4FM1tZ+x9+6zQiGfOcEQAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+tYNLX+m9fyQ6hvQAgEQgDuDD79Aaiui57VeeB5t4wEUU/ycM4wZ6S3P0FrQfaWlHm9NCE2qVb0w/RYFxx8Hag0YWt2tmY6OT3wBDg==
           aws_profile: ""
     gcp_kms: []
     azure_kv: []
@@ -60,14 +60,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwNGpWbHBQTlRQVjR5eEtj
-            K3kzRTdGWGFocGpkWUIzZXFhc0hrT2JKaW1FClE3eUovN3lIUUZQSEF4M1hCTUxQ
-            UE1Ra0h0M25XdEZYaDdXUStPQ0k4aW8KLS0tIFUxM3B5YlB6QzZCRnpGMjhDWUc2
-            RU5hbVY4aWFxTVdXRnNkbzF3aVlmd2MKxQe7WNFICQxo0q3B36Mfo5G5ReQ/z/sm
-            iukA7QZbXQjyni65KXqZmrKGRJwwfqb+f4A1MENrRxqpeLNzVprfXQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0ZElDbE1XQ21SVXJPL0JH
+            SmRsM0pNYmU0YjgvK1NwdDBFcjl2SXBFMGhVCldjNHd4RG1CNGg5b1JJVzdTQjFC
+            NzlpZmFFTWVvZlk5NkFjczhCMFJyM0EKLS0tIDhOMXU3NVVwRXR0bWNDVXZuWVV3
+            ZjFSZFNxZ3RQeVU1NmN2WFI2T04yQVEK1AOTx6GZYf8rurJibsRFysBpAXrzkM+k
+            wr2bDs8kzffM9SAXltZpjx6dFsrPLODhvEbQBAaEgp5/N4bNDpXAXQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-07-02T05:30:24Z"
-    mac: ENC[AES256_GCM,data:YJ/Fpe9X1gx9ctvgvg33RqmtKSWuCdkdeiCIHxRBlKQN0WW0ieVc4RgcdWZ8Vkk32foIZ6FVCOFQHTZnFlthEMWbE0RxIFc9MbEe1SaBYBVJukZVodxEJgnV5OR5loAkDHLR52SzI3vLzqqHRNh7uIWddZodsk6QNA26stiame8=,iv:DibyYPUoQrA/El4FRkej49PBQWGieOJPQZerI+2FmpA=,tag:QuW9JV+WGlpJDojDEmupwA==,type:str]
+    lastmodified: "2026-07-07T00:07:34Z"
+    mac: ENC[AES256_GCM,data:EAjnyG6Cg3xlb0c0i9s/kmNcimzelMqYNOmtAwawTbbVqf3AGlfh+1DYOb1eeXKI2mqv2JgE3UHvk4TjfJ4C8w2lkkVtPgMEHxqse/wTTChRogkHjngzMOF3hSTE4vBMMdU+a+NxBFXXUUmnma229m5i2Vw5U6r6jCDEfevMZdg=,iv:xivJHDvBMW6+9OOr14R3GsgTdnFA4iFk3sU9Z/O7KyQ=,tag:Tg43cBFQDjimCYIHwJiVOQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1

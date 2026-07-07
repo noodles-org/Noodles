@@ -5,7 +5,7 @@ ArgoCD provides GitOps-based continuous deployment for the cluster. It watches t
 ## Access
 
 - **URL:** `https://argocd.noodles.quest`
-- **Authentication:** GitHub OAuth via the `noodles-org` GitHub organization.
+- **Authentication:** Dex OIDC SSO (ArgoCD is registered as the `argocd` Dex static client). Dex in turn authenticates users against the `noodles-org` GitHub organization.
 
 ## Projects
 

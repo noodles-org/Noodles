@@ -5,7 +5,7 @@ Grafana is the primary observability dashboard, deployed as part of the `kube-pr
 ## Access
 
 - **URL:** `https://noodles.quest/grafana/`
-- **Authentication:** GitHub OAuth via the `noodles-org` GitHub organization.
+- **Authentication:** Dex OIDC SSO via generic OAuth (Grafana is registered as the `grafana` Dex static client). Dex in turn authenticates users against the `noodles-org` GitHub organization.
 - Grafana is served from the `/grafana` subpath.
 
 ## Role Mapping
