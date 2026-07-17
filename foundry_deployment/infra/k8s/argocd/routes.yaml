@@ -13,6 +13,12 @@ kind: IngressRoute
 metadata:
   name: argocd-server
   namespace: argocd
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "ArgoCD"
+    noodles.dashboard/description: "GitOps continuous delivery"
+    noodles.dashboard/category: "CI/CD"
 spec:
   entryPoints:
     - web

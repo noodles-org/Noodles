@@ -3,6 +3,12 @@ kind: IngressRoute
 metadata:
   name: pihole-route
   namespace: pihole
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Pi-hole"
+    noodles.dashboard/description: "Network-wide DNS and ad blocking"
+    noodles.dashboard/category: "Networking"
 spec:
   entryPoints:
     - web

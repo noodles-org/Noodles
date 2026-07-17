@@ -13,6 +13,13 @@ kind: IngressRoute
 metadata:
   name: grafana-ingress-route
   namespace: monitoring
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Grafana"
+    noodles.dashboard/description: "Metrics and dashboards"
+    noodles.dashboard/category: "Monitoring"
+    noodles.dashboard/url: "https://noodles.quest/grafana"
 spec:
   entryPoints:
     - web
@@ -34,6 +41,12 @@ kind: IngressRoute
 metadata:
   name: loki-ingress-route
   namespace: monitoring
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Loki"
+    noodles.dashboard/description: "Log aggregation"
+    noodles.dashboard/category: "Monitoring"
 spec:
   entryPoints:
     - web

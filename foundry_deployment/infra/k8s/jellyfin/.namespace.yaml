@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: jellyfin
   labels:
-    dashboard.cluster/managed: "true"
+    noodles.dashboard/managed: "true"

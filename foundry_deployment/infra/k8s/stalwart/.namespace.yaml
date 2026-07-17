@@ -4,4 +4,3 @@ metadata:
   name: stalwart
   labels:
     name: stalwart
-    dashboard.cluster/managed: "true"

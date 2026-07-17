@@ -4,4 +4,3 @@ metadata:
   name: pihole
   labels:
     name: pihole
-    dashboard.cluster/managed: "true"

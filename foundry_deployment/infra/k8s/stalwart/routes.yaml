@@ -13,6 +13,12 @@ kind: IngressRoute
 metadata:
   name: route
   namespace: stalwart
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Mail"
+    noodles.dashboard/description: "Stalwart mail server"
+    noodles.dashboard/category: "Applications"
 spec:
   entryPoints:
     - web
