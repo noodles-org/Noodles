@@ -6,27 +6,29 @@ setup-dev:
 # sops key is ~/.config/sops/age/keys.txt by default
 # export AWS_PROFILE for KMS encryption/decryption.
 sops-encrypt-all:
-	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml && \
-	sops --encrypt k8s/argocd/.secret.yaml > .secrets/argocd.enc.yaml && \
-	sops --encrypt k8s/auth/.secret.yaml > .secrets/auth.enc.yaml && \
-	sops --encrypt k8s/foundry/.secret.yaml > .secrets/foundry.enc.yaml && \
-	sops --encrypt k8s/monitoring/.secret.yaml > .secrets/monitoring.enc.yaml && \
-	sops --encrypt k8s/pihole/.secret.yaml > .secrets/pihole.enc.yaml && \
-	sops --encrypt k8s/stalwart/.secret.yaml > .secrets/stalwart.enc.yaml && \
-	sops --encrypt .secrets/escrow > .secrets/escrow.enc && \
-	sops --encrypt helm/grafana-loki/values.yaml > .secrets/grafana-loki-values.enc.yaml && \
+	sops --encrypt playbooks/.secrets/restic-ansible-vault.yaml > playbooks/.secrets/restic-ansible-vault.enc.yaml
+	sops --encrypt k8s/argocd/.secret.yaml > .secrets/argocd.enc.yaml
+	sops --encrypt k8s/auth/.secret.yaml > .secrets/auth.enc.yaml
+	sops --encrypt k8s/foundry/.secret.yaml > .secrets/foundry.enc.yaml
+	sops --encrypt k8s/monitoring/.secret.yaml > .secrets/monitoring.enc.yaml
+	sops --encrypt k8s/pihole/.secret.yaml > .secrets/pihole.enc.yaml
+	sops --encrypt k8s/stalwart/.secret.yaml > .secrets/stalwart.enc.yaml
+	sops --encrypt k8s/dashboard/.secret.yaml > .secrets/dashboard.enc.yaml
+	sops --encrypt .secrets/escrow > .secrets/escrow.enc
+	sops --encrypt helm/grafana-loki/values.yaml > .secrets/grafana-loki-values.enc.yaml
 	sops --encrypt helm/grafana-alloy/values.yaml > .secrets/grafana-alloy-values.enc.yaml
 
 sops-decrypt-all:
-	sops --decrypt playbooks/.secrets/restic-ansible-vault.enc.yaml > playbooks/.secrets/restic-ansible-vault.yaml && \
-	sops --decrypt .secrets/argocd.enc.yaml > k8s/argocd/.secret.yaml && \
-	sops --decrypt .secrets/auth.enc.yaml > k8s/auth/.secret.yaml && \
-	sops --decrypt .secrets/foundry.enc.yaml > k8s/foundry/.secret.yaml && \
-	sops --decrypt .secrets/monitoring.enc.yaml > k8s/monitoring/.secret.yaml && \
-	sops --decrypt .secrets/pihole.enc.yaml > k8s/pihole/.secret.yaml && \
-	sops --decrypt .secrets/stalwart.enc.yaml > k8s/stalwart/.secret.yaml && \
-	sops --decrypt .secrets/escrow.enc > .secrets/escrow && \
-	sops --decrypt .secrets/grafana-loki-values.enc.yaml > helm/grafana-loki/values.yaml && \
+	sops --decrypt playbooks/.secrets/restic-ansible-vault.enc.yaml > playbooks/.secrets/restic-ansible-vault.yaml
+	sops --decrypt .secrets/argocd.enc.yaml > k8s/argocd/.secret.yaml
+	sops --decrypt .secrets/auth.enc.yaml > k8s/auth/.secret.yaml
+	sops --decrypt .secrets/foundry.enc.yaml > k8s/foundry/.secret.yaml
+	sops --decrypt .secrets/monitoring.enc.yaml > k8s/monitoring/.secret.yaml
+	sops --decrypt .secrets/pihole.enc.yaml > k8s/pihole/.secret.yaml
+	sops --decrypt .secrets/stalwart.enc.yaml > k8s/stalwart/.secret.yaml
+	sops --decrypt .secrets/dashboard.enc.yaml > k8s/dashboard/.secret.yaml
+	sops --decrypt .secrets/escrow.enc > .secrets/escrow
+	sops --decrypt .secrets/grafana-loki-values.enc.yaml > helm/grafana-loki/values.yaml
 	sops --decrypt .secrets/grafana-alloy-values.enc.yaml > helm/grafana-alloy/values.yaml
 
 setup-cluster:

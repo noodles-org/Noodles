@@ -52,22 +52,9 @@
       changed_when: false
 
     - name: Decrypt secrets via sops
-      shell: "sops --decrypt {{ item.src }} > {{ item.dest }}"
+      command: make sops-decrypt-all
       args:
         chdir: "{{ infra_dir }}"
-      loop:
-        - { src: "playbooks/.secrets/restic-ansible-vault.enc.yaml", dest: "playbooks/.secrets/restic-ansible-vault.yaml" }
-        - { src: ".secrets/argocd.enc.yaml", dest: "k8s/argocd/.secret.yaml" }
-        - { src: ".secrets/auth.enc.yaml", dest: "k8s/auth/.secret.yaml" }
-        - { src: ".secrets/foundry.enc.yaml", dest: "k8s/foundry/.secret.yaml" }
-        - { src: ".secrets/monitoring.enc.yaml", dest: "k8s/monitoring/.secret.yaml" }
-        - { src: ".secrets/pihole.enc.yaml", dest: "k8s/pihole/.secret.yaml" }
-        - { src: ".secrets/stalwart.enc.yaml", dest: "k8s/stalwart/.secret.yaml" }
-        - { src: ".secrets/escrow.enc", dest: ".secrets/escrow" }
-        - { src: ".secrets/grafana-loki-values.enc.yaml", dest: "helm/grafana-loki/values.yaml" }
-        - { src: ".secrets/grafana-alloy-values.enc.yaml", dest: "helm/grafana-alloy/values.yaml" }
-      loop_control:
-        label: "{{ item.src }}"
 
     - name: Ensure kubeconfig directory exists
       file:
@@ -90,6 +77,7 @@
       shell: "grep 'KUBELOGIN_CLIENT_SECRET:' {{ auth_secret }} | head -1 | sed 's/.*: *//'"
       changed_when: false
       register: kubelogin_secret
+      no_log: true
 
     - name: Build kubeconfig
       shell: |

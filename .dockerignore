@@ -1,0 +1,13 @@
+node_modules
+app/frontend/node_modules
+app/backend/node_modules
+app/frontend/dist
+app/backend/dist
+.git
+.gitignore
+*.md
+!docs/**/*.md
+gameserver_deployment
+foundry_deployment
+.idea
+.vscode
