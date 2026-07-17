@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import {config} from '../config';
 import {AuthenticatedRequest, User, Role} from '../types';
+import {DEV_USER} from '../constants';
 import {requireAuth} from '../middleware/auth';
 import {logger} from '../services/logger';
 import {authEvents, trackUniqueUser} from '../services/metrics';
@@ -16,15 +17,27 @@ function resolveRole(groups: string[]): Role {
     return 'viewer';
 }
 
-/** Check if user belongs to at least one allowed group */
 function isAllowedUser(groups: string[]): boolean {
     return config.auth.allowedGroups.some((g) => groups.includes(g));
 }
 
-// ── Initiate OAuth via Dex ────────────────────────────────────────
 router.get('/login', (req: Request, res: Response) => {
-    const state = randomBytes(32).toString('hex');
+    // In development, bypass Dex and issue a token for a mock user
+    if (!config.isProduction) {
+        const token = jwt.sign(DEV_USER, config.jwt.secret);
+        res.cookie(config.jwt.cookieName, token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 8 * 60 * 60 * 1000,
+            path: '/',
+        });
 
+        logger.info('Auth: dev login bypass', {ip: req.ip});
+        return res.redirect('/');
+    }
+
+    const state = randomBytes(32).toString('hex');
     res.cookie('oauth_state', state, {
         httpOnly: true,
         secure: config.isProduction,
@@ -46,7 +59,6 @@ router.get('/login', (req: Request, res: Response) => {
     res.redirect(`${config.oauth.authorizeUrl}?${params}`);
 });
 
-// ── OAuth callback ────────────────────────────────────────────────
 router.get('/callback', async (req: Request, res: Response) => {
     const {code, state, error: oauthError} = req.query;
     const storedState = req.cookies?.oauth_state;
@@ -93,7 +105,6 @@ router.get('/callback', async (req: Request, res: Response) => {
         const ui = userRes.data;
         const groups: string[] = ui.groups || [];
 
-        // Reject users not in any allowed group
         if (!isAllowedUser(groups)) {
             logger.warn('Auth: user not in allowed groups', {
                 email: ui.email,
@@ -115,9 +126,6 @@ router.get('/callback', async (req: Request, res: Response) => {
         };
 
         const token = jwt.sign(user, config.jwt.secret);
-        // const token = jwt.sign(user, config.jwt.secret, {
-        //     expiresIn: config.jwt.expiresIn,
-        // });
 
         res.cookie(config.jwt.cookieName, token, {
             httpOnly: true,
@@ -148,12 +156,10 @@ router.get('/callback', async (req: Request, res: Response) => {
     }
 });
 
-// ── Current user ──────────────────────────────────────────────────
 router.get('/me', requireAuth, (req: AuthenticatedRequest, res: Response) => {
     res.json(req.user);
 });
 
-// ── Logout ────────────────────────────────────────────────────────
 router.post('/logout', requireAuth, (req: AuthenticatedRequest, res: Response) => {
     logger.info('Auth: logout', {user: req.user?.email, ip: req.ip});
     authEvents.inc({status: 'success', reason: 'logout'});

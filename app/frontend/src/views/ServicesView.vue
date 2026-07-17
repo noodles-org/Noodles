@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import api from '../api/client';
-import type { ServiceLink } from '../types';
+import type {ServiceLink} from '../types';
 import ServiceCard from '../components/ServiceCard.vue';
 import '../styles/services.css';
 
@@ -10,7 +10,7 @@ const loading = ref(true);
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/services');
+    const {data} = await api.get('/services');
     services.value = data;
   } finally {
     loading.value = false;

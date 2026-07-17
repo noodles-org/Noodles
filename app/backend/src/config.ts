@@ -22,16 +22,19 @@ export const config = {
     nodeEnv: optional('NODE_ENV', 'development'),
     isProduction: optional('NODE_ENV', 'development') === 'production',
 
-    // TODO: Update all OAuth URLs to your Dex instance
-    oauth: {
-        clientId: required('OAUTH_CLIENT_ID'),
-        clientSecret: required('OAUTH_CLIENT_SECRET'),
-        authorizeUrl: required('OAUTH_AUTHORIZE_URL'),
-        tokenUrl: required('OAUTH_TOKEN_URL'),
-        userinfoUrl: required('OAUTH_USERINFO_URL'),
-        callbackUrl: required('OAUTH_CALLBACK_URL'),
-        scopes: optional('OAUTH_SCOPES', 'openid profile email groups'),
-    },
+    oauth: (() => {
+        const issuer = 'https://dex.noodles.quest';
+        const publicUrl = 'https://noodles.quest';
+        return {
+            clientId: 'noodles-dashboard',
+            clientSecret: process.env.DASHBOARD_CLIENT_SECRET || '',
+            authorizeUrl: `${issuer}/auth`,
+            tokenUrl: `${issuer}/token`,
+            userinfoUrl: `${issuer}/userinfo`,
+            callbackUrl: `${publicUrl}/api/auth/callback`,
+            scopes: optional('OAUTH_SCOPES', 'openid profile email groups'),
+        };
+    })(),
 
     jwt: {
         secret: jwtSecret,
@@ -39,25 +42,24 @@ export const config = {
         cookieName: 'dashboard_token',
     },
 
-    // TODO: Update GitHub org group names to match your org
-    auth: {
-        adminGroups: optional('AUTH_ADMIN_GROUPS', 'example-org:admin')
-            .split(',').map((s) => s.trim()),
-        allowedGroups: optional('AUTH_ALLOWED_GROUPS', 'example-org:admin,example-org:developer')
-            .split(',').map((s) => s.trim()),
-    },
+    auth: (() => {
+        const adminGroup = 'noodles-org:admin';
+        const viewerGroup = 'noodles-org:developer';
+        return {
+            adminGroups: [adminGroup],
+            allowedGroups: [adminGroup, viewerGroup],
+        };
+    })(),
 
-    // TODO: Update if your ArgoCD lives at a different in-cluster address
     argocd: {
-        url: optional('ARGOCD_URL', 'https://argocd-server.argocd.svc.cluster.local'),
+        url: 'https://argocd-server.argocd.svc.cluster.local',
         token: process.env.ARGOCD_TOKEN || '',
         insecure: optional('ARGOCD_INSECURE', 'true') === 'true',
     },
 
-    namespaceLabel: optional('NAMESPACE_LABEL', 'dashboard.cluster/managed'),
+    namespaceLabel: optional('NAMESPACE_LABEL', 'noodles.dashboard/managed'),
 
-    docsPath: resolve(optional('DOCS_PATH', '../docs')),
-    configPath: resolve(optional('CONFIG_PATH', '../config')),
-    frontendPath: resolve(optional('FRONTEND_PATH', '../frontend/dist')),
+    docsPath: resolve(optional('DOCS_PATH', '../../docs')),
+    frontendPath: resolve(optional('FRONTEND_PATH', '../../frontend/dist')),
     corsOrigin: optional('CORS_ORIGIN', 'http://localhost:5173'),
 };

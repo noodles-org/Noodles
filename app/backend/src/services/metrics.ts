@@ -8,12 +8,6 @@ export const authEvents = new client.Counter({
     labelNames: ['status', 'reason'] as const,
 });
 
-// This is a rough gauge and will reset on restart
-export const activeUsers = new client.Gauge({
-    name: 'dashboard_active_users',
-    help: 'Approximate active user count',
-});
-
 const authenticatedUserSet = new Set<string>();
 
 export const uniqueUsersGauge = new client.Gauge({

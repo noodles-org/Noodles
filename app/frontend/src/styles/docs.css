@@ -48,7 +48,7 @@
 }
 .docs-item.active {
     color: var(--c-primary);
-    background: #eff6ff;
+    background: var(--c-active-bg);
     font-weight: 500;
 }
 
@@ -82,8 +82,8 @@
     border-radius: 4px;
 }
 .docs-content pre {
-    background: #1e293b;
-    color: #e2e8f0;
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
     padding: 16px;
     border-radius: var(--radius);
     overflow-x: auto;
@@ -98,7 +98,7 @@
     border-left: 3px solid var(--c-primary);
     padding: 8px 16px;
     margin: 0 0 16px;
-    background: #eff6ff;
+    background: var(--c-active-bg);
     border-radius: 0 var(--radius) var(--radius) 0;
 }
 .docs-content table { width: 100%; border-collapse: collapse; margin: 0 0 16px; }

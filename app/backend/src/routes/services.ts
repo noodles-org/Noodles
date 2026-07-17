@@ -1,29 +1,19 @@
-import { Router, Response } from 'express';
-import { readFileSync } from 'fs';
-import path from 'path';
-import { config } from '../config';
-import { requireAuth } from '../middleware/auth';
-import { AuthenticatedRequest, ServiceLink } from '../types';
+import {Router, Response} from 'express';
+import {requireAuth} from '../middleware/auth';
+import {AuthenticatedRequest} from '../types';
+import {discoverServices} from '../services/kubernetes';
+import {logger} from '../services/logger';
 
 const router = Router();
 
-let cache: ServiceLink[] | null = null;
-
-function load(): ServiceLink[] {
-    if (cache) return cache;
+router.get('/', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
     try {
-        cache = JSON.parse(readFileSync(path.join(config.configPath, 'services.json'), 'utf-8'));
-        return cache!;
-    } catch {
-        return [];
+        const services = await discoverServices();
+        res.json(services);
+    } catch (err) {
+        logger.error('Service discovery failed', {error: err});
+        res.status(500).json({error: 'Failed to discover services'});
     }
-}
-
-// Reload on SIGHUP so ConfigMap updates can be picked up without restart
-process.on('SIGHUP', () => { cache = null; });
-
-router.get('/', requireAuth, (_req: AuthenticatedRequest, res: Response) => {
-    res.json(load());
 });
 
 export default router;

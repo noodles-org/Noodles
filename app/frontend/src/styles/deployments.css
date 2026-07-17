@@ -65,12 +65,12 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
-.badge-healthy     { background: #ecfdf5; color: var(--c-success); }
-.badge-progressing { background: #fffbeb; color: var(--c-warning); }
-.badge-degraded    { background: #fef2f2; color: var(--c-danger); }
-.badge-suspended   { background: #f3f4f6; color: var(--c-muted); }
-.badge-synced      { background: #ecfdf5; color: var(--c-success); }
-.badge-outofsync   { background: #fffbeb; color: var(--c-warning); }
+.badge-healthy     { background: var(--c-success-bg); color: var(--c-success); }
+.badge-progressing { background: var(--c-warning-bg); color: var(--c-warning); }
+.badge-degraded    { background: var(--c-danger-bg); color: var(--c-danger); }
+.badge-suspended   { background: var(--c-muted-bg); color: var(--c-muted); }
+.badge-synced      { background: var(--c-success-bg); color: var(--c-success); }
+.badge-outofsync   { background: var(--c-warning-bg); color: var(--c-warning); }
 
 .dep-actions {
     display: flex;

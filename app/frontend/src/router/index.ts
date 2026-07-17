@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
+import {createRouter, createWebHistory} from 'vue-router';
+import {useAuthStore} from '../stores/auth';
 import LoginView from '../views/LoginView.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/login', name: 'Login', component: LoginView, meta: { public: true } },
-        { path: '/', redirect: '/services' },
+        {path: '/login', name: 'Login', component: LoginView, meta: {public: true}},
+        {path: '/', redirect: '/services'},
         {
             path: '/services',
             name: 'Services',
@@ -22,7 +22,6 @@ const router = createRouter({
             name: 'Docs',
             component: () => import('../views/DocsView.vue'),
         },
-        // Add new pages here — just create a view and add a route entry
     ],
 });
 

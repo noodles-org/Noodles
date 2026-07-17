@@ -1,7 +1,7 @@
-import { ref } from 'vue';
-import { defineStore } from 'pinia';
+import {ref} from 'vue';
+import {defineStore} from 'pinia';
 import api from '../api/client';
-import type { DeploymentInfo } from '../types';
+import type {DeploymentInfo} from '../types';
 
 export const useDeploymentsStore = defineStore('deployments', () => {
     const deployments = ref<DeploymentInfo[]>([]);
@@ -12,7 +12,7 @@ export const useDeploymentsStore = defineStore('deployments', () => {
         loading.value = true;
         error.value = null;
         try {
-            const { data } = await api.get('/deployments');
+            const {data} = await api.get('/deployments');
             deployments.value = data;
         } catch {
             error.value = 'Failed to load deployments';

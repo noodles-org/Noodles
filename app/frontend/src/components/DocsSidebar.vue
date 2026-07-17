@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DocTocSection } from '../types';
+import type {DocTocSection} from '../types';
 import '../styles/docs.css';
 
 defineProps<{ sections: DocTocSection[]; activePath: string }>();

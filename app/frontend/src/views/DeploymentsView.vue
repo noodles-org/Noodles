@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useDeploymentsStore } from '../stores/deployments';
+import {onMounted} from 'vue';
+import {useDeploymentsStore} from '../stores/deployments';
 import DeploymentCard from '../components/DeploymentCard.vue';
 import '../styles/deployments.css';
 

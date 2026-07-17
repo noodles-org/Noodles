@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { marked } from 'marked';
+import {ref, onMounted} from 'vue';
+import {marked} from 'marked';
 import DOMPurify from 'dompurify';
 import api from '../api/client';
 import DocsSidebar from '../components/DocsSidebar.vue';
-import type { DocTocSection } from '../types';
+import type {DocTocSection} from '../types';
 import '../styles/docs.css';
 
 const sections = ref<DocTocSection[]>([]);
@@ -16,7 +16,7 @@ async function loadDoc(path: string) {
   activePath.value = path;
   loading.value = true;
   try {
-    const { data } = await api.get(`/docs/content?path=${encodeURIComponent(path)}`);
+    const {data} = await api.get(`/docs/content?path=${encodeURIComponent(path)}`);
     html.value = DOMPurify.sanitize(marked.parse(data.content) as string);
   } catch {
     html.value = '<p>Failed to load document.</p>';
@@ -26,7 +26,7 @@ async function loadDoc(path: string) {
 }
 
 onMounted(async () => {
-  const { data } = await api.get('/docs/toc');
+  const {data} = await api.get('/docs/toc');
   sections.value = data.sections || [];
   if (sections.value[0]?.items[0]) {
     await loadDoc(sections.value[0].items[0].path);

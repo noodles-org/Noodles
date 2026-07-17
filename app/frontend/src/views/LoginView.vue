@@ -12,7 +12,7 @@ const msgs: Record<string, string> = {
   invalid_state: 'Invalid session state. Please try again.',
   auth_failed: 'Authentication failed. Please try again.',
   no_code: 'No authorization code received.',
-  insufficient_permissions:
+  not_authorized:
       'Your GitHub account does not have access to this dashboard. Contact an org admin.',
 };
 </script>

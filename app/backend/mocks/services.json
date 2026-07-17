@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Foundry",
+    "url": "https://foundry.noodles.quest",
+    "description": "Foundry VTT game server",
+    "category": "Applications"
+  },
+  {
+    "name": "Jellyfin",
+    "url": "https://jellyfin.noodles.quest",
+    "description": "Media streaming server",
+    "category": "Applications"
+  },
+  {
+    "name": "Mail",
+    "url": "https://mail.noodles.quest",
+    "description": "Stalwart mail server",
+    "category": "Applications"
+  },
+  {
+    "name": "ArgoCD",
+    "url": "https://argocd.noodles.quest",
+    "description": "GitOps continuous delivery",
+    "category": "CI/CD"
+  },
+  {
+    "name": "Grafana",
+    "url": "https://noodles.quest/grafana",
+    "description": "Metrics and dashboards",
+    "category": "Monitoring"
+  },
+  {
+    "name": "Pi-hole",
+    "url": "http://pihole.noodles.local",
+    "description": "Network-wide DNS and ad blocking",
+    "category": "Networking"
+  },
+  {
+    "name": "Dex",
+    "url": "https://dex.noodles.quest",
+    "description": "OIDC identity provider",
+    "category": "Security"
+  },
+  {
+    "name": "Loki",
+    "url": "http://loki.noodles.quest",
+    "description": "Log aggregation",
+    "category": "Monitoring"
+  }
+]

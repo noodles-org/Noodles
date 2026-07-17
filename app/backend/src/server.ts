@@ -19,7 +19,6 @@ import serviceRoutes from './routes/services';
 
 const app = express();
 
-// ── Security ──────────────────────────────────────────────────────
 app.set('trust proxy', 1);
 app.use(
     helmet({
@@ -43,10 +42,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
 
-// ── Health (unauthenticated) ──────────────────────────────────────
 app.get('/healthz', (_req, res) => res.json({status: 'ok'}));
 
-// ── Auth rate limiter ─────────────────────────────────────────────
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 50,
@@ -55,15 +52,21 @@ const authLimiter = rateLimit({
     message: {error: 'Too many auth attempts'},
 });
 
-// ── API routes ────────────────────────────────────────────────────
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {error: 'Too many requests'},
+});
+
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/deployments', deploymentRoutes);
+app.use('/api/deployments', apiLimiter, deploymentRoutes);
 app.use('/api/docs', docsRoutes);
 app.use('/api/services', serviceRoutes);
 
 app.all('/api/*', (_req, res) => res.status(404).json({error: 'Not found'}));
 
-// ── Serve frontend in production ──────────────────────────────────
 if (config.isProduction) {
     app.use(express.static(config.frontendPath));
     app.get('*', (_req, res) => {
@@ -71,7 +74,6 @@ if (config.isProduction) {
     });
 }
 
-// ── Start ─────────────────────────────────────────────────────────
 app.listen(config.port, () => logger.info(`Server on :${config.port}`));
 
 const metricsApp = express();

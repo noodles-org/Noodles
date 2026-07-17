@@ -14,12 +14,34 @@
 .service-card:hover {
     box-shadow: var(--shadow);
     text-decoration: none;
+    color: var(--c-primary);
+}
+
+.service-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
 }
 
 .service-card-name {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 4px;
+}
+
+.service-card-icon {
+    flex-shrink: 0;
+    filter: brightness(0.75);
+}
+
+[data-theme="dark"] .service-card-icon {
+    filter: none;
+    opacity: 0.55;
+}
+
+.service-card:hover .service-card-icon {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(93%) saturate(1752%) hue-rotate(213deg) brightness(97%) contrast(93%);
+    opacity: 1;
 }
 
 .service-card-desc {
