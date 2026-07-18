@@ -50,12 +50,6 @@ kind: IngressRoute
 metadata:
   name: loki-ingress-route
   namespace: monitoring
-  labels:
-    noodles.dashboard/service: "true"
-  annotations:
-    noodles.dashboard/name: "Loki"
-    noodles.dashboard/description: "Log aggregation"
-    noodles.dashboard/category: "Monitoring"
 spec:
   entryPoints:
     - web
