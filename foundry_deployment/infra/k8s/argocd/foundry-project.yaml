@@ -26,6 +26,9 @@ spec:
     - namespace: stalwart
       server: in-cluster
       name: in-cluster
+    - namespace: dashboard
+      server: in-cluster
+      name: in-cluster
   # Deny all cluster-scoped resources from being created, except for Namespace
   clusterResourceWhitelist:
     - group: ''

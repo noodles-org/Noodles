@@ -1,0 +1,46 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: dashboard-security
+  namespace: dashboard
+spec:
+  headers:
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    forceSTSHeader: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    frameDeny: true
+    referrerPolicy: strict-origin-when-cross-origin
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: secure-redirect
+  namespace: dashboard
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: noodles-dashboard
+  namespace: dashboard
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`noodles.quest`)
+      kind: Rule
+      middlewares:
+        - name: dashboard-security
+        - name: secure-redirect
+      services:
+        - name: noodles-dashboard
+          port: 3000
+  tls:
+    secretName: noodles-quest-prod-tls

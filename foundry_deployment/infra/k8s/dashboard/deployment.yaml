@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noodles-dashboard
+  namespace: dashboard
+  labels: &labels
+    app: noodles-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels: *labels
+  template:
+    metadata:
+      labels: *labels
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: noodles-dashboard
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: dashboard
+          image: docker.io/mephalrith/noodles-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+            - name: metrics
+              containerPort: 9090
+          env:
+            - name: DASHBOARD_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: noodles-dashboard
+                  key: DASHBOARD_CLIENT_SECRET
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: noodles-dashboard
+                  key: JWT_SECRET
+            - name: ARGOCD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: noodles-dashboard
+                  key: ARGOCD_TOKEN
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests: { cpu: 50m,  memory: 128Mi }
+            limits: { cpu: 200m, memory: 256Mi }
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir: { }

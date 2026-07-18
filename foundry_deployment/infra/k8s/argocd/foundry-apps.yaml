@@ -19,6 +19,8 @@ spec:
             path: foundry_deployment/infra/k8s/pihole
           - name: stalwart
             path: foundry_deployment/infra/k8s/stalwart
+          - name: dashboard
+            path: foundry_deployment/infra/k8s/dashboard
   template:
     metadata:
       name: "{{name}}"
