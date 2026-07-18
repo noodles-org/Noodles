@@ -25,7 +25,7 @@ In development, OAuth is bypassed — hitting `/api/auth/login` issues a JWT for
 
 ```
 app/
-├── backend/          # Express API server (TypeScript)
+├── backend/          # Go API server (Chi router)
 │   └── mocks/        # Mock data for dev (no k8s cluster needed)
 ├── frontend/         # Vue 3 SPA (TypeScript + Vite)
 ├── docs/             # This documentation

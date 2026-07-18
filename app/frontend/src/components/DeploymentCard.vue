@@ -5,7 +5,7 @@ import {useDeploymentsStore} from '../stores/deployments';
 import {useAuthStore} from '../stores/auth';
 import '../styles/deployments.css';
 
-const _ = defineProps<{ deployment: DeploymentInfo }>();
+defineProps<{ deployment: DeploymentInfo }>();
 const store = useDeploymentsStore();
 const auth = useAuthStore();
 const busy = ref(false);

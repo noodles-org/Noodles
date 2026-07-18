@@ -1,4 +1,4 @@
-FROM node:20-alpine AS frontend
+FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend
 WORKDIR /build
 COPY app/frontend/package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -6,20 +6,18 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY app/frontend/ ./
 RUN npm run build
 
-FROM node:20-alpine AS backend
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS backend
+ARG TARGETOS TARGETARCH
 WORKDIR /build
-COPY app/backend/package*.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --prefer-offline
+COPY app/backend/go.mod app/backend/go.sum ./
+RUN go mod download
 COPY app/backend/ ./
-RUN npm run build && npm prune --omit=dev
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o server ./cmd/server
 
-FROM node:20-alpine
+FROM alpine:3.21
 WORKDIR /app
 
-COPY --from=backend  /build/dist         ./dist
-COPY --from=backend  /build/node_modules ./node_modules
-COPY --from=backend  /build/package.json ./
+COPY --from=backend  /build/server       ./server
 COPY --from=frontend /build/dist         ./public
 COPY docs   ./docs/
 
@@ -28,5 +26,5 @@ ENV NODE_ENV=production \
     DOCS_PATH=./docs
 
 EXPOSE 3000 9090
-USER node
-CMD ["node", "dist/server.js"]
+USER nobody
+CMD ["./server"]

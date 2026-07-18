@@ -1,12 +1,17 @@
 dev-backend:
-	cd backend && npm run dev-server
+	cd backend && go run ./cmd/server
 dev-frontend:
 	cd frontend && npm run dev
 dev:
 	$(MAKE) dev-backend & $(MAKE) dev-frontend & wait
 
+build-backend:
+	cd backend && CGO_ENABLED=0 go build -o server ./cmd/server
+test-backend:
+	cd backend && go test ./...
+
 install-all:
-	cd backend && npm ci
+	cd backend && go mod download
 	cd frontend && npm ci
 
 update-dashboard:
