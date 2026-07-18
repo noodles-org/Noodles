@@ -18,6 +18,16 @@ kube-prometheus-stack:
     namespaceOverride: "monitoring"
     defaultDashboardsEnabled: true
 
+    additionalDataSources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki-gateway.monitoring.svc.cluster.local
+        jsonData:
+          httpHeaderName1: X-Scope-OrgID
+        secureJsonData:
+          httpHeaderValue1: noodles
+
     grafana.ini:
       server:
         domain: noodles.quest

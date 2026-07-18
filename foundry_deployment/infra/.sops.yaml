@@ -13,6 +13,3 @@ creation_rules:
     encrypted_regex: *kubernetes_secrets_regex
     age: *age_pub
     kms: *aws_kms
-  - path_regex: 'helm\/grafana-.+\/values.yaml'
-    age: *age_pub
-    kms: *aws_kms

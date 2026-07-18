@@ -37,6 +37,15 @@ spec:
     secretName: noodles-quest-prod-tls
 ---
 apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: loki-basic-auth
+  namespace: monitoring
+spec:
+  basicAuth:
+    secret: loki-basic-auth
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: loki-ingress-route
@@ -57,6 +66,8 @@ spec:
         - name: loki-traefik-service
           kind: TraefikService
           namespace: monitoring
+      middlewares:
+        - name: loki-basic-auth
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute

@@ -96,7 +96,9 @@
       shell: |
         helm repo add argo https://argoproj.github.io/argo-helm
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo add grafana https://grafana.github.io/helm-charts
         helm repo add dex https://charts.dexidp.io
+        helm repo update
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
@@ -140,6 +142,13 @@
         kubectl apply -f ../k8s/monitoring/.
         kubectl apply -f ../k8s/monitoring/dashboards/.
         kubectl apply -f ../k8s/monitoring/alerts/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Install Loki and Alloy Helm charts
+      shell: |
+        helm upgrade --install loki grafana/loki --namespace monitoring -f ../helm/grafana-loki/values.yaml
+        helm upgrade --install alloy grafana/alloy --namespace monitoring -f ../helm/grafana-alloy/values.yaml
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
