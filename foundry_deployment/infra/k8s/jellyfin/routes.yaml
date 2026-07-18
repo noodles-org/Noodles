@@ -13,6 +13,12 @@ kind: IngressRoute
 metadata:
   name: route
   namespace: jellyfin
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Jellyfin"
+    noodles.dashboard/description: "Media streaming server"
+    noodles.dashboard/category: "Applications"
 spec:
   entryPoints:
     - web

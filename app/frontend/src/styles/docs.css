@@ -1,0 +1,107 @@
+.docs-layout {
+    display: flex;
+    min-height: calc(100vh - var(--nav-h));
+}
+
+.docs-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--c-surface);
+    border-right: 1px solid var(--c-border);
+    padding: 20px 0;
+    overflow-y: auto;
+    position: sticky;
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+}
+
+.docs-section {
+    margin-bottom: 16px;
+}
+
+.docs-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
+    padding: 0 20px;
+    margin-bottom: 4px;
+}
+
+.docs-items {
+    list-style: none;
+}
+
+.docs-item {
+    display: block;
+    padding: 6px 20px;
+    font-size: 14px;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: all 0.1s;
+}
+.docs-item:hover {
+    color: var(--c-text);
+    background: var(--c-bg);
+    text-decoration: none;
+}
+.docs-item.active {
+    color: var(--c-primary);
+    background: var(--c-active-bg);
+    font-weight: 500;
+}
+
+.docs-content {
+    flex: 1;
+    padding: 32px 48px;
+    max-width: 800px;
+    min-width: 0;
+}
+
+.docs-empty {
+    color: var(--c-muted);
+    font-size: 15px;
+    padding-top: 64px;
+}
+
+/* Markdown rendered content */
+.docs-content h1 { font-size: 28px; font-weight: 700; margin: 0 0 16px; }
+.docs-content h2 { font-size: 22px; font-weight: 600; margin: 32px 0 12px; }
+.docs-content h3 { font-size: 18px; font-weight: 600; margin: 24px 0 8px; }
+.docs-content p  { margin: 0 0 16px; line-height: 1.7; }
+.docs-content ul,
+.docs-content ol { margin: 0 0 16px; padding-left: 24px; }
+.docs-content li { margin-bottom: 4px; line-height: 1.7; }
+
+.docs-content code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--c-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.docs-content pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 16px;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin: 0 0 16px;
+}
+.docs-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+.docs-content blockquote {
+    border-left: 3px solid var(--c-primary);
+    padding: 8px 16px;
+    margin: 0 0 16px;
+    background: var(--c-active-bg);
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+.docs-content table { width: 100%; border-collapse: collapse; margin: 0 0 16px; }
+.docs-content th,
+.docs-content td   { border: 1px solid var(--c-border); padding: 8px 12px; text-align: left; font-size: 14px; }
+.docs-content th   { background: var(--c-bg); font-weight: 600; }

@@ -1,0 +1,54 @@
+[
+  {
+    "name": "foundry-server",
+    "namespace": "foundry",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "mephalrith/foundry-server:latest",
+    "paused": false,
+    "argoApp": "foundry",
+    "healthStatus": "Healthy",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "jellyfin",
+    "namespace": "jellyfin",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "jellyfin/jellyfin:latest",
+    "paused": false,
+    "argoApp": "jellyfin",
+    "healthStatus": "Healthy",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "stalwart",
+    "namespace": "stalwart",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "stalwartlabs/mail-server:latest",
+    "paused": false,
+    "argoApp": "stalwart",
+    "healthStatus": "Healthy",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "noodles-dashboard",
+    "namespace": "dashboard",
+    "replicas": 2,
+    "readyReplicas": 2,
+    "availableReplicas": 2,
+    "image": "mephalrith/noodles-dashboard:latest",
+    "paused": false,
+    "argoApp": "dashboard",
+    "healthStatus": "Healthy",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]

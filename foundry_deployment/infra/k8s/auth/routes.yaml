@@ -3,6 +3,12 @@ kind: IngressRoute
 metadata:
   name: dex-ingress-route
   namespace: auth
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Dex"
+    noodles.dashboard/description: "OIDC identity provider"
+    noodles.dashboard/category: "Security"
 spec:
   entryPoints:
     - websecure

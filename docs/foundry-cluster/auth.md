@@ -4,12 +4,16 @@ The `auth` namespace handles authentication, authorization, and TLS certificate 
 
 ## Dex
 
-Dex is an OpenID Connect (OIDC) identity provider that enables GitHub-based authentication for cluster access via `kubelogin`.
+Dex is an OpenID Connect (OIDC) identity provider and the single sign-on gateway for the cluster. It authenticates users against GitHub (the `noodles-org` organization) and issues OIDC tokens to every cluster application — `kubelogin`, ArgoCD, Grafana, and Jellyfin.
 
 - **Helm chart:** `dex/dex` deployed in the `auth` namespace
 - **Issuer URL:** `https://dex.noodles.quest`
 - **Connector:** GitHub OAuth via the `noodles-org` organization
-- **Static client:** `kubelogin` — used for `kubectl` OIDC login, redirects to `http://localhost:8000`
+- **Static clients:** each application is registered as a Dex static client, with its client secret stored in the `dex-github-oauth` Secret:
+  - `kubelogin` — `kubectl` OIDC login, redirects to `http://localhost:8000`
+  - `argocd` — ArgoCD SSO, redirects to `https://argocd.noodles.quest/auth/callback`
+  - `grafana` — Grafana SSO, redirects to `https://noodles.quest/grafana/login/generic_oauth`
+  - `jellyfin` — Jellyfin SSO, redirects to `https://jellyfin.noodles.quest/sso/OID/redirect/dex`
 - **TLS:** Dex serves its own TLS on port 5554 using a `dex-tls` Secret mounted at `/etc/dex/tls`. External traffic is terminated by Traefik using the cluster's Let's Encrypt wildcard cert (`noodles-quest-prod-tls`).
 - **Storage:** In-memory
 - **Credentials:** GitHub OAuth client ID/secret loaded from the `dex-github-oauth` Secret via `envFrom`

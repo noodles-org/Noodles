@@ -153,6 +153,11 @@
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
+    - name: Apply Dashboard resources
+      shell: kubectl apply -f ../k8s/dashboard/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
     - name: Apply ArgoCD resources
       shell: kubectl apply -f ../k8s/argocd/.
       environment:

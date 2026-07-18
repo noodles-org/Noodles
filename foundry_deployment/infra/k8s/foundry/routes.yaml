@@ -13,6 +13,12 @@ kind: IngressRoute
 metadata:
   name: route
   namespace: foundry
+  labels:
+    noodles.dashboard/service: "true"
+  annotations:
+    noodles.dashboard/name: "Foundry"
+    noodles.dashboard/description: "Foundry VTT game server"
+    noodles.dashboard/category: "Applications"
 spec:
   entryPoints:
     - web

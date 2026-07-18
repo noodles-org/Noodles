@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: noodles-dashboard-grafana
+  namespace: monitoring
+  annotations:
+    grafana_folder: "Metrics"
+  labels:
+    grafana_dashboard: "1"
+data:
+  noodles-dashboard.json: |
+    {
+      "uid": "noodles-dashboard",
+      "title": "Noodles Dashboard",
+      "tags": ["noodles-dashboard", "kubernetes"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "time": { "from": "now-6h", "to": "now" },
+      "templating": {
+        "list": [{
+          "name": "DS_PROMETHEUS",
+          "type": "datasource",
+          "query": "prometheus",
+          "current": {}
+        }]
+      },
+      "panels": [
+        {
+          "type": "row", "title": "Authentication",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "id": 1
+        },
+        {
+          "type": "timeseries", "title": "Auth Events / 5m",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 }, "id": 2,
+          "targets": [{
+            "expr": "sum(rate(dashboard_auth_events_total[5m])) by (status, reason)",
+            "legendFormat": "{{ status }} — {{ reason }}"
+          }],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
+        },
+        {
+          "type": "stat", "title": "Failed Auth (1h)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 6, "x": 12, "y": 1 }, "id": 3,
+          "targets": [{
+            "expr": "sum(increase(dashboard_auth_events_total{status=\"failure\"}[1h])) or vector(0)"
+          }],
+          "fieldConfig": { "defaults": { "thresholds": { "steps": [
+            { "color": "green", "value": null }, { "color": "red", "value": 10 }
+          ] } } }
+        },
+        {
+          "type": "stat", "title": "Unique Users (since restart)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 6, "x": 18, "y": 1 }, "id": 4,
+          "targets": [{ "expr": "dashboard_unique_authenticated_users" }]
+        },
+        {
+          "type": "timeseries", "title": "Unauthorized Access Attempts / 5m",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 }, "id": 11,
+          "targets": [{
+            "expr": "sum(rate(dashboard_unauthorized_access_attempts_total[5m])) by (path)",
+            "legendFormat": "{{ path }}"
+          }],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
+        },
+        {
+          "type": "row", "title": "HTTP",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 }, "id": 5
+        },
+        {
+          "type": "timeseries", "title": "Request Rate by Route",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 }, "id": 6,
+          "targets": [{
+            "expr": "sum(rate(dashboard_http_requests_total[5m])) by (route)",
+            "legendFormat": "{{ route }}"
+          }],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
+        },
+        {
+          "type": "timeseries", "title": "Request Duration p95",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 }, "id": 7,
+          "targets": [{
+            "expr": "histogram_quantile(0.95, sum(rate(dashboard_http_request_duration_seconds_bucket[5m])) by (le, route))",
+            "legendFormat": "{{ route }}"
+          }],
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10 } } }
+        },
+        {
+          "type": "timeseries", "title": "Error Rate (4xx / 5xx)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 26 }, "id": 8,
+          "targets": [{
+            "expr": "sum(rate(dashboard_http_requests_total{status_code=~\"4..|5..\"}[5m])) by (status_code, route)",
+            "legendFormat": "{{ status_code }} {{ route }}"
+          }],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50 } } }
+        },
+        {
+          "type": "row", "title": "Deployment Actions",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 }, "id": 9
+        },
+        {
+          "type": "timeseries", "title": "Deployment Actions / 5m",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 35 }, "id": 10,
+          "targets": [{
+            "expr": "sum(rate(dashboard_deployment_actions_total[5m])) by (action)",
+            "legendFormat": "{{ action }}"
+          }],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 1 } } }
+        }
+      ]
+    }
