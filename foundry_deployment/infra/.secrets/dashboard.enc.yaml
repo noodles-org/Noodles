@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: noodles-dashboard
+    namespace: dashboard
+type: Opaque
+stringData:
+    #ENC[AES256_GCM,data:W+tHQeCliHHH6zuPnjf4VhPfSGTW8jf976kme33jsRNFmSGsjoWl/y0SaXb/3ef0sQEm7PuAwjbUgLmP9vM2zbmJa1iNzj0IL1zoBI6Bs/ws12EcYgFxRd9GA9RGX7WzN8Gmt/br,iv:dsgJAQrJJHm+FNMOaFtY6OwNwpf3Ngt8y9uykDYDTZ0=,tag:heXPN4X6S1LIlc2KwYY9WQ==,type:comment]
+    #ENC[AES256_GCM,data:rR9d3Ptm9lgdOU6zH1s/RyXLwepUM57nw2yA5Glx5Lq2OwpbVF62JvaRff/sJJ9GQWig4agMORoj15Cwzho7HSOP4jNJNpRpHiGHbV7fn501W8iRBvWJtaoD6fu4LC4/,iv:ZvqhlVj4/JRimeCa5pOVkFPcvg7HqdZ+75XnJEHXLHU=,tag:B35ijF3ecRdWDtIkhxKH8g==,type:comment]
+    DASHBOARD_CLIENT_SECRET: ENC[AES256_GCM,data:SRPc+C1jNqnAEYAe4+bzcn6iUGcRlJ4gWvdqCuqUvwY=,iv:8pYNQftBWDbdSc6XcV6Sja863/L/41pi00qAQknIa0I=,tag:fGIWsvWhzBYfvoYhKasPHA==,type:str]
+    JWT_SECRET: ENC[AES256_GCM,data:YWgvPiyqApkqXOWd3Uofo1cb9ebUvM/iUKjtFb1LcPg=,iv:QkbF3MiwHaBTacLwie60XJ4QLzuYe+uIO4jIpqGG5+w=,tag:sCgWmWvLAcd/MFVY/+ZqfA==,type:str]
+    ARGOCD_TOKEN: ENC[AES256_GCM,data:WNw1aeemrDm9k2e/IU3T7qdH+OqAExjDpyqvv4pq1cJVgWbqZTpFqyDyoBj6u/6HQ8pfjDtqxs3Z/MwKtS61ARPrU/blmlW6uLM/IGktdjk7zKNc0QQJdI+D3SrdjNPl00JtCBlJ59iGjOzAcXtyYLpiqWU04ZwTthDJIKDPk3LX9clcqZlm7bs+bfLN5H+w1ZB++g0KH4Qz+oCASkHL+souci7oVExlC3/cmKxVIjQds/2HLkxuC5J74V92Ef8vReHOjSuxOuDSKIFLF7bAPX1Cf5bZ93v1AR2KH0z3Z4OFU0yi8xOBvuo/3d0BYntuvWIXNCP/t6uqdhD2BA==,iv:nZrSmvGd+ed53CNz+hdt8Vi759joSQHeT/yxYiUbsYA=,tag:tFyssxRnOU1IXrWLnRSNMw==,type:str]
+sops:
+    kms:
+        - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
+          created_at: "2026-07-18T01:04:59Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgEsW6bFcE9/JWB0pxEig+6sAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMf4hBLk3Ut422dhACAgEQgDs0yVSf091hiwKktDCZ55cBnSBKnT9H3wCKCT/wKrg9T6Yom7+v62NMSxP62WB043ysMTjFrIiyOLCpsQ==
+          aws_profile: ""
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBSR0pUK1RsTkREU3lSeHha
+            M2RoOElQcUI0TVMrQVkxMjExa3FVWVV4b0Z3ClVJNll4citwY2Rwa2ljemlVaGZ5
+            czkyQjhiRTlBNkVxRWdOcTVPWW51YnMKLS0tIGFKSWVrb2IzY2g3Qk9GejBXR3Zh
+            b2N1WGUvOEYzNHNkazVXbmFsT2lZa0kKw+b7Ln7grL8nCpXsVkPFdxotBIZGT0/f
+            lWoDG3QP1gXWs8eAmSRAwXGdyoForJOS9Yo8DO77r6vwhk/AhaZWUQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-07-18T01:04:59Z"
+    mac: ENC[AES256_GCM,data:hlMxoITs//iOiBmv7YAI7sG8ef3UwMCkCGhj+Iu4NPDUgGavYNgQcSZkgHsKluwQinLkgUk2aFivPB1g3poU+yCO76RzfGF6yZj8rAixWxe8CaL7Yxo4DriCDYzkMQgqy50vhUH8DZMSeFBd8BpscVoUKIcTROruAnUL6Dc/2RE=,iv:jAMJe09YpsqhZMvKZxjTwTLAOutbw+Jgw9tySs1APzY=,tag:O/zWu6s9RLudrjpHS1+psg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
