@@ -14,7 +14,7 @@ Dex is an OpenID Connect (OIDC) identity provider and the single sign-on gateway
   - `argocd` — ArgoCD SSO, redirects to `https://argocd.noodles.quest/auth/callback`
   - `grafana` — Grafana SSO, redirects to `https://noodles.quest/grafana/login/generic_oauth`
   - `jellyfin` — Jellyfin SSO, redirects to `https://jellyfin.noodles.quest/sso/OID/redirect/dex`
-- **TLS:** Dex serves its own TLS on port 5554 using a `dex-tls` Secret mounted at `/etc/dex/tls`. External traffic is terminated by Traefik using the cluster's Let's Encrypt wildcard cert (`noodles-quest-prod-tls`).
+- **TLS:** External traffic is terminated by Traefik using the cluster's Let's Encrypt wildcard cert (`noodles-quest-prod-tls`). Dex itself runs HTTP-only (port 5556) inside the cluster.
 - **Storage:** In-memory
 - **Credentials:** GitHub OAuth client ID/secret loaded from the `dex-github-oauth` Secret via `envFrom`
 

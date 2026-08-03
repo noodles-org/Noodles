@@ -40,7 +40,7 @@ hostAliases: []
 
 https:
   # -- Enable the HTTPS endpoint.
-  enabled: true
+  enabled: false
 
 grpc:
   # -- Enable the gRPC endpoint.
@@ -63,9 +63,6 @@ config:
   issuer: https://dex.noodles.quest
   storage:
     type: memory
-  web:
-    tlsCert: /etc/dex/tls/tls.crt
-    tlsKey: /etc/dex/tls/tls.key
   connectors:
     - type: github
       id: github
@@ -111,17 +108,11 @@ config:
 
 # -- Additional storage [volumes](https://kubernetes.io/docs/concepts/storage/volumes/).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#volumes-1) for details.
-volumes:
-  - name: tls
-    secret:
-      secretName: dex-tls
+volumes: []
 
 # -- Additional [volume mounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#volumes-1) for details.
-volumeMounts:
-  - name: tls
-    mountPath: /etc/dex/tls
-    readOnly: true
+volumeMounts: []
 
 # -- Additional environment variables mounted from [secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables) or [config maps](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables).
 # See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables) for details.

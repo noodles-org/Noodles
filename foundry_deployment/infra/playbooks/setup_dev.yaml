@@ -96,7 +96,8 @@
           --exec-arg=--oidc-client-id={{ oidc_client_id }} \
           --exec-arg=--oidc-extra-scope=email \
           --exec-arg=--oidc-extra-scope=groups \
-          --exec-arg=--oidc-client-secret='{{ kubelogin_secret.stdout }}'
+          --exec-arg=--oidc-client-secret='{{ kubelogin_secret.stdout }}' \
+          --exec-arg=--certificate-authority=/etc/ssl/cert.pem
 
         kubectl config set-context {{ context_name }} \
           --cluster={{ cluster_name }} \

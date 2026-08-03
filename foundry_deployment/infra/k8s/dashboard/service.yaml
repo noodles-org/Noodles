@@ -23,6 +23,7 @@ metadata:
   namespace: dashboard
   labels:
     app: noodles-dashboard
+    release: prometheus-stack
 spec:
   selector:
     matchLabels:
