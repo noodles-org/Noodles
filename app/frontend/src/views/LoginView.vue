@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {useAuthStore} from '../stores/auth';
+import {useThemeStore} from '../stores/theme';
 import {useRoute} from 'vue-router';
 import '../styles/login.css';
 
 const auth = useAuthStore();
+useThemeStore();
 const route = useRoute();
 const error = route.query.error as string | undefined;
 
