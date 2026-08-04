@@ -27,10 +27,15 @@ func RequestLogger(next http.Handler) http.Handler {
 
 		next.ServeHTTP(sw, r)
 
+		// Skip metrics for health checks (k8s probes)
+		if r.URL.Path == "/healthz" {
+			return
+		}
+
 		duration := time.Since(start).Seconds()
 		route := chilib.RouteContext(r.Context()).RoutePattern()
 		if route == "" {
-			route = r.URL.Path
+			route = "unmatched"
 		}
 
 		services.HTTPRequests.With(map[string]string{

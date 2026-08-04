@@ -86,6 +86,22 @@ Services are discovered by listing IngressRoutes with the label `noodles.dashboa
 
 Prometheus metrics are exposed on a separate server on port 9090 at `/metrics`. A `ServiceMonitor` is configured for Prometheus scraping.
 
+Custom metrics:
+
+| Metric | Type | Labels | Description |
+|--------|------|--------|-------------|
+| `dashboard_auth_events_total` | Counter | `status`, `reason` | Auth events (login, logout, failures) |
+| `dashboard_unique_authenticated_users` | Gauge | — | Unique users since last restart |
+| `dashboard_deployment_actions_total` | Counter | `action`, `namespace`, `deployment` | Deployment actions (pause, resume, restart) |
+| `dashboard_unauthorized_access_attempts_total` | Counter | `path` | Admin action attempts without admin role |
+| `dashboard_http_requests_total` | Counter | `method`, `route`, `status_code` | HTTP requests |
+| `dashboard_http_request_duration_seconds` | Histogram | `method`, `route` | HTTP request duration |
+
+Notes:
+- `/healthz` requests are excluded from HTTP metrics to avoid noise from k8s probes.
+- Requests to unregistered routes are grouped under the `"unmatched"` route label.
+- Missing auth tokens (unauthenticated requests to protected endpoints) are not recorded as auth failures — only invalid/expired tokens are.
+
 ## Development
 
 ```bash

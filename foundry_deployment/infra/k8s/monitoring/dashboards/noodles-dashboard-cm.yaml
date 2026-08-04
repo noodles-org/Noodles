@@ -32,50 +32,41 @@ data:
         {
           "type": "timeseries", "title": "Auth Events / 5m",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 }, "id": 2,
+          "gridPos": { "h": 8, "w": 18, "x": 0, "y": 1 }, "id": 2,
           "targets": [{
-            "expr": "sum(rate(dashboard_auth_events_total[5m])) by (status, reason)",
+            "expr": "sum(increase(dashboard_auth_events_total[5m])) by (status, reason)",
             "legendFormat": "{{ status }} — {{ reason }}"
           }],
-          "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
-        },
-        {
-          "type": "stat", "title": "Failed Auth (1h)",
-          "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 6, "x": 12, "y": 1 }, "id": 3,
-          "targets": [{
-            "expr": "sum(increase(dashboard_auth_events_total{status=\"failure\"}[1h])) or vector(0)"
-          }],
-          "fieldConfig": { "defaults": { "thresholds": { "steps": [
-            { "color": "green", "value": null }, { "color": "red", "value": 10 }
-          ] } } }
+          "fieldConfig": { "defaults": { "decimals": 0, "max": 20, "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
         },
         {
           "type": "stat", "title": "Unique Users (since restart)",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
           "gridPos": { "h": 8, "w": 6, "x": 18, "y": 1 }, "id": 4,
-          "targets": [{ "expr": "dashboard_unique_authenticated_users" }]
+          "targets": [{ "expr": "sum(dashboard_unique_authenticated_users)" }],
+          "options": { "textMode": "value", "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "text" } } }
         },
         {
-          "type": "timeseries", "title": "Unauthorized Access Attempts / 5m",
+          "type": "timeseries", "title": "Failed Auth & Unauthorized / 5m",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 }, "id": 11,
-          "targets": [{
-            "expr": "sum(rate(dashboard_unauthorized_access_attempts_total[5m])) by (path)",
-            "legendFormat": "{{ path }}"
-          }],
-          "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
+          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 9 }, "id": 3,
+          "targets": [
+            { "expr": "sum(increase(dashboard_auth_events_total{status=\"failure\"}[5m])) or vector(0)", "legendFormat": "Failed Auth", "refId": "A" },
+            { "expr": "sum(increase(dashboard_unauthorized_access_attempts_total[5m])) or vector(0)", "legendFormat": "Unauthorized Attempts", "refId": "B" }
+          ],
+          "fieldConfig": { "defaults": { "decimals": 0, "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
         },
         {
           "type": "row", "title": "HTTP",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 }, "id": 5
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 }, "id": 5, "collapsed": false
         },
         {
           "type": "timeseries", "title": "Request Rate by Route",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 }, "id": 6,
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }, "id": 6,
           "targets": [{
-            "expr": "sum(rate(dashboard_http_requests_total[5m])) by (route)",
+            "expr": "sum(rate(dashboard_http_requests_total{route!=\"unmatched\"}[5m])) by (route)",
             "legendFormat": "{{ route }}"
           }],
           "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 } } }
@@ -83,9 +74,9 @@ data:
         {
           "type": "timeseries", "title": "Request Duration p95",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 }, "id": 7,
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 }, "id": 7,
           "targets": [{
-            "expr": "histogram_quantile(0.95, sum(rate(dashboard_http_request_duration_seconds_bucket[5m])) by (le, route))",
+            "expr": "histogram_quantile(0.95, sum(rate(dashboard_http_request_duration_seconds_bucket{route!=\"unmatched\"}[5m])) by (le, route))",
             "legendFormat": "{{ route }}"
           }],
           "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10 } } }
@@ -93,26 +84,27 @@ data:
         {
           "type": "timeseries", "title": "Error Rate (4xx / 5xx)",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 26 }, "id": 8,
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 }, "id": 8,
           "targets": [{
-            "expr": "sum(rate(dashboard_http_requests_total{status_code=~\"4..|5..\"}[5m])) by (status_code, route)",
-            "legendFormat": "{{ status_code }} {{ route }}"
+            "expr": "sum(rate(dashboard_http_requests_total{status_code=~\"4..|5..\", route!=\"unmatched\"}[5m])) by (status_code)",
+            "legendFormat": "{{ status_code }}"
           }],
-          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50 } } }
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
         },
         {
           "type": "row", "title": "Deployment Actions",
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 }, "id": 9
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 }, "id": 9
         },
         {
           "type": "timeseries", "title": "Deployment Actions / 5m",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 35 }, "id": 10,
-          "targets": [{
-            "expr": "sum(rate(dashboard_deployment_actions_total[5m])) by (action)",
-            "legendFormat": "{{ action }}"
-          }],
-          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 1 } } }
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 33 }, "id": 10,
+          "targets": [
+            { "expr": "sum(increase(dashboard_deployment_actions_total{action=\"pause\"}[5m])) or vector(0)", "legendFormat": "pause", "refId": "A" },
+            { "expr": "sum(increase(dashboard_deployment_actions_total{action=\"resume\"}[5m])) or vector(0)", "legendFormat": "resume", "refId": "B" },
+            { "expr": "sum(increase(dashboard_deployment_actions_total{action=\"restart\"}[5m])) or vector(0)", "legendFormat": "restart", "refId": "C" }
+          ],
+          "fieldConfig": { "defaults": { "decimals": 0, "max": 20, "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
         }
       ]
     }

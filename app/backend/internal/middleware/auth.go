@@ -33,8 +33,6 @@ func RequireAuth(cfg *config.Config) func(http.Handler) http.Handler {
 
 			cookie, err := r.Cookie(cfg.JWT.CookieName)
 			if err != nil {
-				services.AuthEvents.With(map[string]string{"status": "failure", "reason": "no_token"}).Inc()
-				services.Logger.Warn("Auth: missing token", "ip", r.RemoteAddr, "path", r.URL.Path)
 				respond.Error(w, errs.Unauthorized)
 				return
 			}
