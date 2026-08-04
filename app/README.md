@@ -2,8 +2,8 @@
 
 Developer documentation for the Noodles Dashboard frontend and backend.
 
-- [Backend](backend.md)
-- [Frontend](frontend.md)
+- [Backend](../docs/app/backend.md)
+- [Frontend](../docs/app/frontend.md)
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ app/
 ├── backend/          # Go API server (Chi router)
 │   └── mocks/        # Mock data for dev (no k8s cluster needed)
 ├── frontend/         # Vue 3 SPA (TypeScript + Vite)
-├── docs/             # This documentation
+├── docs/             # See docs/app/ in project root
 ├── .env              # Local environment (gitignored)
 ├── .env.example      # Template for .env
 ├── Makefile          # Dev, build, and deploy commands

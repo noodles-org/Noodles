@@ -50,4 +50,4 @@ The dashboard tracks namespaces labeled with `noodles.dashboard/managed: "true"`
 
 ## Application Documentation
 
-For frontend and backend development documentation, see the [app docs](https://github.com/noodles-org/Noodles/tree/main/app/docs).
+For development documentation, see the [Backend](../app/backend.md) and [Frontend](../app/frontend.md) docs.

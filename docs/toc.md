@@ -51,3 +51,8 @@
   - [Prometheus](foundry-cluster/grafana.md#prometheus)
   - [Loki](foundry-cluster/grafana.md#loki)
   - [Networking](foundry-cluster/grafana.md#networking)
+
+## Dashboard App
+
+- [Backend](app/backend.md#backend)
+- [Frontend](app/frontend.md#frontend)
