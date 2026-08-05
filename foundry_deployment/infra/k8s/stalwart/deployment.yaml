@@ -1,19 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment
-  labels:
+  name: stalwart
+  labels: &labels
     app: stalwart
   namespace: stalwart
 spec:
   selector:
-    matchLabels:
-      app: stalwart
+    matchLabels: *labels
   replicas: 1
   template:
     metadata:
-      labels:
-        app: stalwart
+      labels: *labels
     spec:
       containers:
         - name: stalwart

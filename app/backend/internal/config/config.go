@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -39,16 +40,25 @@ type ArgoCDConfig struct {
 	Insecure bool
 }
 
+type RemoteClusterConfig struct {
+	Name     string `json:"name"`
+	APIURL   string `json:"apiURL"`
+	TokenEnv string `json:"tokenEnv"`
+	Token    string `json:"-"`
+	CAPem    string `json:"caPem"`
+}
+
 type Config struct {
 	Port         int
 	MetricsPort  int
 	NodeEnv      string
 	IsProduction bool
 
-	OAuth  OAuthConfig
-	JWT    JWTConfig
-	Auth   AuthConfig
-	ArgoCD ArgoCDConfig
+	OAuth          OAuthConfig
+	JWT            JWTConfig
+	Auth           AuthConfig
+	ArgoCD         ArgoCDConfig
+	RemoteClusters []RemoteClusterConfig
 
 	NamespaceLabel string
 	DocsPath       string
@@ -108,11 +118,34 @@ func Load() *Config {
 			Insecure: optional("ARGOCD_INSECURE", "true") == "true",
 		},
 
+		RemoteClusters: loadRemoteClusters(),
+
 		NamespaceLabel: optional("NAMESPACE_LABEL", "noodles.dashboard/managed"),
 		DocsPath:       filepath.Clean(optional("DOCS_PATH", "../../docs")),
 		FrontendPath:   filepath.Clean(optional("FRONTEND_PATH", "../../frontend/dist")),
 		CORSOrigin:     optional("CORS_ORIGIN", "http://localhost:5173"),
 	}
+}
+
+func loadRemoteClusters() []RemoteClusterConfig {
+	data := os.Getenv("REMOTE_CLUSTERS")
+	if data == "" {
+		return nil
+	}
+
+	var clusters []RemoteClusterConfig
+	if err := json.Unmarshal([]byte(data), &clusters); err != nil {
+		log.Printf("Failed to parse REMOTE_CLUSTERS: %v", err)
+		return nil
+	}
+
+	for i := range clusters {
+		if clusters[i].TokenEnv != "" {
+			clusters[i].Token = os.Getenv(clusters[i].TokenEnv)
+		}
+	}
+
+	return clusters
 }
 
 func optional(key, fallback string) string {

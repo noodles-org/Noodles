@@ -47,4 +47,4 @@ Dockerfile            # (project root) Multi-stage Docker build
 
 Copy `.env.example` to `.env`. In development, only `NODE_ENV=development` is needed — all other variables have sensible defaults, and auth/k8s features are bypassed. When `NODE_ENV=development`, the backend serves mock deployment and service data from `app/backend/mocks/` and reads docs from the repo's `docs/` directory directly.
 
-In production, the following must be set (via k8s Secrets): `DASHBOARD_CLIENT_SECRET`, `JWT_SECRET`, `ARGOCD_TOKEN`.
+In production, the following must be set (via k8s Secrets): `DASHBOARD_CLIENT_SECRET`, `JWT_SECRET`, `ARGOCD_TOKEN`, `GAMESERVER_TOKEN`. The `REMOTE_CLUSTERS` env var (injected via ConfigMap) configures remote cluster connections — see the [dashboard docs](../docs/foundry-cluster/dashboard.md#multi-cluster-support) for details.

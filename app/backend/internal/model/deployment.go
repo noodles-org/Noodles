@@ -3,6 +3,7 @@ package model
 type DeploymentInfo struct {
 	Name              string `json:"name"`
 	Namespace         string `json:"namespace"`
+	Cluster           string `json:"cluster"`
 	Replicas          int32  `json:"replicas"`
 	ReadyReplicas     int32  `json:"readyReplicas"`
 	AvailableReplicas int32  `json:"availableReplicas"`

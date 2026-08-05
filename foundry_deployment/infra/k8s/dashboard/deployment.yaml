@@ -46,6 +46,14 @@ spec:
                 secretKeyRef:
                   name: noodles-dashboard
                   key: ARGOCD_TOKEN
+            - name: GAMESERVER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: noodles-dashboard
+                  key: GAMESERVER_TOKEN
+          envFrom:
+            - configMapRef:
+                name: remote-clusters
           volumeMounts:
             - name: tmp
               mountPath: /tmp

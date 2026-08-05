@@ -1,5 +1,5 @@
 - name: Configure K3s node
-  hosts: foundry_vm
+  hosts: gameserver_vm
   become: true
   gather_facts: false
 
@@ -68,7 +68,7 @@
       systemd:
         name: k3s
         state: restarted
-      when: k3s_config.changed
+      when: netplan_dns.changed or k3s_config.changed
 
 - name: Set up K3s cluster
   hosts: localhost
@@ -94,24 +94,14 @@
 
     - name: Add Helm repos
       shell: |
-        helm repo add argo https://argoproj.github.io/argo-helm
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo add grafana https://grafana.github.io/helm-charts
-        helm repo add dex https://charts.dexidp.io
         helm repo update
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Build Prometheus stack Helm dependencies
-      shell: helm dependency build ../helm/prometheus-stack
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
     - name: Install Helm charts
       shell: |
-        helm upgrade --install argocd ../helm/argocd --namespace argocd -f ../helm/argocd/values.yaml --create-namespace
-        helm upgrade --install prometheus-stack ../helm/prometheus-stack --namespace monitoring -f ../helm/prometheus-stack/values.yaml --create-namespace
-        helm upgrade --install dex dex/dex --namespace auth -f ../helm/dex/values.yaml
+        helm upgrade --install alloy grafana/alloy --namespace monitoring -f ../helm/grafana-alloy/values.yaml --create-namespace
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
@@ -120,54 +110,49 @@
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
 
-    - name: Apply Foundry resources
-      shell: |
-        kubectl apply -f ../k8s/foundry/.
-        kubectl apply -f ../k8s/foundry/jobs/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply Traefik resources
-      shell: kubectl apply -f ../k8s/traefik/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply Jellyfin resources
-      shell: kubectl apply -f ../k8s/jellyfin/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply monitoring resources
-      shell: |
-        kubectl apply -f ../k8s/monitoring/.
-        kubectl apply -f ../k8s/monitoring/dashboards/.
-        kubectl apply -f ../k8s/monitoring/alerts/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Install Loki and Alloy Helm charts
-      shell: |
-        helm upgrade --install loki grafana/loki --namespace monitoring -f ../helm/grafana-loki/values.yaml
-        helm upgrade --install alloy grafana/alloy --namespace monitoring -f ../helm/grafana-alloy/values.yaml
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply Pi-hole resources
-      shell: kubectl apply -f ../k8s/pihole/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply Stalwart resources
-      shell: kubectl apply -f ../k8s/stalwart/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
-    - name: Apply Dashboard resources
-      shell: kubectl apply -f ../k8s/dashboard/.
-      environment:
-        KUBECONFIG: "{{ file_path.stat.path }}"
-
     - name: Apply ArgoCD resources
       shell: kubectl apply -f ../k8s/argocd/.
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply monitoring resources
+      shell: kubectl apply -f ../k8s/monitoring/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Satisfactory resources
+      shell: kubectl apply -f ../k8s/satisfactory/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Enshrouded resources
+      shell: kubectl apply -f ../k8s/enshrouded/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Valheim resources
+      shell: kubectl apply -f ../k8s/valheim/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Soba resources
+      shell: kubectl apply -f ../k8s/soba/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    # Optional: display the argocd-manager SA token for use in the dashboard secret.
+    - name: Retrieve argocd-manager SA token
+      shell: kubectl get secret argocd-manager-long-lived-token -n kube-system -o jsonpath='{.data.token}' | base64 -d
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+      register: sa_token
+      when: show_token | default(false) | bool
+
+    - name: Display argocd-manager SA token
+      debug:
+        msg: |
+          ============================================================
+          ArgoCD Manager SA Token (for GAMESERVER_TOKEN in dashboard secret):
+          {{ sa_token.stdout }}
+          ============================================================
+      when: show_token | default(false) | bool
