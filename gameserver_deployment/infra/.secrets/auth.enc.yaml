@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: dex-oauth
+    namespace: auth
+type: Opaque
+stringData:
+    #ENC[AES256_GCM,data:Dw11z1WhM4gMl21L8qzi6uKAiTgpozFk+OlKKSFKD+QSMcitfvndzSfg7vq2WW8z/XkWerWhzPELUDVg0hCN0UuW3IDRHnvgCZL1mn+d2uK3MzXzX/Qram8UWBc=,iv:J9J010qI4TlPwnaQf6IhkOxjK3QXAJWEBlP/hSUiy28=,tag:Eq4dy9aD6043qnXgYqBmJA==,type:comment]
+    KUBELOGIN_CLIENT_SECRET: ENC[AES256_GCM,data:F6mGgNz/li0Etd50czdbaQVCl6TRMyUkFzM1wXOYW1Y=,iv:C4zbheYix9ChhOfjo7IWaV5a1oIjka2WFGsYu/npo8s=,tag:rG/ntTqarPDPKlS5+Qp24w==,type:str]
+sops:
+    kms:
+        - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
+          created_at: "2026-08-05T19:48:19Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgFKEymyXL6mo3PBA8KBn6rXAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMWh4QME3VeZTwJoGBAgEQgDuZhmM//yiIFQVwcSN6OWZoWwfoSVliH6arwnA1mvv9pDwc/uwPy7bbRsz2yBhoXsgutbF4CnyN5Q+OgA==
+          aws_profile: ""
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5dDRxWWdZNnp6eGZHT0t4
+            WThrZitGZldVVUlKSi9qV1cvT1hFSVhNc1FjCkJOUm11SWhqU1p3VWdSaEd1cE9L
+            clBsRjlqd2dsaEpaaDZqMjR6dERRRFEKLS0tIGRubGRReFNwYlpEOUxOekJYZWVI
+            SW84RDFJaVJ1KzhGTmw4WDVFQVZnaTQKvIt1Twm9uK85RlgF2tOMe7AlHzmo6HL9
+            4r4RV6gvvsO3I5Nluae15N8JUuPozOBigDGYk3MOfsk8P1ldoqVjgA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-08-05T19:48:20Z"
+    mac: ENC[AES256_GCM,data:TbO8rgjfdezvWD75IFAhK0lNfU+rTJoMzvfFmsqmFdy6ssqFu3lhJ0NHebtxRTRKQM65Oc6FmEC1kWxz/XIJAmSTWIxO72clTmWjXLS8ii8dbjC0K1U+fJw33Q01JHEYyExZw/ScPPfqAFGUx9ATg0qUFIuYggpR/7/eJ9ilgCc=,iv:uYhbLUviQO/dt1IQygJtlxhAQ4s2zfQpI36jkPbyzOo=,tag:XBYdO4Naqw5NbvfjAENKzw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
