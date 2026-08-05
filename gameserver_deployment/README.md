@@ -38,6 +38,13 @@ The Noodles dedicated game servers, run on our TrueNAS cluster.
    make setup-cluster KUBECONFIG=~/.kube/my_custom_config
    ```
 
+### Retrieve ArgoCD Manager Token
+To display the `argocd-manager` ServiceAccount token (needed for `GAMESERVER_TOKEN` in the dashboard secret), pass `SHOW_TOKEN=true` during cluster setup:
+```sh
+make setup-cluster SHOW_TOKEN=true
+```
+This runs the full cluster setup and prints the token at the end. Copy it into the dashboard's `.secret.yaml` under `GAMESERVER_TOKEN`, then re-encrypt with `make sops-encrypt-all` in the foundry `infra/` directory.
+
 ### Update Soba Bot
 The Soba Discord bot image can be updated by running:
 ```sh

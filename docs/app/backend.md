@@ -76,7 +76,9 @@ The backend connects to ArgoCD at `http://argocd-server.argocd.svc.cluster.local
 
 ## Kubernetes Integration
 
-The backend connects to the k8s API using in-cluster credentials (production). In development, mock data is used instead. If neither is available, a warning is logged and k8s-dependent features degrade gracefully.
+The backend connects to the local k8s API using in-cluster credentials (production). Remote clusters are configured via the `REMOTE_CLUSTERS` environment variable — a JSON array where each entry specifies a cluster name, API URL, token env var name, and inline CA PEM. Tokens are resolved from the referenced env vars at startup. In development, mock data is used instead. If neither in-cluster credentials nor remote cluster config is available, a warning is logged and k8s-dependent features degrade gracefully.
+
+Deployment actions (restart, pause, resume) are routed to the correct cluster based on namespace ownership.
 
 ### Service Discovery
 
