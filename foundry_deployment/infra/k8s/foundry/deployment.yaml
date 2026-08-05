@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment
+  name: foundry
   labels: &labels
     app: foundry
   namespace: foundry
