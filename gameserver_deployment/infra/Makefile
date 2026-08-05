@@ -1,7 +1,8 @@
 KUBECONFIG ?= ~/.kube/gameserver_config
+SHOW_TOKEN ?= false
 
 setup-cluster:
-	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG)" -K
+	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG) show_token=$(SHOW_TOKEN)" -K
 
 setup-dev:
 	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG)"

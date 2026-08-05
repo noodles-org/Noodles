@@ -139,3 +139,20 @@
       shell: kubectl apply -f ../k8s/soba/.
       environment:
         KUBECONFIG: "{{ file_path.stat.path }}"
+
+    # Optional: display the argocd-manager SA token for use in the dashboard secret.
+    - name: Retrieve argocd-manager SA token
+      shell: kubectl get secret argocd-manager-long-lived-token -n kube-system -o jsonpath='{.data.token}' | base64 -d
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+      register: sa_token
+      when: show_token | default(false) | bool
+
+    - name: Display argocd-manager SA token
+      debug:
+        msg: |
+          ============================================================
+          ArgoCD Manager SA Token (for GAMESERVER_TOKEN in dashboard secret):
+          {{ sa_token.stdout }}
+          ============================================================
+      when: show_token | default(false) | bool
