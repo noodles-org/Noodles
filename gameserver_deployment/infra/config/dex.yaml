@@ -1,5 +1,5 @@
 # K3s API server authentication configuration for Dex OIDC.
-# This is also used by gameserver_deployment/infra/config/dex.yaml — keep both in sync.
+# This is a copy of foundry_deployment/infra/config/dex.yaml — keep both in sync.
 apiVersion: apiserver.config.k8s.io/v1beta1
 kind: AuthenticationConfiguration
 jwt:
