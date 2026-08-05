@@ -4,12 +4,12 @@ metadata:
     name: valheim-secret
     namespace: valheim
 stringData:
-    password: ENC[AES256_GCM,data:Tu+FGuwH4DCrgA==,iv:47DahSgZkgB9OaZReyHRJLhb0Z4K/w9LyUipb2JedYc=,tag:wv8Z4VcvwjJ+C6/fqPn+gA==,type:str]
+    password: ENC[AES256_GCM,data:W7NtglejIAnKhg==,iv:y6a1Cis31f8JMFlIhEY9ZRLCtbK2mKW2ZKxofPwbsLw=,tag:OuW0O84A7HlEULSf75+QuQ==,type:str]
 sops:
     kms:
         - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
-          created_at: "2026-08-05T19:48:20Z"
-          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgENKZnIK/ImwXsEMiVIjHuiAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMB8pZI+WDO7GeC87cAgEQgDtF/hc0aDlK5RJ9SuSbzqeDSw6zVF98iHY2QYhCz5YdrMrPLJldAtkiiB/FTC4sN/as1yYL6PlGPlVSzQ==
+          created_at: "2026-08-05T22:32:08Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgHq9LLf8xtelo5kDOsmpiCUAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMlVoiAAnEJ1GKhobRAgEQgDsA4kxxUZ8/SGtcJPLuuH2nDQIVMMnJW3U3x3ooOhm47W2xRWlWGIv7uyh6D5s3um1agL5SYmtn/voWMQ==
           aws_profile: ""
     gcp_kms: []
     azure_kv: []
@@ -18,14 +18,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBL1k0UVhwaExvNi9MdEk1
-            SlRRSUhuOGtLMGJnb01VQ2lGU28yVkJZUEhzClN5Um1zamV3TCtsdEFvZVZhamtt
-            cmdpbVRYcFlGT0FTK2xaR25GdzlYNVUKLS0tIGpFR2JLaVRBbGY1NEdwM0NQaTFS
-            UURDY29ZQ3VCWDFVNW1FcFpLazNJZlkKloqiUNRdl9+L+7DTkZAgm93kzWQi1w3A
-            18h/CftJLQJZeD/xKBgMWdlgGlnev1cN/xkKahq7U2Wi7sDS7h5FSA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwQ2pCY3d0RzdoTWMybEZB
+            eFBTK0pNMzJIajAwaS9ubTJJdzc5bk12MGhzCmh5b3ppK1ZpanRsVUx3cHdWSmtn
+            MXgvUlgzZ0phbU5PSkpIVmFKd1AyUGMKLS0tIGsyekNLRVFmY2t6VnVUSVlIeDR5
+            QWNDMzhxb2o4ZVU0L3NnSENhcDY4Q00K2TpE85nZCaf6X8ra26zqLKMO3MpGDtXO
+            YEKR4095bmGPd6vQfACBKLCHqfI3enYQy7/1flH18zUzNuN6eKuMSg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-08-05T19:48:20Z"
-    mac: ENC[AES256_GCM,data:M+uTg4AkMb/NoWMGWoE1qVYNkaeTxZVUs9Qh2uX5wjhzU+7u4mUi9kJlC5M4KwtAfHeoWuJP+gEnjY/ZJ4YJenaKuZw7KSBCCdqPDpkePgrUAVf6AZaUNKHUQBfXTcoNmp8i3n6kGQjnLMubLfKq98YxJfdJ0LkaMM8oJfyVvJg=,iv:jzjv/jG5qPe3uwVvQyIoPcSafSQHfFvswQoLAU7LX78=,tag:u8D5/wNwqKpH9rWvE9rlIQ==,type:str]
+    lastmodified: "2026-08-05T22:32:08Z"
+    mac: ENC[AES256_GCM,data:HEM3uY5J7nTEMXmPMjp5lezoRrJbNYfESNl2rHRJDkzrIoylAK+4JKMJkI4V4gMaPE/Vt+EtVqYrC6dAeCgjeP1TlynIUPbNCS7db8X9nD9TjYbRtycEYge4N6wnbHrmO3DhBlzYb6N5AdSFg3paHFO2Q9YL3ztOluxHAVesn64=,iv:uepfCP6fnIA3biEUga6aPpnasYo6iqzvltIdq7r0iMI=,tag:85KhjerZXn7i93i4VQKrFA==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1
