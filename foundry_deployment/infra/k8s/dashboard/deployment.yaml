@@ -51,8 +51,6 @@ spec:
                 secretKeyRef:
                   name: noodles-dashboard
                   key: GAMESERVER_TOKEN
-            - name: CORS_ORIGIN
-              value: "https://noodles.quest"
           envFrom:
             - configMapRef:
                 name: remote-clusters

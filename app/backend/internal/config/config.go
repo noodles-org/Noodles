@@ -123,7 +123,7 @@ func Load() *Config {
 		NamespaceLabel: optional("NAMESPACE_LABEL", "noodles.dashboard/managed"),
 		DocsPath:       filepath.Clean(optional("DOCS_PATH", "../../docs")),
 		FrontendPath:   filepath.Clean(optional("FRONTEND_PATH", "../../frontend/dist")),
-		CORSOrigin:     optional("CORS_ORIGIN", "http://localhost:5173"),
+		CORSOrigin:     corsOrigin(env, publicURL),
 	}
 }
 
@@ -153,6 +153,13 @@ func optional(key, fallback string) string {
 		return val
 	}
 	return fallback
+}
+
+func corsOrigin(env, publicURL string) string {
+	if env != "production" {
+		return "http://localhost:5173"
+	}
+	return publicURL
 }
 
 func optionalInt(key string, fallback int) int {
