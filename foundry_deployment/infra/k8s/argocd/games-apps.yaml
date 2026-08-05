@@ -8,13 +8,13 @@ spec:
     - list:
         elements:
           - name: soba
-            path: gameserver_deployment/infra/soba
+            path: gameserver_deployment/infra/k8s/soba
           - name: enshrouded
-            path: gameserver_deployment/infra/enshrouded
+            path: gameserver_deployment/infra/k8s/enshrouded
           - name: satisfactory
-            path: gameserver_deployment/infra/satisfactory
+            path: gameserver_deployment/infra/k8s/satisfactory
           - name: valheim
-            path: gameserver_deployment/infra/valheim
+            path: gameserver_deployment/infra/k8s/valheim
   template:
     metadata:
       name: "{{name}}"
