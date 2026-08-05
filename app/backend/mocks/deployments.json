@@ -2,6 +2,7 @@
   {
     "name": "foundry-server",
     "namespace": "foundry",
+    "cluster": "foundry",
     "replicas": 1,
     "readyReplicas": 1,
     "availableReplicas": 1,
@@ -15,6 +16,7 @@
   {
     "name": "jellyfin",
     "namespace": "jellyfin",
+    "cluster": "foundry",
     "replicas": 1,
     "readyReplicas": 0,
     "availableReplicas": 0,
@@ -28,6 +30,7 @@
   {
     "name": "stalwart",
     "namespace": "stalwart",
+    "cluster": "foundry",
     "replicas": 1,
     "readyReplicas": 0,
     "availableReplicas": 0,
@@ -41,6 +44,7 @@
   {
     "name": "noodles-dashboard",
     "namespace": "dashboard",
+    "cluster": "foundry",
     "replicas": 2,
     "readyReplicas": 0,
     "availableReplicas": 0,
@@ -48,6 +52,62 @@
     "paused": true,
     "argoApp": "dashboard",
     "healthStatus": "Suspended",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "satisfactory",
+    "namespace": "satisfactory",
+    "cluster": "gameserver",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "wolveix/satisfactory-server:latest",
+    "paused": false,
+    "argoApp": "satisfactory",
+    "healthStatus": "Healthy",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "enshrouded",
+    "namespace": "enshrouded",
+    "cluster": "gameserver",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "sknnr/enshrouded-dedicated-server:latest",
+    "paused": false,
+    "argoApp": "enshrouded",
+    "healthStatus": "Degraded",
+    "syncStatus": "OutOfSync",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "valheim",
+    "namespace": "valheim",
+    "cluster": "gameserver",
+    "replicas": 1,
+    "readyReplicas": 0,
+    "availableReplicas": 0,
+    "image": "lloesche/valheim-server:latest",
+    "paused": true,
+    "argoApp": "valheim",
+    "healthStatus": "Suspended",
+    "syncStatus": "Synced",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "name": "soba",
+    "namespace": "soba",
+    "cluster": "gameserver",
+    "replicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "image": "mephalrith/soba-discord-bot:v0.1",
+    "paused": false,
+    "argoApp": "soba",
+    "healthStatus": "Progressing",
     "syncStatus": "Synced",
     "createdAt": "2026-01-01T00:00:00.000Z"
   }

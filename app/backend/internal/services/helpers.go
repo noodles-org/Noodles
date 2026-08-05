@@ -3,7 +3,11 @@ package services
 import "regexp"
 
 func extractRegex(s, pattern string) string {
-	re := regexp.MustCompile(pattern)
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		Logger.Warn("Invalid regex pattern", "pattern", pattern, "error", err)
+		return ""
+	}
 	m := re.FindStringSubmatch(s)
 	if len(m) < 2 {
 		return ""
