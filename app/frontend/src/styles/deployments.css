@@ -43,11 +43,30 @@
     font-size: 15px;
 }
 
+.dep-image {
+    font-weight: 400;
+    color: var(--c-muted);
+}
+
 .dep-meta {
     font-size: 13px;
     color: var(--c-muted);
     display: flex;
     gap: 16px;
+    margin-top: 2px;
+}
+
+.dep-cluster {
+    font-weight: 500;
+}
+
+.dep-ns {
+    font-weight: 500;
+}
+
+.dep-replicas {
+    font-size: 13px;
+    color: var(--c-muted);
     margin-top: 2px;
 }
 

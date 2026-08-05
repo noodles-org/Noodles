@@ -11,6 +11,7 @@ export interface User {
 export interface DeploymentInfo {
     name: string;
     namespace: string;
+    cluster: string;
     replicas: number;
     readyReplicas: number;
     availableReplicas: number;

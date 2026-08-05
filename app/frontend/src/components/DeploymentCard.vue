@@ -35,12 +35,12 @@ async function act(fn: () => Promise<void>, confirmMsg?: string) {
   <div class="card deployment-card">
     <div :class="['dep-dot', `dot-${cls(deployment.healthStatus)}`]"/>
     <div class="dep-info">
-      <div class="dep-name">{{ deployment.name }}</div>
+      <div class="dep-name">{{ deployment.name }} <span class="dep-image">— {{ deployment.image.split('/').pop() }}</span></div>
       <div class="dep-meta">
-        <span>{{ deployment.namespace }}</span>
-        <span>{{ deployment.readyReplicas }}/{{ deployment.replicas }} ready</span>
-        <span>{{ deployment.image.split('/').pop() }}</span>
+        <span>cluster: <span class="dep-cluster">{{ deployment.cluster }}</span></span>
+        <span>namespace: <span class="dep-ns">{{ deployment.namespace }}</span></span>
       </div>
+      <div class="dep-replicas">{{ deployment.readyReplicas }}/{{ deployment.replicas }} replicas ready</div>
     </div>
     <div class="dep-badges">
       <span :class="['badge', `badge-${cls(deployment.healthStatus)}`]">
