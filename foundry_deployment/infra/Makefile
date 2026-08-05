@@ -1,5 +1,8 @@
 KUBECONFIG ?= ~/.kube/foundry_config
 
+setup-cluster:
+	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG)" -K
+
 setup-dev:
 	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG)"
 
@@ -26,9 +29,6 @@ sops-decrypt-all:
 	sops --decrypt .secrets/stalwart.enc.yaml > k8s/stalwart/.secret.yaml
 	sops --decrypt .secrets/dashboard.enc.yaml > k8s/dashboard/.secret.yaml
 	sops --decrypt .secrets/escrow.enc > .secrets/escrow
-
-setup-cluster:
-	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG)"
 
 manual-backup:
 	kubectl apply -f k8s/foundry/jobs/manual/manual-backup.yaml

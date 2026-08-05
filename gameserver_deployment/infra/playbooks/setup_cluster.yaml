@@ -1,0 +1,141 @@
+- name: Configure K3s node
+  hosts: gameserver_vm
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Configure DNS to bypass systemd-resolved stub
+      block:
+        - name: Set static DNS via netplan
+          copy:
+            dest: /etc/netplan/99-dns-override.yaml
+            content: |
+              network:
+                version: 2
+                ethernets:
+                  enp0s4:
+                    dhcp4-overrides:
+                      use-dns: false
+                    nameservers:
+                      addresses:
+                        - 8.8.8.8
+            mode: "0600"
+          register: netplan_dns
+
+        - name: Apply netplan changes
+          command: netplan apply
+          when: netplan_dns.changed
+
+        - name: Bypass systemd-resolved stub listener
+          file:
+            src: /run/systemd/resolve/resolv.conf
+            dest: /etc/resolv.conf
+            state: link
+            force: true
+
+    - name: Set inotify max_user_instances
+      ansible.posix.sysctl:
+        name: fs.inotify.max_user_instances
+        value: "1024"
+        state: present
+        sysctl_set: true
+
+    - name: Create K3s auth config directory and copy dex.yaml
+      block:
+        - file:
+            path: /home/noodle/k3s-auth
+            state: directory
+            owner: noodle
+            group: noodle
+            mode: "0755"
+        - copy:
+            src: ../config/dex.yaml
+            dest: /home/noodle/k3s-auth/dex.yaml
+            owner: noodle
+            group: noodle
+            mode: "0644"
+
+    - name: Configure K3s API server authentication
+      copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |
+          kube-apiserver-arg:
+            - "authentication-config=/home/noodle/k3s-auth/dex.yaml"
+        mode: "0644"
+      register: k3s_config
+
+    - name: Restart K3s
+      systemd:
+        name: k3s
+        state: restarted
+      when: netplan_dns.changed or k3s_config.changed
+
+- name: Set up K3s cluster
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_prompt:
+    - name: config
+      prompt: kube config file location
+      private: false
+
+  tasks:
+    - name: Verify config file location
+      stat:
+        path: "{{ config }}"
+      register: file_path
+      failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "text/plain"
+
+    - name: Install cert-manager
+      shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Add Helm repos
+      shell: |
+        helm repo add grafana https://grafana.github.io/helm-charts
+        helm repo update
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Install Helm charts
+      shell: |
+        helm upgrade --install alloy grafana/alloy --namespace monitoring -f ../helm/grafana-alloy/values.yaml --create-namespace
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply auth resources
+      shell: kubectl apply -f ../k8s/auth/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply ArgoCD resources
+      shell: kubectl apply -f ../k8s/argocd/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply monitoring resources
+      shell: kubectl apply -f ../k8s/monitoring/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Satisfactory resources
+      shell: kubectl apply -f ../k8s/satisfactory/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Enshrouded resources
+      shell: kubectl apply -f ../k8s/enshrouded/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Valheim resources
+      shell: kubectl apply -f ../k8s/valheim/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+
+    - name: Apply Soba resources
+      shell: kubectl apply -f ../k8s/soba/.
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
