@@ -16,9 +16,10 @@ metadata:
   labels:
     noodles.dashboard/service: "true"
   annotations:
-    noodles.dashboard/name: "Mail"
+    noodles.dashboard/name: "Stalwart"
     noodles.dashboard/description: "Stalwart mail server"
     noodles.dashboard/category: "Applications"
+    noodles.dashboard/url: "https://mail.noodles.quest/admin"
 spec:
   entryPoints:
     - web

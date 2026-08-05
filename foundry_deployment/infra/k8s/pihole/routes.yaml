@@ -9,6 +9,7 @@ metadata:
     noodles.dashboard/name: "Pi-hole"
     noodles.dashboard/description: "Network-wide DNS and ad blocking"
     noodles.dashboard/category: "Networking"
+    noodles.dashboard/url: "http://pihole.noodles.local/admin/"
 spec:
   entryPoints:
     - web
