@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: remote-clusters
+  namespace: dashboard
+data:
+  REMOTE_CLUSTERS: |
+    [
+      {
+        "name": "gameserver",
+        "apiURL": "https://10.0.128.177:6443",
+        "tokenEnv": "GAMESERVER_TOKEN",
+        "caPem": "-----BEGIN CERTIFICATE-----\nMIIBdjCCAR2gAwIBAgIBADAKBggqhkjOPQQDAjAjMSEwHwYDVQQDDBhrM3Mtc2Vy\ndmVyLWNhQDE3NjkwMzI1MzgwHhcNMjYwMTIxMjE1NTM4WhcNMzYwMTE5MjE1NTM4\nWjAjMSEwHwYDVQQDDBhrM3Mtc2VydmVyLWNhQDE3NjkwMzI1MzgwWTATBgcqhkjO\nPQIBBggqhkjOPQMBBwNCAAQnJzsiqxDYKpB0aOFrGRW+MQMOQNrP9L14qzayYrb3\n9yOyANrxqUQvX/+30EzoOKoP4EvYz3jWezv503TMZHP/o0IwQDAOBgNVHQ8BAf8E\nBAMCAqQwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUZrC6kKi8xOk/13BUeic6\n3H7dKqgwCgYIKoZIzj0EAwIDRwAwRAIgdVAWy4To+VKXScZxJnQzWzxuUb3cHoD/\n3n4UvpxQl74CIBrQ6EJ4KTvtYKNadiJzlPV+oVcBuQdvarjFgUni7x8D\n-----END CERTIFICATE-----"
+      }
+    ]
