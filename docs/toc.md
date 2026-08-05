@@ -52,6 +52,37 @@
   - [Loki](foundry-cluster/grafana.md#loki)
   - [Networking](foundry-cluster/grafana.md#networking)
 
+## Games Cluster
+
+- [Cluster Overview](games-cluster/overview.md#cluster-overview)
+  - [Namespaces](games-cluster/overview.md#namespaces)
+  - [Cluster Setup](games-cluster/overview.md#cluster-setup)
+- [Auth](games-cluster/auth.md#auth)
+  - [Dex](games-cluster/auth.md#dex)
+  - [Kubernetes RBAC](games-cluster/auth.md#kubernetes-rbac)
+  - [K3s Configuration](games-cluster/auth.md#k3s-configuration)
+- [Satisfactory](games-cluster/satisfactory.md#satisfactory)
+  - [Deployment](games-cluster/satisfactory.md#deployment)
+  - [Storage](games-cluster/satisfactory.md#storage)
+  - [Networking](games-cluster/satisfactory.md#networking)
+- [Enshrouded](games-cluster/enshrouded.md#enshrouded)
+  - [Deployment](games-cluster/enshrouded.md#deployment)
+  - [Storage](games-cluster/enshrouded.md#storage)
+  - [Networking](games-cluster/enshrouded.md#networking)
+- [Valheim](games-cluster/valheim.md#valheim)
+  - [Deployment](games-cluster/valheim.md#deployment)
+  - [Storage](games-cluster/valheim.md#storage)
+  - [Networking](games-cluster/valheim.md#networking)
+- [Soba](games-cluster/soba.md#soba)
+  - [Deployment](games-cluster/soba.md#deployment)
+  - [Updating](games-cluster/soba.md#updating)
+  - [Source](games-cluster/soba.md#source)
+- [ArgoCD](games-cluster/argocd.md#argocd)
+  - [Remote Management](games-cluster/argocd.md#remote-management)
+  - [RBAC](games-cluster/argocd.md#rbac)
+- [Monitoring](games-cluster/monitoring.md#monitoring)
+  - [Grafana Alloy](games-cluster/monitoring.md#grafana-alloy)
+
 ## Dashboard App
 
 - [Backend](app/backend.md#backend)

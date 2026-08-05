@@ -49,7 +49,7 @@
             group: noodle
             mode: "0755"
         - copy:
-            src: ../../config/dex.yaml
+            src: ../config/dex.yaml
             dest: /home/noodle/k3s-auth/dex.yaml
             owner: noodle
             group: noodle
