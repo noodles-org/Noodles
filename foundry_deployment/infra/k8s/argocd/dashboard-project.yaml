@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: dashboard-project
+  namespace: argocd
+spec:
+  description: Dashboard Project
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: dashboard
+      server: in-cluster
+      name: in-cluster
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+  namespaceResourceBlacklist:
+    - group: ''
+      kind: ResourceQuota
+    - group: ''
+      kind: LimitRange
+    - group: ''
+      kind: NetworkPolicy
+  roles:
+    - name: read-only
+      description: Read-only privileges to dashboard-project
+      policies:
+        - p, proj:dashboard-project:read-only, applications, get, dashboard-project/*, allow
+      groups:
+        - developer

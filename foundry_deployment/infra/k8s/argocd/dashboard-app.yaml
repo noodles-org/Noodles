@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dashboard
+  namespace: argocd
+spec:
+  project: dashboard-project
+  source:
+    repoURL: https://github.com/noodles-org/Noodles
+    targetRevision: HEAD
+    path: foundry_deployment/infra/k8s/dashboard
+    directory:
+      recurse: true
+  destination:
+    name: in-cluster
+    namespace: dashboard
