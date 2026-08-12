@@ -51,6 +51,9 @@ spec:
             - containerPort: 4190
               protocol: TCP
               hostPort: 4190
+          resources:
+            requests: { cpu: 100m, memory: 256Mi, ephemeral-storage: 256Mi }
+            limits: { cpu: 1, memory: 1Gi, ephemeral-storage: 2Gi }
           lifecycle:
             postStart:
               exec:
@@ -90,6 +93,9 @@ spec:
           ports:
             - containerPort: 3000
               protocol: TCP
+          resources:
+            requests: { cpu: 10m, memory: 32Mi, ephemeral-storage: 64Mi }
+            limits: { cpu: 200m, memory: 128Mi, ephemeral-storage: 256Mi }
           env:
             - name: PORT
               value: "3000"
