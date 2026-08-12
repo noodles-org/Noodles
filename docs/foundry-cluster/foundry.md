@@ -50,7 +50,16 @@ Foundry data is backed up using Restic to an S3 bucket:
 - **Excludes:** `/foundrydata/Backups/*`
 - **Credentials:** Stored in the `restic` Kubernetes Secret (AWS keys + Restic password).
 
-Manual backup and restore jobs are also available under `k8s/foundry/jobs/manual/`.
+Manual backup and restore jobs are available under `k8s/_manual-jobs/foundry/`:
+
+- **Jobs:** `foundry-manual-backup`, `foundry-restore`
+- **Not managed by ArgoCD:** they live outside every ArgoCD Application source path (and are not applied by `setup_cluster.yaml`), so ArgoCD never creates, recreates, or prunes them.
+- **Usage:** apply them by hand when needed, and delete the completed Job before re-running it:
+
+```
+kubectl apply -f foundry_deployment/infra/k8s/_manual-jobs/foundry/manual-backup.yaml
+kubectl delete job -n foundry foundry-manual-backup
+```
 
 ## Fetch IP CronJob
 

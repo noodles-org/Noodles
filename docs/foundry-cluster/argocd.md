@@ -39,6 +39,16 @@ The `games-apps` ApplicationSet generates applications from a list of directory 
 
 Both ApplicationSets pull from `https://github.com/noodles-org/Noodles` at `HEAD`.
 
+## Unmanaged manifests
+
+Because each Application syncs its source path recursively, any manifest placed under those paths is managed by ArgoCD. Manifests that must only ever be triggered manually are therefore kept outside them:
+
+| Path                                          | Contents                                        |
+|-----------------------------------------------|-------------------------------------------------|
+| `foundry_deployment/infra/k8s/_manual-jobs/`   | One-off Jobs (e.g. Foundry manual backup/restore) |
+
+These are applied with `kubectl apply -f` by hand. This also avoids sync failures caused by the immutable `spec.template` of a `Job` that already exists in the cluster.
+
 ## RBAC
 
 ArgoCD roles are mapped to GitHub organization teams:

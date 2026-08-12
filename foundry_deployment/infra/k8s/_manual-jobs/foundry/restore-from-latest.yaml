@@ -1,7 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: foundry-manual-backup
+  name: foundry-restore
+  namespace: foundry
 spec:
   template:
     spec:
@@ -15,9 +16,10 @@ spec:
             - "-r"
             - "s3:https://s3.us-west-1.amazonaws.com/noodles-foundry-bucket/restic"
             - "--verbose=2"
-            - "backup"
-            - "/foundrydata"
-            - "--exclude=/foundrydata/Backups/*"
+            - "restore"
+            - "latest"
+            - "--target"
+            - "/"
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
