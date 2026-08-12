@@ -17,6 +17,9 @@ spec:
           containers:
             - name: push-metrics
               image: curlimages/curl:8.10.1
+              resources:
+                requests: { cpu: 10m, memory: 16Mi, ephemeral-storage: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi, ephemeral-storage: 128Mi }
               env:
                 - name: METRICS_URL
                   value: "http://service.stalwart.svc.cluster.local:3000/metrics"

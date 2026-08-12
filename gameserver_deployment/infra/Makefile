@@ -1,10 +1,13 @@
 KUBECONFIG ?= ~/.kube/gameserver_config
 SHOW_TOKEN ?= false
 
-setup-cluster:
+install-collections:
+	ansible-galaxy collection install -r requirements.yml
+
+setup-cluster: install-collections
 	ansible-playbook -i inventory.ini playbooks/setup_cluster.yaml --extra-vars "config=$(KUBECONFIG) show_token=$(SHOW_TOKEN)" -K
 
-setup-dev:
+setup-dev: install-collections
 	ansible-playbook -i inventory.ini playbooks/setup_dev.yaml --extra-vars "kubeconfig=$(KUBECONFIG)"
 
 # sops key is ~/.config/sops/age/keys.txt by default

@@ -22,10 +22,18 @@ spec:
               protocol: TCP
             - containerPort: 7359
               protocol: UDP
+          resources:
+            requests: { cpu: 250m, memory: 512Mi, ephemeral-storage: 512Mi }
+            limits: { cpu: 6, memory: 1536Mi, ephemeral-storage: 2Gi }
           volumeMounts:
             - name: jellyfin-config
               mountPath: /config
+            - name: jellyfin-media
+              mountPath: /media
       volumes:
         - name: jellyfin-config
           persistentVolumeClaim:
             claimName: jellyfin-pvc
+        - name: jellyfin-media
+          persistentVolumeClaim:
+            claimName: jellyfin-media-pvc

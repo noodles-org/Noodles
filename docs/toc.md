@@ -4,6 +4,8 @@
 
 - [Cluster Overview](foundry-cluster/overview.md#cluster-overview)
   - [Namespaces](foundry-cluster/overview.md#namespaces)
+  - [Node Capacity](foundry-cluster/overview.md#node-capacity)
+  - [Node Storage](foundry-cluster/overview.md#node-storage)
   - [Cluster Setup](foundry-cluster/overview.md#cluster-setup)
 - [Auth](foundry-cluster/auth.md#auth)
   - [Dex](foundry-cluster/auth.md#dex)

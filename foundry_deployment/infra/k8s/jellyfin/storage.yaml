@@ -12,3 +12,33 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-media-pv
+spec:
+  capacity:
+    storage: 2560Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.0.128.146
+    path: /mnt/media/jellyfin
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media-pvc
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/sync-options: Delete=false
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2560Gi
+  storageClassName: ""
+  volumeName: jellyfin-media-pv

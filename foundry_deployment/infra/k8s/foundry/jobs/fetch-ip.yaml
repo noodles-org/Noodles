@@ -17,6 +17,9 @@ spec:
             - name: ip-fetcher
               image: docker.io/mephalrith/fetch-foundry-ip:v0.1
               imagePullPolicy: Always
+              resources:
+                requests: { cpu: 10m, memory: 32Mi, ephemeral-storage: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi, ephemeral-storage: 128Mi }
               env:
                 - name: API_KEY
                   valueFrom:
