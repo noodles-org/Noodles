@@ -26,10 +26,12 @@ spec:
     - namespace: stalwart
       server: in-cluster
       name: in-cluster
-  # Deny all cluster-scoped resources from being created, except for Namespace
+  # Deny all cluster-scoped resources from being created, except for Namespace and PersistentVolume
   clusterResourceWhitelist:
     - group: ''
       kind: Namespace
+    - group: ''
+      kind: PersistentVolume
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
     - group: ''

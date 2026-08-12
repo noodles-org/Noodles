@@ -25,6 +25,8 @@ The `foundry-apps` ApplicationSet generates applications from a list of director
 | `pihole`       | `foundry_deployment/infra/k8s/pihole`           | `pihole`     |
 | `stalwart`     | `foundry_deployment/infra/k8s/stalwart`         | `stalwart`   |
 
+Cluster-scoped resources are denied by default; `Namespace` and `PersistentVolume` are whitelisted (the latter is required by the `jellyfin-media-pv` media volume). `ResourceQuota`, `LimitRange`, and `NetworkPolicy` are blacklisted at the namespace scope.
+
 ### games-project
 Manages game server deployments on a separate cluster context (`games-context`). Allowed destination namespaces: `enshrouded`, `satisfactory`, `soba`, `valheim`.
 
