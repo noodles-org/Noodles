@@ -8,6 +8,10 @@ FoundryVTT is the primary application running on the cluster. It uses a custom N
 - **Replicas:** 1
 - **Container port:** 30000
 - **Namespace:** `foundry`
+- **Requests:** 500m CPU, 1Gi memory, 1Gi ephemeral-storage
+- **Limits:** 4 CPU, 3Gi memory, 4Gi ephemeral-storage
+
+The image is intentionally left on the `latest` tag with `imagePullPolicy: Always` so a rebuild rolls out without a manifest change.
 
 The Foundry version is updated by rebuilding the Docker image:
 ```

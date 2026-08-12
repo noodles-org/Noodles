@@ -29,6 +29,10 @@ The cluster is provisioned via Ansible using `make setup-cluster`. The playbook 
 
 1. Configures K3s API server authentication with Dex (shared with the foundry cluster).
 2. Configures DNS to bypass systemd-resolved and sets inotify limits.
-3. Installs cert-manager for TLS certificate management.
-4. Adds the Grafana Helm repo and installs the Alloy chart.
-5. Applies Kubernetes manifests for auth, ArgoCD, monitoring, Satisfactory, Enshrouded, Valheim, and Soba resources.
+3. Grows the root partition, physical volume and logical volume to fill the disk, and enables `fstrim.timer` so freed blocks return to the ZFS pool.
+4. Verifies the kubeconfig can authenticate before touching the cluster, failing early with an explanation if the API server rejects the credentials.
+5. Installs cert-manager for TLS certificate management.
+6. Adds the Grafana Helm repo and installs the Alloy chart.
+7. Applies Kubernetes manifests for auth, ArgoCD, monitoring, Satisfactory, Enshrouded, Valheim, and Soba resources.
+
+The playbooks depend on the `community.general` and `ansible.posix` collections, pinned in `infra/requirements.yml` and installed automatically by `make setup-cluster`.
