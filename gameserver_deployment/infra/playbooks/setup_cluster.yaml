@@ -33,6 +33,43 @@
             state: link
             force: true
 
+    - name: Ensure the root filesystem uses the whole disk
+      block:
+        - name: Install cloud-guest-utils for growpart
+          apt:
+            name: cloud-guest-utils
+            state: present
+            update_cache: true
+
+        - name: Grow the root partition into any unallocated disk space
+          command: growpart /dev/sda 3
+          register: root_partition
+          changed_when: root_partition.rc == 0
+          failed_when: root_partition.rc != 0 and 'NOCHANGE' not in root_partition.stdout
+
+        - name: Resize the physical volume onto the grown partition
+          command: pvresize /dev/sda3
+          when: root_partition is changed
+
+        - name: Check for unallocated space in the volume group
+          command: vgs --noheadings --nosuffix --units b -o vg_free ubuntu-vg
+          register: vg_free
+          changed_when: false
+
+        - name: Extend the root logical volume over all free extents
+          community.general.lvol:
+            vg: ubuntu-vg
+            lv: ubuntu-lv
+            size: +100%FREE
+            resizefs: true
+          when: vg_free.stdout | trim | int >= 1073741824
+
+        - name: Enable periodic TRIM so freed blocks return to the ZFS pool
+          systemd:
+            name: fstrim.timer
+            enabled: true
+            state: started
+
     - name: Set inotify max_user_instances
       ansible.posix.sysctl:
         name: fs.inotify.max_user_instances
@@ -86,6 +123,26 @@
         path: "{{ config }}"
       register: file_path
       failed_when: file_path.stat.exists == false or file_path.stat.mimetype != "text/plain"
+
+    - name: Verify the kubeconfig can authenticate against the API server
+      command: kubectl auth whoami
+      register: kube_whoami
+      changed_when: false
+      failed_when: kube_whoami.rc != 0
+      environment:
+        KUBECONFIG: "{{ file_path.stat.path }}"
+      ignore_errors: true
+
+    - name: Fail early when the API server rejects the credentials
+      fail:
+        msg: >-
+          Cannot authenticate against the cluster with {{ file_path.stat.path }}.
+          If it is an OIDC context, Ansible cannot run the interactive kubelogin
+          browser flow — run `rm -rf ~/.kube/cache/oidc-login && kubectl get nodes`
+          in your own shell first to refresh the token cache, then re-run this playbook.
+          On a brand-new cluster Dex does not exist yet, so use the K3s admin
+          kubeconfig from /etc/rancher/k3s/k3s.yaml for the initial setup.
+      when: kube_whoami is failed
 
     - name: Install cert-manager
       shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
