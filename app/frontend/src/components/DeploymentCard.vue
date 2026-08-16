@@ -51,7 +51,7 @@ async function act(fn: () => Promise<void>, confirmMsg?: string) {
           :class="['badge', deployment.syncStatus === 'Synced' ? 'badge-synced' : 'badge-outofsync']"
       >{{ deployment.syncStatus }}</span>
     </div>
-    <div class="dep-actions" v-if="auth.isAdmin">
+    <div class="dep-actions" v-if="auth.canMutate">
       <button
           class="btn btn-sm"
           :disabled="busy || deployment.paused"

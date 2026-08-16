@@ -14,8 +14,9 @@ const msgs: Record<string, string> = {
   invalid_state: 'Invalid session state. Please try again.',
   auth_failed: 'Authentication failed. Please try again.',
   no_code: 'No authorization code received.',
-  not_authorized:
-      'Your GitHub account does not have access to this dashboard. Contact an org admin.',
+  not_authorized: 'Your account does not have access. Contact an administrator.',
+  email_unverified: 'Your account has no verified email address. Access cannot be granted.',
+  requests_closed: 'Access requests are temporarily closed. Please contact an administrator.',
 };
 </script>
 
@@ -23,7 +24,7 @@ const msgs: Record<string, string> = {
   <div class="login-page">
     <div class="login-card">
       <h1>Cluster Dashboard</h1>
-      <p>Sign in with your GitHub organization account</p>
+      <p>Sign in with your GitHub organization or Google account</p>
       <div v-if="error" class="login-error">
         {{ msgs[error] || 'An error occurred.' }}
       </div>
