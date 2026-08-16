@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -48,6 +50,66 @@ func isAllowedUser(groups []string, cfg *config.Config) bool {
 		}
 	}
 	return false
+}
+
+// claimBool returns a boolean claim, tolerating the string form some providers emit.
+func claimBool(claims map[string]any, key string) bool {
+	switch v := claims[key].(type) {
+	case bool:
+		return v
+	case string:
+		return v == "true"
+	default:
+		return false
+	}
+}
+
+// resolveIdentity maps verified claims onto a dashboard user.
+func resolveIdentity(ctx context.Context, claims map[string]any, groups []string, cfg *config.Config, registry services.ClientRegistry) (model.User, error) {
+	if isAllowedUser(groups, cfg) {
+		return buildUserFromClaims(claims, groups, resolveRole(groups, cfg)), nil
+	}
+
+	if registry == nil {
+		return model.User{}, errs.NotAuthorized
+	}
+
+	email := strings.ToLower(strings.TrimSpace(claimStr(claims, "email")))
+	if email == "" || !claimBool(claims, "email_verified") {
+		return model.User{}, errs.EmailUnverified
+	}
+
+	if entry, ok := registry.Lookup(email); ok {
+		role := entry.Role
+		if role != model.RoleClient && role != model.RoleClientAdmin {
+			role = model.RoleClient
+		}
+		return buildUserFromClaims(claims, groups, role), nil
+	}
+
+	if registry.IsPending(email) {
+		return buildUserFromClaims(claims, groups, model.RolePending), nil
+	}
+
+	pendingUser := buildUserFromClaims(claims, groups, model.RolePending)
+	entry := model.ClientEntry{
+		Email:     email,
+		Name:      pendingUser.Name,
+		Sub:       pendingUser.Sub,
+		Role:      model.RolePending,
+		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+	}
+	if err := registry.AddPending(ctx, entry); err != nil {
+		if errors.Is(err, errs.PendingFull) {
+			return model.User{}, errs.RequestsClosed
+		}
+		services.Logger.Error("Auth: failed to add pending entry", "email", email, "error", err)
+		return model.User{}, errs.RegistryFailed
+	}
+
+	services.Logger.Info("Auth: access request created", "email", email)
+	services.AuthEvents.With(map[string]string{"status": "success", "reason": "pending_created"}).Inc()
+	return pendingUser, nil
 }
 
 // signSessionJWT creates a signed JWT string from a User.
@@ -216,7 +278,7 @@ func buildUserFromClaims(claims map[string]any, groups []string, role model.Role
 	}
 }
 
-func HandleCallback(cfg *config.Config) http.HandlerFunc {
+func HandleCallback(cfg *config.Config, registry services.ClientRegistry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := r.URL.Query().Get("code")
 		state := r.URL.Query().Get("state")
@@ -268,13 +330,16 @@ func HandleCallback(cfg *config.Config) http.HandlerFunc {
 
 		groups := parseGroups(userinfo)
 
-		if !isAllowedUser(groups, cfg) {
-			authFailure(w, r, "unauthorized_group", "not_authorized",
-				"Auth: user not in allowed groups", "email", claimStr(userinfo, "email"), "groups", groups, "ip", r.RemoteAddr)
+		user, err := resolveIdentity(r.Context(), userinfo, groups, cfg, registry)
+		if err != nil {
+			var idErr *errs.IdentityError
+			if !errors.As(err, &idErr) {
+				idErr = errs.NotAuthorized
+			}
+			authFailure(w, r, idErr.Reason, idErr.Redirect,
+				idErr.Message, "email", claimStr(userinfo, "email"), "groups", groups, "ip", r.RemoteAddr)
 			return
 		}
-
-		user := buildUserFromClaims(userinfo, groups, resolveRole(groups, cfg))
 
 		signed, err := signSessionJWT(&user, cfg.JWT.Secret)
 		if err != nil {

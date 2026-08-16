@@ -60,10 +60,11 @@ type Config struct {
 	ArgoCD         ArgoCDConfig
 	RemoteClusters []RemoteClusterConfig
 
-	NamespaceLabel string
-	DocsPath       string
-	FrontendPath   string
-	CORSOrigin     string
+	NamespaceLabel   string
+	ClientsNamespace string
+	DocsPath         string
+	FrontendPath     string
+	CORSOrigin       string
 }
 
 func Load() *Config {
@@ -120,10 +121,11 @@ func Load() *Config {
 
 		RemoteClusters: loadRemoteClusters(),
 
-		NamespaceLabel: optional("NAMESPACE_LABEL", "noodles.dashboard/managed"),
-		DocsPath:       filepath.Clean(optional("DOCS_PATH", "../../docs")),
-		FrontendPath:   filepath.Clean(optional("FRONTEND_PATH", "../../frontend/dist")),
-		CORSOrigin:     corsOrigin(env, publicURL),
+		NamespaceLabel:   optional("NAMESPACE_LABEL", "noodles.dashboard/managed"),
+		ClientsNamespace: optional("CLIENTS_NAMESPACE", "dashboard"),
+		DocsPath:         filepath.Clean(optional("DOCS_PATH", "../../docs")),
+		FrontendPath:     filepath.Clean(optional("FRONTEND_PATH", "../../frontend/dist")),
+		CORSOrigin:       corsOrigin(env, publicURL),
 	}
 }
 

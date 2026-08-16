@@ -101,6 +101,19 @@ func RequireRole(roles ...model.Role) func(http.Handler) http.Handler {
 	}
 }
 
+func RequireApproved(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := UserFromContext(r.Context())
+		if user == nil || !user.Role.CanRead() {
+			services.Logger.Warn("Auth: pending user blocked",
+				"path", r.URL.Path)
+			respond.Error(w, errs.Forbidden)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func claimString(claims jwtlib.MapClaims, key string) string {
 	if v, ok := claims[key]; ok {
 		if s, ok := v.(string); ok {
