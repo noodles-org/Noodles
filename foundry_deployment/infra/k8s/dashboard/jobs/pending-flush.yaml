@@ -1,0 +1,65 @@
+# Clears stale client access requests every Monday at 03:00.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: noodles-clients-pending-flush
+  namespace: dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: noodles-clients-pending-flush
+  namespace: dashboard
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["noodles-clients-pending"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: noodles-clients-pending-flush
+  namespace: dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: noodles-clients-pending-flush
+subjects:
+  - kind: ServiceAccount
+    name: noodles-clients-pending-flush
+    namespace: dashboard
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: noodles-clients-pending-flush
+  namespace: dashboard
+spec:
+  schedule: "0 3 * * 1"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: noodles-clients-pending-flush
+          containers:
+            - name: kubectl
+              image: docker.io/bitnami/kubectl:1.31
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests: { cpu: 10m, memory: 32Mi, ephemeral-storage: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi, ephemeral-storage: 128Mi }
+              command:
+                - kubectl
+                - -n
+                - dashboard
+                - patch
+                - configmap
+                - noodles-clients-pending
+                - --type=merge
+                - -p
+                - '{"data":{"clients.yaml":"[]"}}'
