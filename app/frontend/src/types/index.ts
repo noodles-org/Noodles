@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'viewer';
+export type Role = 'admin' | 'viewer' | 'client_admin' | 'client' | 'pending';
 
 export interface User {
     sub: string;
@@ -6,6 +6,14 @@ export interface User {
     name: string;
     role: Role;
     groups: string[];
+}
+
+export interface ClientEntry {
+    email: string;
+    name: string;
+    sub: string;
+    role: Role;
+    createdAt: string;
 }
 
 export interface DeploymentInfo {

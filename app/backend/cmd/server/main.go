@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -29,6 +30,11 @@ func main() {
 	k8s := services.NewK8sService(cfg)
 	argo := services.NewArgoCDService(cfg)
 
+	ctx, stopRefresh := context.WithCancel(context.Background())
+	defer stopRefresh()
+	clients := services.NewClientRegistry(cfg)
+	clients.StartRefresh(ctx)
+
 	r := chilib.NewRouter()
 
 	// Global middleware
@@ -48,7 +54,7 @@ func main() {
 	// Auth routes (with rate limiting handled by middleware)
 	r.Route("/api/auth", func(sub chilib.Router) {
 		sub.Get("/login", handlers.HandleLogin(cfg))
-		sub.Get("/callback", handlers.HandleCallback(cfg))
+		sub.Get("/callback", handlers.HandleCallback(cfg, clients))
 		sub.With(middleware.RequireAuth(cfg)).Get("/me", handlers.HandleMe)
 		sub.With(middleware.RequireAuth(cfg)).Post("/logout", handlers.HandleLogout(cfg))
 	})
@@ -56,22 +62,36 @@ func main() {
 	// Deployment routes
 	r.Route("/api/deployments", func(sub chilib.Router) {
 		sub.Use(middleware.RequireAuth(cfg))
+		sub.Use(middleware.RequireApproved)
 		sub.Get("/", handlers.HandleListDeployments(k8s, argo))
-		sub.With(middleware.RequireRole(model.RoleAdmin)).Post("/{namespace}/{name}/restart", handlers.HandleRestartDeployment(k8s))
-		sub.With(middleware.RequireRole(model.RoleAdmin)).Post("/{namespace}/{name}/pause", handlers.HandlePauseDeployment(k8s))
-		sub.With(middleware.RequireRole(model.RoleAdmin)).Post("/{namespace}/{name}/resume", handlers.HandleResumeDeployment(k8s))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/{namespace}/{name}/restart", handlers.HandleRestartDeployment(k8s))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/{namespace}/{name}/pause", handlers.HandlePauseDeployment(k8s))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/{namespace}/{name}/resume", handlers.HandleResumeDeployment(k8s))
 	})
 
 	// Docs routes
 	r.Route("/api/docs", func(sub chilib.Router) {
 		sub.Use(middleware.RequireAuth(cfg))
+		sub.Use(middleware.RequireApproved)
 		sub.Get("/toc", handlers.HandleDocsToc(cfg))
 		sub.Get("/content", handlers.HandleDocsContent(cfg))
+	})
+
+	// Client registry routes (staff admins only)
+	r.Route("/api/clients", func(sub chilib.Router) {
+		sub.Use(middleware.RequireAuth(cfg))
+		sub.Use(middleware.RequireRole(model.RoleAdmin))
+		sub.Get("/", handlers.HandleListApprovedClients(clients))
+		sub.Get("/pending", handlers.HandleListPendingClients(clients))
+		sub.Post("/approve", handlers.HandleApproveClient(clients))
+		sub.Post("/reject", handlers.HandleRejectClient(clients))
+		sub.Post("/revoke", handlers.HandleRevokeClient(clients))
 	})
 
 	// Services routes
 	r.Route("/api/services", func(sub chilib.Router) {
 		sub.Use(middleware.RequireAuth(cfg))
+		sub.Use(middleware.RequireApproved)
 		sub.Get("/", handlers.HandleListServices(k8s))
 	})
 

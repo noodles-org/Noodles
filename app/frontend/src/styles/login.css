@@ -27,6 +27,24 @@
     font-size: 15px;
 }
 
+.login-providers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-provider {
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 15px;
+}
+
+.login-provider svg {
+    flex-shrink: 0;
+}
+
 .login-error {
     background: var(--c-danger-bg);
     color: var(--c-danger);

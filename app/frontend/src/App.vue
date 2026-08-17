@@ -6,6 +6,6 @@ const auth = useAuthStore();
 </script>
 
 <template>
-  <NavBar v-if="auth.isAuthenticated"/>
+  <NavBar v-if="auth.isAuthenticated && !auth.isPending"/>
   <router-view/>
 </template>

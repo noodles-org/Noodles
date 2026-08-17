@@ -7,7 +7,7 @@ The Noodles Dashboard is a web application at `noodles.quest` that provides a ce
 - **Service Directory** — Auto-discovered list of all labeled cluster services and their URLs
 - **Deployment Management** — View, restart, pause, and resume deployments across managed namespaces on both the foundry and gameserver clusters
 - **Documentation** — Integrated docs reader serving content from the `docs/` directory
-- **Authentication** — Dex OIDC integration with role-based access control (admin/viewer)
+- **Authentication** — Dex OIDC integration with role-based access control for staff (admin/viewer) and clients (client_admin/client), see [Client Access](client-access.md)
 
 ## Deployment
 
@@ -22,6 +22,8 @@ The dashboard runs in the `dashboard` namespace with 1 replica. It is managed by
 | IngressRoute | `routes.yaml` | Traefik route for `noodles.quest` with TLS and security headers |
 | RBAC | `rbac.yaml` | ServiceAccount, ClusterRoles, and bindings for namespace/deployment/IngressRoute access |
 | ConfigMap | `remote-clusters.yaml` | Remote cluster definitions injected as `REMOTE_CLUSTERS` env var (name, API URL, token env var, inline CA cert) |
+| ConfigMap | `clients.yaml`, `clients-pending.yaml` | Client registry, see [Client Access](client-access.md#registry-storage) |
+| CronJob | `jobs/pending-flush.yaml` | Weekly flush of pending client access requests |
 
 ### Secrets
 

@@ -5,12 +5,12 @@ metadata:
     namespace: pihole
 type: Opaque
 stringData:
-    ADMIN_PASSWORD: ENC[AES256_GCM,data:+H7na08sNl7ECg==,iv:bBrt4QEv8uk/SE8RaHZZQANGb/IWVRFdiY4SFWxersk=,tag:8v+OKfrngFtiHcIOdiV5xg==,type:str]
+    ADMIN_PASSWORD: ENC[AES256_GCM,data:QMGItmDA7o7fcw==,iv:VJXp0RLdz9HtgVp53saA1Icim/mMtf1eyPzQIDz9ceE=,tag:tMFnzSdIY2npDz6we1bFug==,type:str]
 sops:
     kms:
         - arn: arn:aws:kms:us-west-1:061349021976:key/aa320f6e-8677-4b20-ba4a-a397b9b6ef4f
-          created_at: "2026-08-05T22:31:56Z"
-          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgEF5O6VeR6aJn359rsSm+wrAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMaHFGxjaFvStSee7kAgEQgDvv7b+yv4f6h8S4ykPmzekG65KgSoQ7iepDjJ7hRzoObwwImxIhfQNp7kziSSwpGagphVdP4y/ZJuwTJg==
+          created_at: "2026-08-16T06:06:39Z"
+          enc: AQICAHgs6Vc7psOJ5zsR5mf8eWfzoQ3QNJYc83uk6RP4fu4nxgGGNS1+t1bzdDMr1aRp3NEoAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMBRpjRK5Z2VvZ4hQ+AgEQgDueaYaVLwIPBpOMpBvRIlO0/F8HF5FApCeJqIQqRuXiP0d3JQmotX9KLvSjjcPEOqXXExPPVzJC+kYIUg==
           aws_profile: ""
     gcp_kms: []
     azure_kv: []
@@ -19,14 +19,14 @@ sops:
         - recipient: age1zafe3axpkvz9y8uv9d82mqr4e92yx5dhvuu5jsc4y0dzz97wlu4qt5uxqz
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0cDJkQjJhWGZhUHp2M0xW
-            WGJ1RWFnYU8xNXAzZHNZTS9GNVZsTEw4RGhFCkN5Wk9GRE15ZHpxRWo1TUJ6ZDRK
-            Qys4YVhLT1RPWGpmRG85RzdrUG00Q0EKLS0tIFF5MVlRNGZDSm83MXlsY2gzLysz
-            Y29UMElLUlEwbzM1M1lXWGtERnhuQ00KQt0TG+/FWlwOvqGiSqAwAEC7HIPxdbR6
-            jngS2KY/ci2PwdrlvsR5u3DMxvm4Z5m5MdCLgU0vCcppQDiRq8SuSg==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA1K09DaHA1cHpybUUzLzRy
+            aE90bGxhbXMySk1vcDN4Rk9TWEExQ1kvRmhnCjc0L080aVM2STk5Rnd0a0d2bjRT
+            RjBNYStLUlV4WjlVL2paWHNFdTRYdHMKLS0tIDEvdldodjR2dlhkRFJLdENvK2hJ
+            SjRZcFBpVFc5VG9XdHJpWUZFUFZWR3MKmtEYi4j2dhsoUW6dEkEjDdO06pwy3z5u
+            B/GLKnA8wnkLUQcEkEfqvNUSLHBH88LwTCBEH3hGbifwZCYK0ttoGg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-08-05T22:31:56Z"
-    mac: ENC[AES256_GCM,data:WAR86DFhC4a2HxW3CHHjk3MWxE8fxMQSn2ywFlSvZalXuQ7uW0rV7GaU3qc711IfX2N1pP83eWzAmtHENXMzclue5SURLYinHgWC7JCK23nPMaaOKBDv+o6cqXAfEazzioDbjf0yq21spYu3ND5rataszZKzaARUYzJP26qcAy0=,iv:0w/okYrelprE67NqHVLsV9iZ8FJF1vMi+WeKUzb2iTs=,tag:DxyUB1nz4WdjHFv+qycnRA==,type:str]
+    lastmodified: "2026-08-16T06:06:39Z"
+    mac: ENC[AES256_GCM,data:aTlzoDW6r4yahFv8bQ2sutljiCt4WuaWmIpx6eqBEX1RZ1RoEZ2ElFL6MmS/yo6hQTj/AJ6I/gjUatrBNeOZkZXrTOa+NH3QoFHhs9BXMfAeIDGsMc+iTDHhu6a1OFHv1y8t97DPRANcMr51apZ2LpD+vjO10HwV3ahLdF2IWdE=,iv:kDvi7JKhtJXRokGBS1xRcw4dN08S8C9DSBA37uLlbsg=,tag:9MhJoog0Z2m8Fop4RLMlVA==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.8.1

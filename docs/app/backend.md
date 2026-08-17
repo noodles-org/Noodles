@@ -14,6 +14,7 @@ backend/
 │   ├── errs/                  # Typed error definitions (auth, oauth, resource, etc.)
 │   ├── handlers/
 │   │   ├── auth.go            # OAuth login/callback/logout via Dex
+│   │   ├── clients.go         # Client registry API (list, approve, reject, revoke)
 │   │   ├── deployments.go     # CRUD operations on k8s deployments
 │   │   ├── docs.go            # Serves docs TOC and markdown content
 │   │   └── services.go        # Service directory (k8s discovery)
@@ -21,11 +22,12 @@ backend/
 │   │   ├── auth.go            # JWT verification, role-based access (bypassed in dev)
 │   │   ├── cors.go            # CORS middleware for development
 │   │   └── logging.go         # Request logging middleware
-│   ├── model/                 # Shared Go structs (deployment, doc, service, user)
+│   ├── model/                 # Shared Go structs (client, deployment, doc, service, user)
 │   ├── respond/
 │   │   └── respond.go         # JSON response helpers
 │   └── services/
 │       ├── argocd.go          # ArgoCD API client for sync/health status
+│       ├── clients.go         # ConfigMap-backed client registry with cache
 │       ├── kubernetes.go      # K8s client: namespace/deployment/service discovery
 │       ├── logger.go          # Structured slog logger
 │       └── metrics.go         # Prometheus metrics via client_golang
@@ -50,6 +52,11 @@ All routes except `/healthz` and `/api/auth/*` require authentication.
 | GET | `/api/services` | List discovered services |
 | GET | `/api/docs/toc` | Table of contents (parsed from `docs/toc.md`) |
 | GET | `/api/docs/content?path=...` | Markdown content for a doc page |
+| GET | `/api/clients` | List approved clients (admin only) |
+| GET | `/api/clients/pending` | List pending access requests (admin only) |
+| POST | `/api/clients/approve` | `{email, role}` — move pending → approved (admin only) |
+| POST | `/api/clients/reject` | `{email}` — drop from pending (admin only) |
+| POST | `/api/clients/revoke` | `{email}` — drop from approved (admin only) |
 
 ## Static File Serving & SPA Fallback
 
@@ -57,18 +64,36 @@ In production, the backend serves the frontend's built assets and handles SPA ro
 
 1. Requests to `/api/*` that don't match a defined route return a JSON 404
 2. Requests matching a static file in the frontend dist directory are served directly
-3. All other requests serve `index.html`, allowing Vue Router to handle client-side routes (e.g. `/login`, `/services`, `/deployments`, `/docs`)
+3. All other requests serve `index.html`, allowing Vue Router to handle client-side routes (e.g. `/login`, `/services`, `/deployments`, `/docs`, `/pending`, `/admin/clients`)
 
 ## Authentication
 
 In production, authentication uses Dex OIDC:
 1. `/login` redirects to Dex
 2. Dex redirects back to `/callback` with an auth code
-3. The backend exchanges the code for tokens, resolves the user's role from group membership, and sets an `httpOnly` JWT cookie
+3. The backend exchanges the code for tokens, resolves the user's role, and sets an `httpOnly` JWT cookie
+
+`resolveIdentity` in `handlers/auth.go` resolves the role in order: GitHub group match → staff (`admin` / `viewer`), then the client registry → `client` / `client_admin`, then the pending list → `pending`, otherwise a new pending entry is recorded. See [Client Access](../foundry-cluster/client-access.md) for the identity model.
+
+### Roles and Route Gating
+
+`model.Role` has five values — `admin`, `viewer`, `client_admin`, `client`, `pending` — with the predicates `IsStaff()`, `CanRead()`, and `CanMutate()`.
+
+| Middleware | Applied to | Effect |
+|------------|-----------|--------|
+| `RequireAuth` | all routes except `/healthz` and `/api/auth/login`, `/api/auth/callback` | Parses the session JWT into `model.User` |
+| `RequireApproved` | `/api/deployments`, `/api/services`, `/api/docs` | 403 for any role failing `CanRead()` (i.e. `pending`) |
+| `RequireRole(admin, client_admin)` | restart / pause / resume | Mutating deployment actions |
+| `RequireRole(admin)` | `/api/clients/*` | Staff-admin-only approval API |
+
+### Client Registry
+
+`services.ClientRegistry` (`services/clients.go`) stores clients in the `clients.yaml` key of the `noodles-clients` and `noodles-clients-pending` ConfigMaps, in the namespace given by `CLIENTS_NAMESPACE` (default `dashboard`). Both lists are cached in memory, refreshed on a 30s ticker and invalidated synchronously on every write. Lookups are case-insensitive, `AddPending` is idempotent and capped at 20 entries, and malformed YAML degrades to an empty list with an error log rather than panicking. `Approve` moves an entry from the pending to the approved ConfigMap, `Reject` drops it from pending, and `Revoke` removes an already approved client from the approved ConfigMap. Sentinel errors live in `errs/clients.go` (`PendingFull` 503, `NotPending` 404, `NotApproved` 404, `InvalidClientRole` 400) and login rejections in `errs/identity.go` (`NotAuthorized`, `EmailUnverified`, `RequestsClosed`, `RegistryFailed`).
 
 In development (`NODE_ENV=development`), auth is fully bypassed:
 - `requireAuth` middleware injects a mock admin user
 - `/login` issues a JWT cookie directly without contacting Dex
+- The client registry runs purely in memory, since there is no cluster to read ConfigMaps from. It is seeded once at startup from `mocks/clients.json`: every entry lands in the pending list with role `pending` and the approved list starts empty, so approve / reject / revoke can be exercised locally. Nothing is written back to disk, and the backend must be run from `app/backend` for the relative `mocks` path to resolve
 
 ## ArgoCD Integration
 

@@ -9,6 +9,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isAuthenticated = computed(() => !!user.value);
     const isAdmin = computed(() => user.value?.role === 'admin');
+    const isPending = computed(() => user.value?.role === 'pending');
+    const isStaff = computed(() => user.value?.role === 'admin' || user.value?.role === 'viewer');
+    const canMutate = computed(() => user.value?.role === 'admin' || user.value?.role === 'client_admin');
 
     async function checkAuth() {
         try {
@@ -21,8 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    function login() {
-        window.location.href = '/api/auth/login';
+    function login(connector?: 'github' | 'google') {
+        window.location.href = connector
+            ? `/api/auth/login?connector=${connector}`
+            : '/api/auth/login';
     }
 
     async function logout() {
@@ -35,5 +40,5 @@ export const useAuthStore = defineStore('auth', () => {
         window.location.href = '/login';
     }
 
-    return {user, loading, isAuthenticated, isAdmin, checkAuth, login, logout};
+    return {user, loading, isAuthenticated, isAdmin, isPending, isStaff, canMutate, checkAuth, login, logout};
 });

@@ -1,0 +1,85 @@
+.clients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.clients-header .page-title {
+    margin-bottom: 0;
+}
+
+.clients-section {
+    margin-bottom: 32px;
+}
+
+.clients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.clients-empty {
+    color: var(--c-muted);
+    font-size: 14px;
+    padding: 18px 20px;
+    border: 1px dashed var(--c-border);
+    border-radius: var(--radius);
+    text-align: left;
+}
+
+.client-card {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.client-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.client-email {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.client-meta {
+    font-size: 13px;
+    color: var(--c-muted);
+    display: flex;
+    gap: 16px;
+    margin-top: 2px;
+}
+
+.client-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.client-role {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    background: var(--c-success-bg);
+    color: var(--c-success);
+}
+
+.client-role-select {
+    font-size: 13px;
+    padding: 4px 8px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    background: var(--c-surface);
+    color: var(--c-text);
+    font-family: var(--font);
+}
+
+[data-theme="dark"] .client-role-select {
+    color-scheme: dark;
+}

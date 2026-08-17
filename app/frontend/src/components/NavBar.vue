@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted} from 'vue';
+import {ref, computed, onMounted, onUnmounted} from 'vue';
 import {useAuthStore} from '../stores/auth';
 import {useThemeStore} from '../stores/theme';
 import {useRoute} from 'vue-router';
@@ -12,11 +12,12 @@ const route = useRoute();
 const profileOpen = ref(false);
 const profileRef = ref<HTMLElement | null>(null);
 
-const navItems = [
+const navItems = computed(() => [
   {path: '/services', label: 'Services'},
   {path: '/deployments', label: 'Deployments'},
   {path: '/docs', label: 'Docs'},
-];
+  ...(auth.isAdmin ? [{path: '/admin/clients', label: 'User Management'}] : []),
+]);
 
 function toggleProfile() {
   profileOpen.value = !profileOpen.value;
