@@ -12,7 +12,6 @@ metadata:
   labels:
     app: dashboard
   annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
 data:
   clients.yaml: "[]"

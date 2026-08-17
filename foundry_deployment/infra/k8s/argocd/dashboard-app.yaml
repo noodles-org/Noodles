@@ -14,8 +14,9 @@ spec:
   destination:
     name: in-cluster
     namespace: dashboard
-  # The client registry ConfigMaps are shipped as empty shells and owned by the
-  # dashboard backend at runtime; never reconcile their contents away.
+  syncPolicy:
+    syncOptions:
+      - RespectIgnoreDifferences=true
   ignoreDifferences:
     - group: ""
       kind: ConfigMap
