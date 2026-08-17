@@ -16,7 +16,7 @@ const navItems = computed(() => [
   {path: '/services', label: 'Services'},
   {path: '/deployments', label: 'Deployments'},
   {path: '/docs', label: 'Docs'},
-  ...(auth.isAdmin ? [{path: '/admin/clients', label: 'Clients'}] : []),
+  ...(auth.isAdmin ? [{path: '/admin/clients', label: 'User Management'}] : []),
 ]);
 
 function toggleProfile() {

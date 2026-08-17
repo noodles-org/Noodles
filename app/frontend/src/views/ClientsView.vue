@@ -14,10 +14,12 @@ function roleFor(email: string): Role {
   return roles.value[email] ?? 'client';
 }
 
-async function act(email: string, action: 'approve' | 'reject') {
+async function act(email: string, action: 'approve' | 'reject' | 'revoke', confirmMsg?: string) {
+  if (confirmMsg && !confirm(confirmMsg)) return;
   busy.value = email;
   try {
     if (action === 'approve') await store.approve(email, roleFor(email));
+    else if (action === 'revoke') await store.revoke(email);
     else await store.reject(email);
   } catch {
     store.error = `Failed to ${action} ${email}`;
@@ -40,7 +42,7 @@ async function act(email: string, action: 'approve' | 'reject') {
     <template v-else>
       <section class="clients-section">
         <h2 class="page-title">Pending requests</h2>
-        <div v-if="!store.pending.length" class="empty">No pending access requests.</div>
+        <div v-if="!store.pending.length" class="clients-empty">No pending access requests.</div>
         <div v-else class="clients-list">
           <div v-for="c in store.pending" :key="c.email" class="card client-card">
             <div class="client-info">
@@ -72,7 +74,7 @@ async function act(email: string, action: 'approve' | 'reject') {
 
       <section class="clients-section">
         <h2 class="page-title">Approved clients</h2>
-        <div v-if="!store.approved.length" class="empty">No approved clients yet.</div>
+        <div v-if="!store.approved.length" class="clients-empty">No approved clients yet.</div>
         <div v-else class="clients-list">
           <div v-for="c in store.approved" :key="c.email" class="card client-card">
             <div class="client-info">
@@ -84,6 +86,12 @@ async function act(email: string, action: 'approve' | 'reject') {
             </div>
             <div class="client-actions">
               <span class="client-role">{{ c.role }}</span>
+              <button
+                  class="btn btn-sm btn-danger"
+                  :disabled="busy === c.email"
+                  @click="act(c.email, 'revoke', `Revoke access for ${c.email}? They will need to be approved again.`)">
+                Revoke
+              </button>
             </div>
           </div>
         </div>

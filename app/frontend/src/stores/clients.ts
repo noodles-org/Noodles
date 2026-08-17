@@ -36,5 +36,10 @@ export const useClientsStore = defineStore('clients', () => {
         await fetchClients();
     }
 
-    return {pending, approved, loading, error, fetchClients, approve, reject};
+    async function revoke(email: string) {
+        await api.post('/clients/revoke', {email});
+        await fetchClients();
+    }
+
+    return {pending, approved, loading, error, fetchClients, approve, reject, revoke};
 });

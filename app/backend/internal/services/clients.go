@@ -2,8 +2,11 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -19,14 +22,10 @@ import (
 )
 
 const (
-	// ApprovedConfigMap holds clients that staff have approved.
 	ApprovedConfigMap = "noodles-clients"
-	// PendingConfigMap holds sign-in requests awaiting approval.
-	PendingConfigMap = "noodles-clients-pending"
-	// clientsKey is the ConfigMap data key holding the YAML list of entries.
-	clientsKey = "clients.yaml"
-	// PendingCap is the maximum number of pending requests accepted at once.
-	PendingCap = 20
+	PendingConfigMap  = "noodles-clients-pending"
+	clientsKey        = "clients.yaml"
+	PendingCap        = 20
 
 	clientsRefreshInterval = 30 * time.Second
 )
@@ -40,6 +39,7 @@ type ClientRegistry interface {
 	AddPending(ctx context.Context, entry model.ClientEntry) error
 	Approve(ctx context.Context, email string, role model.Role) error
 	Reject(ctx context.Context, email string) error
+	Revoke(ctx context.Context, email string) error
 	Refresh(ctx context.Context) error
 }
 
@@ -50,19 +50,21 @@ var _ ClientRegistry = (*K8sClientRegistry)(nil)
 type K8sClientRegistry struct {
 	client    kubernetes.Interface
 	namespace string
+	isDev     bool
+	mocksDir  string
 
 	mu       sync.RWMutex
 	approved []model.ClientEntry
 	pending  []model.ClientEntry
+	seeded   bool
 }
 
-// NewClientRegistry builds a registry backed by the in-cluster API server. In
-// development there is no cluster, so the registry degrades to an in-memory one.
+// NewClientRegistry builds a registry backed by the in-cluster API server.
 func NewClientRegistry(cfg *config.Config) *K8sClientRegistry {
-	reg := &K8sClientRegistry{namespace: cfg.ClientsNamespace}
+	reg := &K8sClientRegistry{namespace: cfg.ClientsNamespace, isDev: !cfg.IsProduction, mocksDir: filepath.Join("mocks")}
 
-	if !cfg.IsProduction {
-		Logger.Info("Clients: dev mode, using in-memory client registry")
+	if reg.isDev {
+		Logger.Info("Clients: dev mode, using mock client registry")
 		return reg
 	}
 
@@ -82,13 +84,15 @@ func NewClientRegistry(cfg *config.Config) *K8sClientRegistry {
 	return reg
 }
 
-// NewClientRegistryWithClient is used by tests and by callers that already hold
-// a clientset.
-func NewClientRegistryWithClient(client kubernetes.Interface, namespace string) *K8sClientRegistry {
-	return &K8sClientRegistry{client: client, namespace: namespace}
+func (r *K8sClientRegistry) loadMock(file string, v any) error {
+	data, err := os.ReadFile(filepath.Join(r.mocksDir, file))
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, v)
 }
 
-// StartRefresh keeps the cache warm until ctx is cancelled.
+// StartRefresh keeps the cache warm until ctx is canceled.
 func (r *K8sClientRegistry) StartRefresh(ctx context.Context) {
 	if err := r.Refresh(ctx); err != nil {
 		Logger.Error("Clients: initial refresh failed", "error", err)
@@ -110,8 +114,39 @@ func (r *K8sClientRegistry) StartRefresh(ctx context.Context) {
 	}()
 }
 
+// seedMocks loads mocks/clients.json into the pending list once per process.
+func (r *K8sClientRegistry) seedMocks() error {
+	r.mu.RLock()
+	seeded := r.seeded
+	r.mu.RUnlock()
+	if seeded {
+		return nil
+	}
+
+	var entries []model.ClientEntry
+	if err := r.loadMock("clients.json", &entries); err != nil {
+		return fmt.Errorf("loading mock clients: %w", err)
+	}
+	for i := range entries {
+		entries[i].Email = normalizeEmail(entries[i].Email)
+		entries[i].Role = model.RolePending
+	}
+
+	r.mu.Lock()
+	r.pending = entries
+	r.approved = nil
+	r.seeded = true
+	r.mu.Unlock()
+
+	Logger.Info("Clients: seeded mock pending clients", "count", len(entries))
+	return nil
+}
+
 // Refresh reloads both lists from the cluster.
 func (r *K8sClientRegistry) Refresh(ctx context.Context) error {
+	if r.isDev {
+		return r.seedMocks()
+	}
 	if r.client == nil {
 		return nil
 	}
@@ -163,7 +198,7 @@ func (r *K8sClientRegistry) ListPending() []model.ClientEntry {
 }
 
 // AddPending records a new sign-in request. It is a no-op if the email is
-// already pending, and refuses new entries once PendingCap is reached.
+// already pending and refuses new entries once PendingCap is reached.
 func (r *K8sClientRegistry) AddPending(ctx context.Context, entry model.ClientEntry) error {
 	entry.Email = normalizeEmail(entry.Email)
 	entry.Role = model.RolePending
@@ -261,6 +296,32 @@ func (r *K8sClientRegistry) Reject(ctx context.Context, email string) error {
 
 	r.setPending(pending)
 	Logger.Info("Clients: request rejected", "email", email)
+	return nil
+}
+
+// Revoke removes an already approved client from the approved registry.
+func (r *K8sClientRegistry) Revoke(ctx context.Context, email string) error {
+	email = normalizeEmail(email)
+
+	approved, err := r.load(ctx, ApprovedConfigMap)
+	if err != nil {
+		return err
+	}
+	i := indexOfEmail(approved, email)
+	if i < 0 {
+		return errs.NotApproved
+	}
+
+	approved = append(approved[:i:i], approved[i+1:]...)
+	if err := r.save(ctx, ApprovedConfigMap, approved); err != nil {
+		return err
+	}
+
+	r.mu.Lock()
+	r.approved = approved
+	r.mu.Unlock()
+
+	Logger.Info("Clients: approval revoked", "email", email)
 	return nil
 }
 

@@ -14,7 +14,7 @@ backend/
 │   ├── errs/                  # Typed error definitions (auth, oauth, resource, etc.)
 │   ├── handlers/
 │   │   ├── auth.go            # OAuth login/callback/logout via Dex
-│   │   ├── clients.go         # Client registry API (list, approve, reject)
+│   │   ├── clients.go         # Client registry API (list, approve, reject, revoke)
 │   │   ├── deployments.go     # CRUD operations on k8s deployments
 │   │   ├── docs.go            # Serves docs TOC and markdown content
 │   │   └── services.go        # Service directory (k8s discovery)
@@ -56,6 +56,7 @@ All routes except `/healthz` and `/api/auth/*` require authentication.
 | GET | `/api/clients/pending` | List pending access requests (admin only) |
 | POST | `/api/clients/approve` | `{email, role}` — move pending → approved (admin only) |
 | POST | `/api/clients/reject` | `{email}` — drop from pending (admin only) |
+| POST | `/api/clients/revoke` | `{email}` — drop from approved (admin only) |
 
 ## Static File Serving & SPA Fallback
 
@@ -87,12 +88,12 @@ In production, authentication uses Dex OIDC:
 
 ### Client Registry
 
-`services.ClientRegistry` (`services/clients.go`) stores clients in the `clients.yaml` key of the `noodles-clients` and `noodles-clients-pending` ConfigMaps, in the namespace given by `CLIENTS_NAMESPACE` (default `dashboard`). Both lists are cached in memory, refreshed on a 30s ticker and invalidated synchronously on every write. Lookups are case-insensitive, `AddPending` is idempotent and capped at 20 entries, and malformed YAML degrades to an empty list with an error log rather than panicking. Sentinel errors live in `errs/clients.go` (`PendingFull` 503, `NotPending` 404, `InvalidClientRole` 400) and login rejections in `errs/identity.go` (`NotAuthorized`, `EmailUnverified`, `RequestsClosed`, `RegistryFailed`).
+`services.ClientRegistry` (`services/clients.go`) stores clients in the `clients.yaml` key of the `noodles-clients` and `noodles-clients-pending` ConfigMaps, in the namespace given by `CLIENTS_NAMESPACE` (default `dashboard`). Both lists are cached in memory, refreshed on a 30s ticker and invalidated synchronously on every write. Lookups are case-insensitive, `AddPending` is idempotent and capped at 20 entries, and malformed YAML degrades to an empty list with an error log rather than panicking. `Approve` moves an entry from the pending to the approved ConfigMap, `Reject` drops it from pending, and `Revoke` removes an already approved client from the approved ConfigMap. Sentinel errors live in `errs/clients.go` (`PendingFull` 503, `NotPending` 404, `NotApproved` 404, `InvalidClientRole` 400) and login rejections in `errs/identity.go` (`NotAuthorized`, `EmailUnverified`, `RequestsClosed`, `RegistryFailed`).
 
 In development (`NODE_ENV=development`), auth is fully bypassed:
 - `requireAuth` middleware injects a mock admin user
 - `/login` issues a JWT cookie directly without contacting Dex
-- The client registry runs purely in memory, since there is no cluster to read ConfigMaps from
+- The client registry runs purely in memory, since there is no cluster to read ConfigMaps from. It is seeded once at startup from `mocks/clients.json`: every entry lands in the pending list with role `pending` and the approved list starts empty, so approve / reject / revoke can be exercised locally. Nothing is written back to disk, and the backend must be run from `app/backend` for the relative `mocks` path to resolve
 
 ## ArgoCD Integration
 

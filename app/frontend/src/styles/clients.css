@@ -18,6 +18,15 @@
     gap: 10px;
 }
 
+.clients-empty {
+    color: var(--c-muted);
+    font-size: 14px;
+    padding: 18px 20px;
+    border: 1px dashed var(--c-border);
+    border-radius: var(--radius);
+    text-align: left;
+}
+
 .client-card {
     padding: 14px 20px;
     display: flex;

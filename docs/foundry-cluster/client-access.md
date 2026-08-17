@@ -25,6 +25,8 @@ Clients see all deployments — there is no per-client namespace scoping. How th
 
 ## Sign-in Flow
 
+The dashboard renders the provider choice itself: the login page offers **Sign in with GitHub** and **Sign in with Google**, and `/api/auth/login?connector=github|google` forwards the choice to Dex as `connector_id`. Dex therefore skips its own unthemed connector-selection screen and goes straight to the provider. An unknown or missing `connector` value is ignored and the Dex chooser is shown.
+
 Staff always win: a GitHub group match resolves to `admin` or `viewer` before the client registry is consulted. Otherwise the verified Google email is looked up in the approved registry, then the pending list, and an unknown email is recorded as a new access request. The Google `email_verified` claim must be true — an unverified email is rejected and nothing is written.
 
 ### Waiting Room
@@ -48,7 +50,7 @@ There is no git history of the allowlist. If the ConfigMap is lost, clients simp
 
 ## Approval
 
-Staff admins approve or reject requests from the **Clients** page in the dashboard, assigning `client` or `client_admin`. Approving moves the entry between the two ConfigMaps. Because the role is carried in the session JWT, a revoked client keeps their access until the 8h cookie expires.
+Staff admins approve or reject requests from the **User Management** page in the dashboard, assigning `client` or `client_admin`. Approving moves the entry between the two ConfigMaps. An already approved client can be revoked from the same page, which removes them from `noodles-clients`; the action asks for confirmation first so it cannot be triggered by a stray click. Because the role is carried in the session JWT, a revoked client keeps their access until the 8h cookie expires.
 
 The page and its admin-only API are documented in [Frontend](../app/frontend.md#clients) and [Backend](../app/backend.md#api-routes).
 

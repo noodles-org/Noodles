@@ -85,6 +85,7 @@ func main() {
 		sub.Get("/pending", handlers.HandleListPendingClients(clients))
 		sub.Post("/approve", handlers.HandleApproveClient(clients))
 		sub.Post("/reject", handlers.HandleRejectClient(clients))
+		sub.Post("/revoke", handlers.HandleRevokeClient(clients))
 	})
 
 	// Services routes

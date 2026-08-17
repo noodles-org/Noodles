@@ -22,6 +22,10 @@ type rejectRequest struct {
 	Email string `json:"email"`
 }
 
+type revokeRequest struct {
+	Email string `json:"email"`
+}
+
 func HandleListPendingClients(registry services.ClientRegistry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		respond.OK(w, registry.ListPending())
@@ -71,6 +75,25 @@ func HandleRejectClient(registry services.ClientRegistry) http.HandlerFunc {
 		}
 
 		services.Logger.Info("Clients: access rejected", "email", req.Email, "by", actorEmail(r.Context()))
+
+		respond.OK(w, map[string]bool{"ok": true})
+	}
+}
+
+func HandleRevokeClient(registry services.ClientRegistry) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req revokeRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Email == "" {
+			respond.Error(w, errs.BadRequest)
+			return
+		}
+
+		if err := registry.Revoke(r.Context(), req.Email); err != nil {
+			respondRegistryError(w, err, "Clients: revoke failed", req.Email)
+			return
+		}
+
+		services.Logger.Info("Clients: access revoked", "email", req.Email, "by", actorEmail(r.Context()))
 
 		respond.OK(w, map[string]bool{"ok": true})
 	}

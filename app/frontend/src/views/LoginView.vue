@@ -5,7 +5,7 @@ import {useRoute} from 'vue-router';
 import '../styles/login.css';
 
 const auth = useAuthStore();
-useThemeStore();
+const theme = useThemeStore();
 const route = useRoute();
 const error = route.query.error as string | undefined;
 
@@ -28,9 +28,18 @@ const msgs: Record<string, string> = {
       <div v-if="error" class="login-error">
         {{ msgs[error] || 'An error occurred.' }}
       </div>
-      <button class="btn btn-primary" @click="auth.login()">
-        Sign in with SSO
-      </button>
+      <div class="login-providers">
+        <button class="btn login-provider" @click="auth.login('github')">
+          <img v-if="theme.dark" src="../assets/GitHub_Invertocat_White.svg" alt="Github logo" width="18" height="18" class="service-card-icon" />
+          <img v-else src="../assets/GitHub_Invertocat_Black.svg" alt="Github logo" width="18" height="18" class="service-card-icon" />
+          Sign in with GitHub
+        </button>
+        <button class="btn login-provider" @click="auth.login('google')">
+          <img src="../assets/Google_G.svg" alt="Google logo" width="18" height="18" aria-hidden="true"
+               class="service-card-icon"/>
+          Sign in with Google
+        </button>
+      </div>
     </div>
   </div>
 </template>

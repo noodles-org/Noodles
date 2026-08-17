@@ -14,7 +14,7 @@ frontend/src/
 │   └── index.ts           # Vue Router with auth guard
 ├── stores/
 │   ├── auth.ts            # User state, login/logout, auth check, role computeds
-│   ├── clients.ts         # Client registry state, approve/reject actions
+│   ├── clients.ts         # Client registry state, approve/reject/revoke actions
 │   └── deployments.ts     # Deployment list state and actions
 ├── views/
 │   ├── LoginView.vue      # Login page
@@ -45,7 +45,7 @@ Loads the table of contents from `/api/docs/toc` into a sidebar. Selecting an it
 The waiting room at `/pending` shown to users whose access request has not been approved yet. It has no data access, and `App.vue` hides the `NavBar` for pending users so no navigation is offered.
 
 ### Clients
-The admin-only page at `/admin/clients` lists pending requests and approved clients from `/api/clients*`, with Approve (plus a role selector), and Reject controls.
+The admin-only page at `/admin/clients` lists pending requests and approved clients from `/api/clients*`, with Approve (plus a role selector) and Reject controls on pending rows, and a Revoke control on approved rows. Revoke asks for confirmation first via a native `confirm()` prompt. Empty sections render a left-aligned `.clients-empty` placeholder rather than the centered global `.empty` utility.
 
 ## Auth Flow
 

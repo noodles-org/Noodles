@@ -137,6 +137,11 @@ func setSessionCookie(w http.ResponseWriter, cfg *config.Config, signed string) 
 	})
 }
 
+var dexConnectors = map[string]bool{
+	"github": true,
+	"google": true,
+}
+
 func HandleLogin(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !cfg.IsProduction {
@@ -173,6 +178,10 @@ func HandleLogin(cfg *config.Config) http.HandlerFunc {
 			"response_type": {"code"},
 			"scope":         {cfg.OAuth.Scopes},
 			"state":         {state},
+		}
+
+		if connector := r.URL.Query().Get("connector"); dexConnectors[connector] {
+			params.Set("connector_id", connector)
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("%s?%s", cfg.OAuth.AuthorizeURL, params.Encode()), http.StatusFound)

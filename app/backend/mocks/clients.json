@@ -1,0 +1,23 @@
+[
+  {
+    "email": "client_test@gmail.com",
+    "name": "Client Test",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "role": "client",
+    "sub": "client_test"
+  },
+  {
+    "email": "admin_test@gmail.com",
+    "name": "Admin Test",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "role": "client_admin",
+    "sub": "admin_test"
+  },
+  {
+    "email": "pending_test@gmail.com",
+    "name": "Pending User",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "role": "pending",
+    "sub": "pending_test"
+  }
+]

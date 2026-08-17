@@ -24,8 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    function login() {
-        window.location.href = '/api/auth/login';
+    function login(connector?: 'github' | 'google') {
+        window.location.href = connector
+            ? `/api/auth/login?connector=${connector}`
+            : '/api/auth/login';
     }
 
     async function logout() {
