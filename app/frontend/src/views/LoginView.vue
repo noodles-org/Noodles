@@ -23,7 +23,7 @@ const msgs: Record<string, string> = {
 <template>
   <div class="login-page">
     <div class="login-card">
-      <h1>Cluster Dashboard</h1>
+      <h1>Noodles Dashboard</h1>
       <p>Sign in with your GitHub organization or Google account</p>
       <div v-if="error" class="login-error">
         {{ msgs[error] || 'An error occurred.' }}
