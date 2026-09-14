@@ -1,0 +1,178 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-slo-scheduled-jobs
+  namespace: monitoring
+  annotations:
+    grafana_folder: "SLO"
+  labels:
+    grafana_dashboard: "1"
+data:
+  slo-scheduled-jobs.json: |-
+    {
+      "uid": "slo-scheduled-jobs",
+      "title": "SLO - Scheduled Jobs & CronJobs",
+      "tags": ["slo", "sli", "cronjobs", "backups", "fetch-ip"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "time": { "from": "now-7d", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "DS_PROMETHEUS",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": {}
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "row",
+          "title": "CronJob Freshness & SLA Status",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "collapsed": false
+        },
+        {
+          "type": "stat",
+          "title": "Fetch IP Run Freshness (Target < 30m)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 8, "x": 0, "y": 1 },
+          "id": 1,
+          "targets": [
+            {
+              "expr": "time() - max(push_time_seconds{exported_job=\"fetch-ip\"} or push_time_seconds{job=\"fetch-foundry-ip\"})",
+              "legendFormat": "Time Since Last Success"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": 0 },
+                  { "color": "yellow", "value": 1200 },
+                  { "color": "red", "value": 1800 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": { "calcs": ["lastNotNull"] }
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Foundry Backup Freshness (Target < 8d)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 8, "x": 8, "y": 1 },
+          "id": 2,
+          "targets": [
+            {
+              "expr": "time() - max(kube_job_status_completion_time{job_name=~\"foundry-backup.*\"})",
+              "legendFormat": "Time Since Last Backup"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": 0 },
+                  { "color": "yellow", "value": 604800 },
+                  { "color": "red", "value": 691200 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": { "calcs": ["lastNotNull"] }
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Pending Flush Freshness (Target < 8d)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 8, "x": 16, "y": 1 },
+          "id": 3,
+          "targets": [
+            {
+              "expr": "time() - max(kube_job_status_completion_time{job_name=~\"pending-flush.*\"})",
+              "legendFormat": "Time Since Last Flush"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": 0 },
+                  { "color": "yellow", "value": 604800 },
+                  { "color": "red", "value": 691200 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "reduceOptions": { "calcs": ["lastNotNull"] }
+          }
+        },
+        {
+          "type": "row",
+          "title": "Job Execution History & Failure Rates",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+          "id": 101,
+          "collapsed": false
+        },
+        {
+          "type": "timeseries",
+          "title": "Fetch IP Operations Processed vs Failed",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
+          "id": 11,
+          "targets": [
+            {
+              "expr": "fetch_ip_ops_processed_total{exported_job=\"fetch-ip\"}",
+              "legendFormat": "Processed Total"
+            },
+            {
+              "expr": "fetch_ip_ops_failed_total{exported_job=\"fetch-ip\"}",
+              "legendFormat": "Failed Total"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "drawStyle": "line", "lineWidth": 2 }
+            }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "CronJob Failures (Last 7 Days)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
+          "id": 12,
+          "targets": [
+            {
+              "expr": "sum(kube_job_status_failed{job_name=~\"foundry-backup.*|pending-flush.*\"}) by (job_name)",
+              "legendFormat": "Failed: {{ job_name }}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "drawStyle": "bars", "fillOpacity": 50 }
+            }
+          }
+        }
+      ]
+    }

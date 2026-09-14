@@ -22,12 +22,17 @@ GitHub organization teams are mapped to Grafana roles:
 
 - Default Kubernetes dashboards are enabled (`defaultDashboardsEnabled: true`).
 - Custom dashboards are loaded via a sidecar that watches for ConfigMaps with the `grafana_folder` annotation.
-- Dashboard ConfigMaps are stored in `k8s/monitoring/dashboards/`.
+- Dashboard ConfigMaps are stored in `k8s/monitoring/dashboards/`:
+  - `noodles-dashboard-cm.yaml` — Application metrics dashboard (`noodles-dashboard.json`) for per-route traffic, latency, and auth event drill-downs.
+  - `slo-core-apps-cm.yaml` — SLO / SLI dashboard for core applications and APIs (`slo-core-apps.json`), tracking availability, latency percentiles, error budget burn rates, and Dex/Foundry ingress health.
+  - `slo-scheduled-jobs-cm.yaml` — SLO / SLI dashboard for scheduled jobs (`slo-scheduled-jobs.json`), tracking execution freshness, failure rates, processed operations, and backup completion.
 
 ## Alerts
 
-- Alert rules are loaded via a sidecar that watches for ConfigMaps.
-- Alert ConfigMaps are stored in `k8s/monitoring/alerts/` (e.g., `fetch-ip-alert-cm.yaml`).
+- Alert rules and notification policies are loaded via a sidecar that watches for ConfigMaps with the `grafana_alert: "1"` label.
+- Alert ConfigMaps are stored in `k8s/monitoring/alerts/`:
+  - `slo-alerts-cm.yaml` — Unified alerts for core application SLOs (fast error burn rates, high latency, Dex/Foundry ingress 5xx errors, overdue backups, and Fetch IP failures/overdue execution).
+  - `slo-notification-policies-cm.yaml` — Contact points (Discord `#alerts` webhook) and default notification routing policy (all alerts and recoveries routed to Discord).
 
 ## Prometheus
 
