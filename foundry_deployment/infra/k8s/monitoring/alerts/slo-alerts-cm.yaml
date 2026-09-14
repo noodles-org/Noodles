@@ -1,0 +1,400 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-slo-alert-config
+  namespace: monitoring
+  labels:
+    grafana_alert: "1"
+data:
+  slo-alerts.json: |-
+    {
+      "apiVersion": 1,
+      "groups": [
+        {
+          "orgId": 1,
+          "name": "SLO Alerts",
+          "folder": "SLO",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "slo-dash-burn-rate",
+              "title": "Dashboard High Error Burn Rate",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 3600, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "(sum(rate(dashboard_http_requests_total{status_code=~\"5..\"}[1h])) / sum(rate(dashboard_http_requests_total[1h]))) / (1 - 0.995)",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [14.4], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-core-applications",
+              "labels": {
+                "severity": "critical"
+              },
+              "noDataState": "OK",
+              "execErrState": "Error",
+              "for": "2m",
+              "annotations": {
+                "summary": "Noodles Dashboard is burning through 30d error budget at >14.4x rate (1h window)"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-dash-latency",
+              "title": "Dashboard High Latency (P95 > 500ms)",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 300, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum(rate(dashboard_http_request_duration_seconds_bucket{route!=\"unmatched\"}[5m])) by (le))",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [0.5], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-core-applications",
+              "labels": {
+                "severity": "warning"
+              },
+              "noDataState": "OK",
+              "execErrState": "Error",
+              "for": "5m",
+              "annotations": {
+                "summary": "Noodles Dashboard P95 request latency exceeded 500ms SLO threshold"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-dex-errors",
+              "title": "Dex OIDC High Error Rate",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 300, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "sum(rate(traefik_service_requests_total{service=~\"auth-dex.*\", code=~\"5..\"}[5m])) / sum(rate(traefik_service_requests_total{service=~\"auth-dex.*\"}[5m]))",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [0.01], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-core-applications",
+              "labels": {
+                "severity": "critical"
+              },
+              "noDataState": "OK",
+              "execErrState": "Error",
+              "for": "5m",
+              "annotations": {
+                "summary": "Dex OIDC ingress 5xx error rate exceeded 1%"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-foundry-errors",
+              "title": "FoundryVTT Ingress Errors",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 300, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\", code=~\"5..\"}[5m])) / sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\"}[5m]))",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [0.01], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-core-applications",
+              "labels": {
+                "severity": "critical"
+              },
+              "noDataState": "OK",
+              "execErrState": "Error",
+              "for": "5m",
+              "annotations": {
+                "summary": "FoundryVTT ingress 5xx error rate exceeded 1%"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-backup-overdue",
+              "title": "Foundry Weekly Backup Overdue",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 300, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "time() - max(kube_job_status_completion_time{job_name=~\"foundry-backup.*\"})",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [691200], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-scheduled-jobs",
+              "labels": {
+                "severity": "warning"
+              },
+              "noDataState": "Alerting",
+              "execErrState": "Error",
+              "for": "1h",
+              "annotations": {
+                "summary": "Foundry Restic backup has not completed in > 8 days"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-fetch-ip-failed",
+              "title": "Fetch IP Operations Failed",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 900, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "sum(increase(fetch_ip_ops_failed_total{exported_job=\"fetch-ip\"}[15m])) or sum(increase(fetch_ip_ops_failed_total[15m])) or vector(0)",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [0], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-scheduled-jobs",
+              "labels": {
+                "severity": "warning"
+              },
+              "noDataState": "OK",
+              "execErrState": "Error",
+              "for": "1m",
+              "annotations": {
+                "summary": "Fetch IP CronJob failed during public IP sync operation"
+              },
+              "isPaused": false
+            },
+            {
+              "uid": "slo-fetch-ip-overdue",
+              "title": "Fetch IP Execution Overdue",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": { "from": 300, "to": 0 },
+                  "datasourceUid": "prometheus",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "time() - max(push_time_seconds{exported_job=\"fetch-ip\"} or push_time_seconds{job=\"fetch-foundry-ip\"})",
+                    "instant": true,
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "range": false,
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 0, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [1800], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "slo-scheduled-jobs",
+              "labels": {
+                "severity": "warning"
+              },
+              "noDataState": "Alerting",
+              "execErrState": "Error",
+              "for": "5m",
+              "annotations": {
+                "summary": "Fetch IP CronJob has not pushed metrics in > 30 minutes"
+              },
+              "isPaused": false
+            }
+          ]
+        }
+      ]
+    }

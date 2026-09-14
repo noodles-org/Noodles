@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-slo-notification-policies
+  namespace: monitoring
+  labels:
+    grafana_alert: "1"
+data:
+  slo-notification-policies.json: |-
+    {
+      "apiVersion": 1,
+      "contactPoints": [
+        {
+          "orgId": 1,
+          "name": "discord-notifications",
+          "receivers": [
+            {
+              "uid": "discord-notifications",
+              "type": "discord",
+              "settings": {
+                "url": "$__env{DISCORD_WEBHOOK_URL}"
+              },
+              "disableResolveMessage": false
+            }
+          ]
+        }
+      ],
+      "policies": [
+        {
+          "orgId": 1,
+          "receiver": "discord-notifications",
+          "groupBy": [
+            "alertname",
+            "grafana_folder"
+          ],
+          "groupWait": "30s",
+          "groupInterval": "5m",
+          "repeatInterval": "4h"
+        }
+      ]
+    }
