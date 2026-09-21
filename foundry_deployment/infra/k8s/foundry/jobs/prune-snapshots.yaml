@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: foundry-prune-snapshots
+  namespace: foundry
+spec:
+  # Wednesdays at 9AM
+  schedule: 0 9 * * 3
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: restic
+              image: docker.io/restic/restic:0.18.0
+              imagePullPolicy: IfNotPresent
+              command:
+                - restic
+                - "-r"
+                - "s3:https://s3.us-west-1.amazonaws.com/noodles-foundry-bucket/restic"
+                - "forget"
+                - "--group-by ''"
+                - "--keep-weekly 4"
+                - "--keep-monthly 6"
+                - "--keep-yearly 2"
+                - "--prune"
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: restic
+                      key: access-key-id
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: restic
+                      key: secret-access-key
+                - name: RESTIC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: restic
+                      key: restic-password
+                - name: BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: restic
+                      key: bucket-name
+              resources:
+                requests: { cpu: 200m, memory: 512Mi, ephemeral-storage: 1Gi }
+                limits: { cpu: 1, memory: 1Gi, ephemeral-storage: 2Gi }
