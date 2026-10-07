@@ -68,7 +68,7 @@ data:
         },
         {
           "type": "stat",
-          "title": "Dashboard Latency < 500ms (Target: 99.0%)",
+          "title": "Dashboard Latency < 500ms (Target: 80.0%)",
           "datasource": { "uid": "${DS_PROMETHEUS}" },
           "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
           "id": 2,
@@ -86,8 +86,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   { "color": "red", "value": 0 },
-                  { "color": "yellow", "value": 98.0 },
-                  { "color": "green", "value": 99.0 }
+                  { "color": "yellow", "value": 78.0 },
+                  { "color": "green", "value": 80.0 }
                 ]
               }
             }
