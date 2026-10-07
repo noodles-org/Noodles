@@ -5,6 +5,12 @@
     gap: 16px;
     margin-bottom: 16px;
     flex-wrap: wrap;
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 10;
+    background: var(--c-bg);
+    padding: 12px 0;
+    margin-top: -12px;
 }
 .files-header .page-title {
     margin-bottom: 0;
