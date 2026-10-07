@@ -6,6 +6,7 @@ The Noodles Dashboard is a web application at `noodles.quest` that provides a ce
 
 - **Service Directory** — Auto-discovered list of all labeled cluster services and their URLs
 - **Deployment Management** — View, restart, pause, and resume deployments across managed namespaces on both the foundry and gameserver clusters
+- **Foundry Files** — Browse, download, upload, delete, create folders, rename, and move files in the Foundry `Data` tree, with inline image previews; backed by the foundry [File Sidecar](foundry.md#file-sidecar)
 - **Documentation** — Integrated docs reader serving content from the `docs/` directory
 - **Authentication** — Dex OIDC integration with role-based access control for staff (admin/viewer) and clients (client_admin/client), see [Client Access](client-access.md)
 
@@ -33,6 +34,9 @@ The deployment references a `noodles-dashboard` Secret with the following keys:
 - `JWT_SECRET` — Secret for signing session JWTs
 - `ARGOCD_TOKEN` — ArgoCD API token for sync status
 - `GAMESERVER_TOKEN` — Long-lived service account token from the gameserver cluster's `argocd-manager` ServiceAccount, used to query gameserver deployments
+- `FILESVC_TOKEN` — Shared bearer token for the foundry [File Sidecar](foundry.md#file-sidecar); must match the value in the `file-sidecar` Secret in the `foundry` namespace (k8s has no cross-namespace Secret sharing, so the value is duplicated)
+
+The deployment also sets `FILESVC_URL` (defaulting to `http://file-sidecar.foundry.svc.cluster.local`) so the backend can reach the sidecar cross-namespace.
 
 ### Service Discovery
 

@@ -17,6 +17,7 @@ backend/
 │   │   ├── clients.go         # Client registry API (list, approve, reject, revoke)
 │   │   ├── deployments.go     # CRUD operations on k8s deployments
 │   │   ├── docs.go            # Serves docs TOC and markdown content
+│   │   ├── files.go           # Foundry file management (proxied to the file sidecar)
 │   │   └── services.go        # Service directory (k8s discovery)
 │   ├── middleware/
 │   │   ├── auth.go            # JWT verification, role-based access (bypassed in dev)
@@ -28,6 +29,7 @@ backend/
 │   └── services/
 │       ├── argocd.go          # ArgoCD API client for sync/health status
 │       ├── clients.go         # ConfigMap-backed client registry with cache
+│       ├── files.go           # File service: sidecar HTTP client (prod) / jailed local FS (dev)
 │       ├── kubernetes.go      # K8s client: namespace/deployment/service discovery
 │       ├── logger.go          # Structured slog logger
 │       └── metrics.go         # Prometheus metrics via client_golang
@@ -50,6 +52,12 @@ All routes except `/healthz` and `/api/auth/*` require authentication.
 | POST | `/api/deployments/{namespace}/{name}/pause` | Scale to 0, saving original replicas |
 | POST | `/api/deployments/{namespace}/{name}/resume` | Restore original replica count |
 | GET | `/api/services` | List discovered services |
+| GET | `/api/files` | List entries at `?path=` under the Foundry `Data` root |
+| GET | `/api/files/download` | Stream a file's bytes at `?path=` |
+| POST | `/api/files/upload` | Multipart upload into `?path=` (admin/client_admin) |
+| DELETE | `/api/files` | Delete a file or empty dir at `?path=` (admin/client_admin) |
+| POST | `/api/files/mkdir` | Create a folder at `?path=` (admin/client_admin) |
+| POST | `/api/files/rename` | `{from, to}` — rename or move (admin/client_admin) |
 | GET | `/api/docs/toc` | Table of contents (parsed from `docs/toc.md`) |
 | GET | `/api/docs/content?path=...` | Markdown content for a doc page |
 | GET | `/api/clients` | List approved clients (admin only) |
@@ -83,7 +91,8 @@ In production, authentication uses Dex OIDC:
 |------------|-----------|--------|
 | `RequireAuth` | all routes except `/healthz` and `/api/auth/login`, `/api/auth/callback` | Parses the session JWT into `model.User` |
 | `RequireApproved` | `/api/deployments`, `/api/services`, `/api/docs` | 403 for any role failing `CanRead()` (i.e. `pending`) |
-| `RequireRole(admin, client_admin)` | restart / pause / resume | Mutating deployment actions |
+| `RequireApproved` | `/api/files` | 403 for any role failing `CanRead()` (i.e. `pending`); covers list/download |
+| `RequireRole(admin, client_admin)` | restart / pause / resume, file upload / delete / mkdir / rename | Mutating deployment and file actions |
 | `RequireRole(admin)` | `/api/clients/*` | Staff-admin-only approval API |
 
 ### Client Registry
@@ -94,6 +103,15 @@ In development (`NODE_ENV=development`), auth is fully bypassed:
 - `requireAuth` middleware injects a mock admin user
 - `/login` issues a JWT cookie directly without contacting Dex
 - The client registry runs purely in memory, since there is no cluster to read ConfigMaps from. It is seeded once at startup from `mocks/clients.json`: every entry lands in the pending list with role `pending` and the approved list starts empty, so approve / reject / revoke can be exercised locally. Nothing is written back to disk, and the backend must be run from `app/backend` for the relative `mocks` path to resolve
+
+## File Management
+
+`services.FileService` (`services/files.go`) is the backend's only path to the Foundry files; clients never talk to the sidecar directly.
+
+- **Production:** an HTTP client to the file sidecar at `FILESVC_URL` (default `http://file-sidecar.foundry.svc.cluster.local`), sending `Authorization: Bearer <FILESVC_TOKEN>`. Non-2xx responses are translated into typed errors (e.g. `409` → `DirNotEmpty`, `404` → `FileNotFound`, in `errs/resource.go`). Downloads are streamed straight through.
+- **Development (`NODE_ENV=development`):** operations run against a local jailed directory rooted at `FILESVC_ROOT` (default `mocks/files`), so `make dev` works with no cluster. On startup the service copies the committed `mocks/files` seed into an ephemeral `files-work-*` temp dir and points dev operations at the copy, so mutations never touch the seed; the temp dir is removed on shutdown (SIGINT/SIGTERM or normal exit), so the tree resets on each backend restart.
+
+`handlers/files.go` re-validates every `path` (rejecting `..` and absolute paths) as defense in depth even though the sidecar enforces its own jail, audit-logs the acting `user.Email` on mutations, and increments the `dashboard_file_actions_total` metric. The route group's config lives in `FileSvcConfig` (`FILESVC_URL`, `FILESVC_TOKEN`, `FILESVC_ROOT`) in `config/config.go`. See [Foundry](../foundry-cluster/foundry.md#file-sidecar) for the sidecar side.
 
 ## ArgoCD Integration
 
@@ -120,6 +138,7 @@ Custom metrics:
 | `dashboard_auth_events_total` | Counter | `status`, `reason` | Auth events (login, logout, failures) |
 | `dashboard_unique_authenticated_users` | Gauge | — | Unique users since last restart |
 | `dashboard_deployment_actions_total` | Counter | `action`, `namespace`, `deployment` | Deployment actions (pause, resume, restart) |
+| `dashboard_file_actions_total` | Counter | `action`, `status` | Foundry file management actions (list, download, upload, delete, mkdir, rename) |
 | `dashboard_unauthorized_access_attempts_total` | Counter | `path` | Admin action attempts without admin role |
 | `dashboard_http_requests_total` | Counter | `method`, `route`, `status_code` | HTTP requests |
 | `dashboard_http_request_duration_seconds` | Histogram | `method`, `route` | HTTP request duration |

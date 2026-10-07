@@ -15,6 +15,7 @@
 - [Foundry](foundry-cluster/foundry.md#foundry)
   - [Deployment](foundry-cluster/foundry.md#deployment)
   - [Storage](foundry-cluster/foundry.md#storage)
+  - [File Sidecar](foundry-cluster/foundry.md#file-sidecar)
   - [Networking](foundry-cluster/foundry.md#networking)
   - [Backups](foundry-cluster/foundry.md#backups)
   - [Fetch IP CronJob](foundry-cluster/foundry.md#fetch-ip-cronjob)

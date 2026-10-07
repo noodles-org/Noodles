@@ -15,11 +15,13 @@ frontend/src/
 ├── stores/
 │   ├── auth.ts            # User state, login/logout, auth check, role computeds
 │   ├── clients.ts         # Client registry state, approve/reject/revoke actions
-│   └── deployments.ts     # Deployment list state and actions
+│   ├── deployments.ts     # Deployment list state and actions
+│   └── files.ts           # Foundry file browser state and actions
 ├── views/
 │   ├── LoginView.vue      # Login page
 │   ├── ServicesView.vue   # Service directory grid
 │   ├── DeploymentsView.vue # Deployment management table
+│   ├── FilesView.vue      # Foundry Files browser
 │   ├── DocsView.vue       # Documentation reader with sidebar
 │   ├── PendingView.vue    # Waiting room for unapproved users
 │   └── ClientsView.vue    # Admin-only client approval page
@@ -37,6 +39,9 @@ Fetches the service list from `/api/services` and renders a card grid grouped by
 
 ### Deployments
 Lists deployments from `/api/deployments` with health status indicators. Users whose role passes `auth.canMutate` (`admin`, `client_admin`) can restart, pause, and resume deployments; the action block on `DeploymentCard.vue` is hidden for everyone else.
+
+### Foundry Files
+Browses the Foundry `Data` tree from `/api/files`, with a breadcrumb rooted at `Data` (it cannot climb above the root). The table shows name, size, and modified time, and image files render a lazy-loaded inline thumbnail that opens a click-to-enlarge preview modal (image detection is by extension on the frontend; the thumbnail reuses the cookie-authenticated `/api/files/download` URL). Users whose role passes `auth.canMutate` (`admin`, `client_admin`) get upload, delete (multi-select), new-folder, rename, and move controls; everyone else sees a read-only list with download. The **Move** action opens a destination-folder picker modal and confirms before overwriting an existing file, stopping a multi-file move on the first cancel/failure. The `files` Pinia store wraps the list/download/upload/delete/mkdir/rename endpoints, and the action toolbar is sticky to stay reachable while scrolling long lists.
 
 ### Docs
 Loads the table of contents from `/api/docs/toc` into a sidebar. Selecting an item fetches the markdown from `/api/docs/content?path=...`, renders it with `marked`, and sanitizes it with `DOMPurify`.

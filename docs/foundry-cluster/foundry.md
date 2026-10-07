@@ -30,6 +30,18 @@ Foundry data is persisted using a `PersistentVolumeClaim`:
 
 Data is mounted at `/foundrydata` inside the container.
 
+## File Sidecar
+
+A second container, `file-sidecar`, rides inside the `foundry` pod to power the dashboard's **Foundry Files** feature. It is a small custom Go HTTP service (`docker.io/mephalrith/foundry-file-sidecar:latest`) that shares the same `foundry-pv-storage` volume mounted at `/foundrydata`, exposing a narrow internal API (list, download, upload, delete, mkdir, rename) over the files it manages.
+
+- **Jail root:** every operation is confined to `FILESVC_ROOT` (`/foundrydata/Data`); paths that escape the root via `..`, absolute paths, or symlinks are rejected. The root itself cannot be deleted or renamed.
+- **Delete semantics:** non-recursive — a file or an *empty* directory can be removed; a non-empty directory returns `409 Conflict`.
+- **Auth:** a shared bearer token (`FILESVC_TOKEN`, from the `file-sidecar` Secret) is required on every request; the dashboard backend is the only intended caller.
+- **Port / metrics:** listens on `8080` (`FILESVC_PORT`), serving `/healthz` and Prometheus `/metrics` (`filesvc_actions_total`). The pod's `prometheus.io/*` annotations point the scrape at this port.
+- **Service:** an internal `ClusterIP` Service `file-sidecar` (no IngressRoute) reachable in-cluster at `http://file-sidecar.foundry.svc.cluster.local`.
+
+The sidecar source, Dockerfile, and `make update-file-sidecar` build target live under `k8s/foundry/file-sidecar/`. Because it rides inside the existing `foundry` deployment, it needs no separate ArgoCD Application. See [Dashboard](dashboard.md) for the user-facing feature and [Client Access](client-access.md#roles) for the permission mapping.
+
 ## Networking
 
 Foundry is exposed via Traefik IngressRoutes:
