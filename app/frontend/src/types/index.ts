@@ -40,6 +40,14 @@ export interface ServiceLink {
     category: string;
 }
 
+export interface FileEntry {
+    name: string;
+    path: string;
+    isDir: boolean;
+    size: number;
+    modTime: string;
+}
+
 export interface DocTocSection {
     title: string;
     items: { title: string; path: string }[];
