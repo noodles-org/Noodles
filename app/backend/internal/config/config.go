@@ -40,6 +40,12 @@ type ArgoCDConfig struct {
 	Insecure bool
 }
 
+type FileSvcConfig struct {
+	URL   string
+	Token string
+	Root  string
+}
+
 type RemoteClusterConfig struct {
 	Name     string `json:"name"`
 	APIURL   string `json:"apiURL"`
@@ -58,6 +64,7 @@ type Config struct {
 	JWT            JWTConfig
 	Auth           AuthConfig
 	ArgoCD         ArgoCDConfig
+	FileSvc        FileSvcConfig
 	RemoteClusters []RemoteClusterConfig
 
 	NamespaceLabel   string
@@ -117,6 +124,12 @@ func Load() *Config {
 			URL:      "http://argocd-server.argocd.svc.cluster.local",
 			Token:    os.Getenv("ARGOCD_TOKEN"),
 			Insecure: optional("ARGOCD_INSECURE", "true") == "true",
+		},
+
+		FileSvc: FileSvcConfig{
+			URL:   optional("FILESVC_URL", "http://file-sidecar.foundry.svc.cluster.local"),
+			Token: optional("FILESVC_TOKEN", "dev-token"),
+			Root:  optional("FILESVC_ROOT", filepath.Join("mocks", "files")),
 		},
 
 		RemoteClusters: loadRemoteClusters(),

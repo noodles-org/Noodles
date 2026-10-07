@@ -17,16 +17,15 @@ spec:
   syncPolicy:
     syncOptions:
       - RespectIgnoreDifferences=true
+      - ServerSideApply=true
   ignoreDifferences:
     - group: ""
       kind: ConfigMap
       name: noodles-clients
       namespace: dashboard
-      jsonPointers:
-        - /data
+      jqPathExpressions: [".data"]
     - group: ""
       kind: ConfigMap
       name: noodles-clients-pending
       namespace: dashboard
-      jsonPointers:
-        - /data
+      jqPathExpressions: [".data"]

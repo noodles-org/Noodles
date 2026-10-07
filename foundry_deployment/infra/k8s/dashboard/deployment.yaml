@@ -51,6 +51,13 @@ spec:
                 secretKeyRef:
                   name: noodles-dashboard
                   key: GAMESERVER_TOKEN
+            - name: FILESVC_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: noodles-dashboard
+                  key: FILESVC_TOKEN
+            - name: FILESVC_URL
+              value: "http://file-sidecar.foundry.svc.cluster.local"
           envFrom:
             - configMapRef:
                 name: remote-clusters

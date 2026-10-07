@@ -12,6 +12,10 @@ spec:
   template:
     metadata:
       labels: *labels
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: foundry
@@ -25,6 +29,30 @@ spec:
           volumeMounts:
             - mountPath: "/foundrydata"
               name: foundry-pv-storage
+        - name: file-sidecar
+          image: docker.io/mephalrith/foundry-file-sidecar:latest
+          imagePullPolicy: Always
+          ports:
+            - name: filesvc
+              containerPort: 8080
+          env:
+            - name: FILESVC_ROOT
+              value: "/foundrydata/Data"
+            - name: FILESVC_PORT
+              value: "8080"
+            - name: FILESVC_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: filesvc-token
+                  name: file-sidecar
+          resources:
+            requests: { cpu: 25m, memory: 32Mi,
+              ephemeral-storage: 32Mi }
+            limits: { cpu: 200m, memory: 128Mi,
+              ephemeral-storage: 256Mi }
+          volumeMounts:
+          - mountPath: "/foundrydata"
+            name: foundry-pv-storage
       volumes:
         - name: foundry-pv-storage
           persistentVolumeClaim:

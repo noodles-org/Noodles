@@ -20,14 +20,13 @@ spec:
               imagePullPolicy: IfNotPresent
               command:
                 - restic
-                - -r
-                - s3:https://s3.us-west-1.amazonaws.com/noodles-foundry-bucket/restic
-                - forget
-                - --group-by ""
-                - --keep-weekly 4
-                - --keep-monthly 6
-                - --keep-yearly 2
-                - --prune
+                - "-r"
+                - "s3:https://s3.us-west-1.amazonaws.com/noodles-foundry-bucket/restic"
+                - "forget"
+                - "--keep-weekly 4"
+                - "--keep-monthly 6"
+                - "--keep-yearly 2"
+                - "--prune"
               env:
                 - name: AWS_ACCESS_KEY_ID
                   valueFrom:

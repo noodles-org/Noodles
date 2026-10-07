@@ -29,6 +29,7 @@ func main() {
 
 	k8s := services.NewK8sService(cfg)
 	argo := services.NewArgoCDService(cfg)
+	files := services.NewFileService(cfg)
 
 	ctx, stopRefresh := context.WithCancel(context.Background())
 	defer stopRefresh()
@@ -93,6 +94,18 @@ func main() {
 		sub.Use(middleware.RequireAuth(cfg))
 		sub.Use(middleware.RequireApproved)
 		sub.Get("/", handlers.HandleListServices(k8s))
+	})
+
+	// Foundry file management routes
+	r.Route("/api/files", func(sub chilib.Router) {
+		sub.Use(middleware.RequireAuth(cfg))
+		sub.Use(middleware.RequireApproved)
+		sub.Get("/", handlers.HandleListFiles(files))
+		sub.Get("/download", handlers.HandleDownloadFile(files))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/upload", handlers.HandleUploadFile(files))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Delete("/", handlers.HandleDeleteFile(files))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/mkdir", handlers.HandleMkdir(files))
+		sub.With(middleware.RequireRole(model.RoleAdmin, model.RoleClientAdmin)).Post("/rename", handlers.HandleRename(files))
 	})
 
 	// Serve frontend static files in production

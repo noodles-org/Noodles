@@ -2,7 +2,6 @@
 #
 # DO NOT POPULATE THIS FILE. It is an empty bootstrap shell so the object exists
 # on a fresh cluster; the dashboard backend owns its contents at runtime.
-# Entries hold client PII (email, name, Google sub) and this repository is public.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -11,6 +10,4 @@ metadata:
   labels:
     app: dashboard
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
-data:
-  clients.yaml: "[]"
+    argocd.argoproj.io/sync-options: Prune=false, RespectIgnoreDifferences=true

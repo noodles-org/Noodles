@@ -15,6 +15,7 @@ const profileRef = ref<HTMLElement | null>(null);
 const navItems = computed(() => [
   {path: '/services', label: 'Services'},
   {path: '/deployments', label: 'Deployments'},
+  {path: '/files', label: 'Foundry Files'},
   {path: '/docs', label: 'Docs'},
   ...(auth.isAdmin ? [{path: '/admin/clients', label: 'User Management'}] : []),
 ]);

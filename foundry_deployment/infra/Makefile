@@ -52,3 +52,7 @@ update-foundry-version:
 update-stalwart-webhook:
 	docker buildx build --platform linux/amd64 -t mephalrith/stalwart-inbound-webhook k8s/stalwart/inbound-webhook/.
 	docker push mephalrith/stalwart-inbound-webhook:latest
+update-file-sidecar:
+	docker buildx build --platform linux/amd64 -t mephalrith/foundry-file-sidecar k8s/foundry/file-sidecar/.
+	docker push mephalrith/foundry-file-sidecar:latest
+	kubectl rollout restart -n foundry deployment

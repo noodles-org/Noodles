@@ -28,6 +28,11 @@ var (
 		Help: "Attempts to perform admin actions without admin role",
 	}, []string{"path"})
 
+	FileActions = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "dashboard_file_actions_total",
+		Help: "Foundry file management actions",
+	}, []string{"action", "status"})
+
 	HTTPRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "dashboard_http_requests_total",
 		Help: "Total HTTP requests",
@@ -60,6 +65,7 @@ func InitMetrics() *prometheus.Registry {
 		AuthEvents,
 		UniqueUsersGauge,
 		DeploymentActions,
+		FileActions,
 		UnauthorizedAttempts,
 		HTTPRequests,
 		HTTPDuration,

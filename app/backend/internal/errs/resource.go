@@ -10,4 +10,6 @@ var (
 	NamespaceNotManaged = &Error{Status: http.StatusForbidden, Message: "Namespace not managed by this dashboard"}
 	MissingPath         = &Error{Status: http.StatusBadRequest, Message: "Missing path parameter"}
 	InvalidPath         = &Error{Status: http.StatusBadRequest, Message: "Invalid path"}
+	FileNotFound        = &Error{Status: http.StatusNotFound, Message: "File not found"}
+	DirNotEmpty         = &Error{Status: http.StatusConflict, Message: "Directory not empty"}
 )

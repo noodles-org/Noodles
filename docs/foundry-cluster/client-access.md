@@ -13,13 +13,15 @@ Dex only proves identity. Google returns no useful `groups` claim, so authorizat
 
 ## Roles
 
-| Role | Services | Docs | Deployments (read) | Restart/Pause/Resume | Clients page |
-|------|----------|------|--------------------|----------------------|--------------|
-| `admin` (staff) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `viewer` (staff) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `client_admin` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `client` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `pending` | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Role | Services | Docs | Deployments (read) | Restart/Pause/Resume | Files (read) | Files (modify) | Clients page |
+|------|----------|------|--------------------|----------------------|--------------|----------------|--------------|
+| `admin` (staff) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `viewer` (staff) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| `client_admin` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `client` | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| `pending` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+Files (read) covers browsing and downloading the Foundry `Data` tree; Files (modify) covers upload, delete, new folder, rename, and move — gated the same way as the mutating deployment actions.
 
 Clients see all deployments — there is no per-client namespace scoping. How these roles are enforced is documented in [Backend](../app/backend.md#roles-and-route-gating) and [Frontend](../app/frontend.md#roles-and-guards).
 

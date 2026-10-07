@@ -2,8 +2,7 @@
 #
 # DO NOT POPULATE THIS FILE. It is an empty bootstrap shell so the object exists
 # on a fresh cluster; the dashboard backend writes pending entries at runtime and
-# the weekly flush CronJob clears them. Entries hold client PII and this
-# repository is public.
+# the weekly flush CronJob clears them.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,6 +11,4 @@ metadata:
   labels:
     app: dashboard
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
-data:
-  clients.yaml: "[]"
+    argocd.argoproj.io/sync-options: Prune=false, RespectIgnoreDifferences=true
