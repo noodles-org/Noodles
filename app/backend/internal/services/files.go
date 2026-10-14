@@ -235,7 +235,7 @@ func (s *FileService) do(ctx context.Context, method, endpoint string, query url
 	return resp, nil
 }
 
-func statusError(resp *http.Response) *errs.Error {
+func statusError(resp *http.Response) error {
 	switch {
 	case resp.StatusCode >= 200 && resp.StatusCode < 300:
 		return nil
