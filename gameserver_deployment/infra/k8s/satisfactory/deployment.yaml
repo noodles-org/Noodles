@@ -62,17 +62,30 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
-#        - image: mephalrith/mod-manager:v0.1
-#          name: satisfactory-mod-manager
-#          command:
-#            - "/bin/sh"
-#            - "-c"
-#            - "ficsit installation add /config/gamefiles && while true; do sleep 30; done;"
-#          volumeMounts:
-#            - name: satisfactory-config
-#              mountPath: /config
-#          securityContext:
-#            runAsUser: 0
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+        - image: mephalrith/mod-manager:v0.1
+          name: mod-manager
+          env:
+            - name: HOME
+              value: /config/ficsit-home
+          command:
+            - "/bin/sh"
+            - "-c"
+            # - "ficsit --local-dir /config/ficsit-home installation add /config/gamefiles"
+            - "while true; do sleep 30; done;"
+          volumeMounts:
+            - name: satisfactory-config
+              mountPath: /config
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
         - name: satisfactory-config
           persistentVolumeClaim:
