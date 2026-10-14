@@ -25,5 +25,6 @@ spec:
       port: 8888
       protocol: TCP
       targetPort: 8888
+      nodePort: 32172
   selector:
     app: satisfactory
