@@ -64,11 +64,11 @@ spec:
             runAsGroup: 1000
           resources:
             requests:
-              cpu: 500m
-              memory: 2Gi
+              cpu: "1"
+              memory: 4Gi
             limits:
-              cpu: "4"
-              memory: 8Gi
+              cpu: "2"
+              memory: 16Gi
         - image: mephalrith/mod-manager:v0.1
           name: mod-manager
           env:

@@ -20,6 +20,15 @@ Key environment variables:
 
 The container runs as non-root (UID/GID 1000) with a liveness probe using the built-in health check script.
 
+### Resources
+
+| Resource | Request | Limit  |
+|----------|---------|--------|
+| CPU      | `1`     | `2`    |
+| Memory   | `4Gi`   | `16Gi` |
+
+Satisfactory's game simulation is largely single-threaded, so per-core clock speed matters more than core count. The CPU limit is kept modest (`2`: one core for the simulation tick, one for background work such as nav-mesh build, autosave compression, and networking) to avoid CFS throttling.
+
 ## Mod manager sidecar
 
 The deployment runs a second `mod-manager` container alongside the game server:
