@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: foundry-dashboard-grafana
+  namespace: monitoring
+  annotations:
+    grafana_folder: "Foundry"
+  labels:
+    grafana_dashboard: "1"
+data:
+  foundry-dashboard.json: |-
+    {
+      "uid": "foundry-dashboard",
+      "title": "Foundry VTT - Overview & Logs",
+      "tags": ["foundry", "vtt", "logs", "performance"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "time": { "from": "now-6h", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "DS_PROMETHEUS",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": {}
+          },
+          {
+            "name": "DS_LOKI",
+            "type": "datasource",
+            "query": "loki",
+            "current": {}
+          },
+          {
+            "name": "container",
+            "label": "Container",
+            "type": "custom",
+            "query": ".+ : All,foundry : foundry,file-sidecar : file-sidecar",
+            "current": { "text": "All", "value": ".+" },
+            "includeAll": false,
+            "multi": false
+          },
+          {
+            "name": "search",
+            "label": "Log search (regex)",
+            "type": "textbox",
+            "query": "",
+            "current": { "text": "", "value": "" }
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "row", "title": "Overview",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "id": 1
+        },
+        {
+          "type": "stat", "title": "Foundry Availability (24h)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 }, "id": 2,
+          "targets": [{
+            "expr": "clamp_max((sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\", code!~\"5..\"}[24h])) or vector(1)) / (sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\"}[24h])) or vector(1)) * 100, 100)",
+            "legendFormat": "Availability"
+          }],
+          "fieldConfig": { "defaults": { "unit": "percent", "decimals": 2, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": 0 }, { "color": "yellow", "value": 98.0 }, { "color": "green", "value": 99.0 } ] } } },
+          "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
+        },
+        {
+          "type": "stat", "title": "Replicas Available",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 }, "id": 3,
+          "targets": [{ "expr": "sum(kube_deployment_status_replicas_available{namespace=\"foundry\", deployment=\"foundry\"}) or vector(0)" }],
+          "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "fieldConfig": { "defaults": { "decimals": 0, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": 0 }, { "color": "green", "value": 1 } ] } } }
+        },
+        {
+          "type": "stat", "title": "Container Restarts (24h)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 }, "id": 4,
+          "targets": [{ "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"foundry\"}[24h])) or vector(0)" }],
+          "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "fieldConfig": { "defaults": { "decimals": 0, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": 0 }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } } }
+        },
+        {
+          "type": "stat", "title": "Ingress Request Rate",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 }, "id": 5,
+          "targets": [{ "expr": "sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\"}[5m])) or vector(0)" }],
+          "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+          "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "blue" } } }
+        },
+        {
+          "type": "row", "title": "Performance",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 }, "id": 10
+        },
+        {
+          "type": "timeseries", "title": "CPU Usage by Container (cores) vs Limit",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 }, "id": 11,
+          "targets": [
+            { "expr": "sum by (container) (rate(container_cpu_usage_seconds_total{namespace=\"foundry\", container!=\"\", container!=\"POD\"}[5m]))", "legendFormat": "{{ container }}", "refId": "A" },
+            { "expr": "sum by (container) (kube_pod_container_resource_limits{namespace=\"foundry\", resource=\"cpu\", container!=\"\"})", "legendFormat": "{{ container }} limit", "refId": "B" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "none", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } }, "overrides": [{ "matcher": { "id": "byRegexp", "options": ".*limit" }, "properties": [{ "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "custom.fillOpacity", "value": 0 }] }] }
+        },
+        {
+          "type": "timeseries", "title": "Memory Usage by Container vs Limit",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 }, "id": 12,
+          "targets": [
+            { "expr": "sum by (container) (container_memory_working_set_bytes{namespace=\"foundry\", container!=\"\", container!=\"POD\"})", "legendFormat": "{{ container }}", "refId": "A" },
+            { "expr": "sum by (container) (kube_pod_container_resource_limits{namespace=\"foundry\", resource=\"memory\", container!=\"\"})", "legendFormat": "{{ container }} limit", "refId": "B" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } }, "overrides": [{ "matcher": { "id": "byRegexp", "options": ".*limit" }, "properties": [{ "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "custom.fillOpacity", "value": 0 }] }] }
+        },
+        {
+          "type": "timeseries", "title": "Network I/O",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 }, "id": 13,
+          "targets": [
+            { "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"foundry\"}[5m]))", "legendFormat": "receive", "refId": "A" },
+            { "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"foundry\"}[5m]))", "legendFormat": "transmit", "refId": "B" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } } }
+        },
+        {
+          "type": "timeseries", "title": "Persistent Volume Usage",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 }, "id": 14,
+          "targets": [
+            { "expr": "sum(kubelet_volume_stats_used_bytes{namespace=\"foundry\"})", "legendFormat": "used", "refId": "A" },
+            { "expr": "sum(kubelet_volume_stats_capacity_bytes{namespace=\"foundry\"})", "legendFormat": "capacity", "refId": "B" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } }, "overrides": [{ "matcher": { "id": "byName", "options": "capacity" }, "properties": [{ "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "custom.fillOpacity", "value": 0 }] }] }
+        },
+        {
+          "type": "row", "title": "Ingress / HTTP",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 }, "id": 20
+        },
+        {
+          "type": "timeseries", "title": "Request Rate by Status Code",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 }, "id": 21,
+          "targets": [{
+            "expr": "sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\"}[5m])) by (code)",
+            "legendFormat": "{{ code }}"
+          }],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
+        },
+        {
+          "type": "timeseries", "title": "Request Duration (p50 / p95 / p99)",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 }, "id": 22,
+          "targets": [
+            { "expr": "histogram_quantile(0.50, sum(rate(traefik_service_request_duration_seconds_bucket{service=~\"foundry-foundry.*\"}[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
+            { "expr": "histogram_quantile(0.95, sum(rate(traefik_service_request_duration_seconds_bucket{service=~\"foundry-foundry.*\"}[5m])) by (le))", "legendFormat": "p95", "refId": "B" },
+            { "expr": "histogram_quantile(0.99, sum(rate(traefik_service_request_duration_seconds_bucket{service=~\"foundry-foundry.*\"}[5m])) by (le))", "legendFormat": "p99", "refId": "C" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2 } } }
+        },
+        {
+          "type": "timeseries", "title": "5xx Error Rate",
+          "datasource": { "uid": "${DS_PROMETHEUS}" },
+          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 32 }, "id": 23,
+          "targets": [{
+            "expr": "sum(rate(traefik_service_requests_total{service=~\"foundry-foundry.*\", code=~\"5..\"}[5m])) by (code) or vector(0)",
+            "legendFormat": "{{ code }}"
+          }],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 60, "lineWidth": 0, "stacking": { "mode": "normal" } }, "color": { "mode": "fixed", "fixedColor": "red" } } }
+        },
+        {
+          "type": "row", "title": "Logs",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 38 }, "id": 40
+        },
+        {
+          "type": "timeseries", "title": "Log Volume by Container",
+          "datasource": { "uid": "${DS_LOKI}" },
+          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 39 }, "id": 41,
+          "targets": [{
+            "expr": "sum by (container) (count_over_time({namespace=\"foundry\", container=~\"$container\"} |~ \"(?i)$search\" [$__interval]))",
+            "legendFormat": "{{ container }}"
+          }],
+          "fieldConfig": { "defaults": { "unit": "logs", "custom": { "drawStyle": "bars", "fillOpacity": 70, "lineWidth": 0, "stacking": { "mode": "normal" } } } }
+        },
+        {
+          "type": "logs", "title": "Foundry Logs",
+          "datasource": { "uid": "${DS_LOKI}" },
+          "gridPos": { "h": 16, "w": 24, "x": 0, "y": 45 }, "id": 42,
+          "targets": [{
+            "expr": "{namespace=\"foundry\", container=~\"$container\"} |~ \"(?i)$search\"",
+            "refId": "A"
+          }],
+          "options": {
+            "showTime": true,
+            "showLabels": false,
+            "showCommonLabels": false,
+            "wrapLogMessage": true,
+            "prettifyLogMessage": false,
+            "enableLogDetails": true,
+            "dedupStrategy": "none",
+            "sortOrder": "Descending"
+          }
+        }
+      ]
+    }

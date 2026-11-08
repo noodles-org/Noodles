@@ -30,12 +30,31 @@ kind: Service
 metadata:
   name: file-sidecar
   namespace: foundry
+  labels:
+    app: foundry
 spec:
   selector:
     app: foundry
   ports:
-    - name: filesvc
+    - name: file-service
       protocol: TCP
       port: 80
       targetPort: filesvc
   type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: service-monitor
+  namespace: foundry
+  labels:
+    app: foundry
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: foundry
+  endpoints:
+    - port: file-service
+      interval: 30s
+      path: /metrics
