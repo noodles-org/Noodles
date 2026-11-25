@@ -51,3 +51,4 @@ spec:
           persistentVolumeClaim:
             claimName: foundry-pvc
   backoffLimit: 4
+  ttlSecondsAfterFinished: 86400
